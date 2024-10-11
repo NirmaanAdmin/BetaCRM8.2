@@ -1,6 +1,6 @@
 <?php
 $lang['commodity_type']  = 'Commodities';
-$lang['commodity_group']  = 'Commodity group';
+$lang['commodity_group']  = 'Budget head';
 $lang['commodity_list']  = 'Commodity List';
 $lang['bodys']  = 'Bodies';
 $lang['units']  = 'Units';

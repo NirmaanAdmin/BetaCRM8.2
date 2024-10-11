@@ -1,5 +1,5 @@
 <?php
-$lang['purchase']  = 'Purchase';
+$lang['purchase']  = 'Procurement';
 $lang['create_new_estimate_po']  = 'Create Quotation';
 $lang['vendor']  = 'Vendors';
 $lang['products_services']  = 'Products/Services';

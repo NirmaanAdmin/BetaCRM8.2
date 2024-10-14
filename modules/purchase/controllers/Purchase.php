@@ -5343,6 +5343,10 @@ class purchase extends AdminController
                                 $flag = 1;
                             }
 
+                            if(empty($value_unit_id)) {
+                                $value_unit_id = 1;
+                            }
+
                             //check unit_code exist  (input: id or name contract)
                             if (is_null($value_unit_id) != true && ( $value_unit_id != '0') && $value_unit_id != '') {
                                 /*case input id*/
@@ -5385,7 +5389,7 @@ class purchase extends AdminController
                                     }
                                 } else {
                                     /*case input name*/
-                                    $this->db->like(db_prefix() . 'items_groups.commodity_group_code', $value_commodity_group);
+                                    $this->db->like(db_prefix() . 'items_groups.name', $value_commodity_group);
                                     $commodity_group_value = $this->db->get(db_prefix() . 'items_groups')->result_array();
                                     if (count($commodity_group_value) == 0) {
                                         $string_error .= _l('commodity_group') . _l('does_not_exist');
@@ -5466,7 +5470,7 @@ class purchase extends AdminController
                                     }
                                 } else {
                                     /*case input  name*/
-                                    $this->db->like(db_prefix() . 'wh_sub_group.sub_group_code', $value_sub_group);
+                                    $this->db->like(db_prefix() . 'wh_sub_group.sub_group_name', $value_sub_group);
                                     $sub_group_value = $this->db->get(db_prefix() . 'wh_sub_group')->result_array();
                                     if (count($sub_group_value) == 0) {
                                         $string_error .= _l('sub_group') . _l('does_not_exist');

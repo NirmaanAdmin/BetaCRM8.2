@@ -2615,6 +2615,10 @@ class warehouse extends AdminController {
 
 								}
 
+								if(empty($value_cell_unit_id)) {
+	                                $value_cell_unit_id = 1;
+	                            }
+
 								//check unit_code exist  (input: id or name contract)
 								if (is_null($value_cell_unit_id) != true && ( $value_cell_unit_id != '0')  && $value_cell_unit_id != '') {
 									/*case input id*/
@@ -2665,7 +2669,7 @@ class warehouse extends AdminController {
 
 									} else {
 										/*case input name*/
-										$this->db->like(db_prefix() . 'items_groups.commodity_group_code', $value_cell_commodity_group);
+										$this->db->like(db_prefix() . 'items_groups.name', $value_cell_commodity_group);
 
 										$commodity_group_value = $this->db->get(db_prefix() . 'items_groups')->result_array();
 										if (count($commodity_group_value) == 0) {
@@ -2744,7 +2748,7 @@ class warehouse extends AdminController {
 
 									} else {
 										/*case input  name*/
-										$this->db->like(db_prefix() . 'wh_sub_group.sub_group_code', $value_cell_sub_group);
+										$this->db->like(db_prefix() . 'wh_sub_group.sub_group_name', $value_cell_sub_group);
 
 										$sub_group_value = $this->db->get(db_prefix() . 'wh_sub_group')->result_array();
 										if (count($sub_group_value) == 0) {

@@ -120,6 +120,21 @@
                         echo render_select('buyer',$staff,array('staffid',array('firstname','lastname')),'buyer',$selected);
                         ?>
             </div>
+            <?php 
+              $project_id = '';
+              if($this->input->get('project')){
+                $project_id = $this->input->get('project'); 
+              }
+            ?>
+            <div class="col-md-6">
+              <label for="project"><?php echo _l('project'); ?></label>
+              <select name="project" id="project" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
+                <option value=""></option>
+                <?php foreach($projects as $s) { ?>
+                  <option value="<?php echo pur_html_entity_decode($s['id']); ?>" <?php if(isset($estimate) && $s['id'] == $estimate->project){ echo 'selected'; }else if(!isset($estimate) && $s['id'] == $project_id ){ echo 'selected';  } ?>><?php echo pur_html_entity_decode($s['name']); ?></option>
+                  <?php } ?>
+              </select>
+            </div>
           </div>
             
             <div class="clearfix mbot15"></div>

@@ -81,7 +81,7 @@ foreach ($rResult as $aRow) {
                 $approve_status = '<span class="label label-danger" id="status_span_'.$aRow['id'].'"> '._l('pur_canceled');
             }
 
-            if(has_permission('purchase_request_change_approve_status', '', 'edit')){
+            if(false){
                 $approve_status .= '<div class="dropdown inline-block mleft5 table-export-exclude">';
                 $approve_status .= '<a href="#" class="dropdown-toggle text-dark" id="tablePurOderStatus-' . $aRow['id'] . '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">';
                 $approve_status .= '<span data-toggle="tooltip" title="' . _l('ticket_single_change_status') . '"><i class="fa fa-caret-down" aria-hidden="true"></i></span>';

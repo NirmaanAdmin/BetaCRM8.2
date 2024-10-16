@@ -65,6 +65,7 @@
                     <p class="bold col-md-9 p_style"><?php echo _l('information'); ?></p>
                     <div class="col-md-3 pull-right">
                         <div class="task-info task-status task-info-status pull-right">
+                            <?php if($check_approval_setting) { ?>
                             <h5>
                                <i class="fa fa-<?php if($pur_request->status == 2){echo 'star';} else if($pur_request->status == 1){echo 'star-o';} else {echo 'star-half-o';} ?> pull-left task-info-icon fa-fw fa-lg mtop10"></i><?php echo _l('task_status'); ?>:
                                <?php if(has_permission('purchase_request_change_approve_status', '', 'edit')) { ?>
@@ -91,6 +92,7 @@
                                <?php echo pur_format_approve_status($pur_request->status,true); ?>
                                <?php } ?>
                             </h5>
+                            <?php } ?>
                          </div>
                     </div>
                   <div class=" col-md-12">

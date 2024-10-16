@@ -83,7 +83,7 @@
              
               <a href="#" onclick="send_quotation('<?php echo pur_html_entity_decode($estimate->id); ?>'); return false;" class="btn btn-success pull-right mleft5 mright5" ><i class="fa fa-envelope" data-toggle="tooltip" title="<?php echo _l('send_a_quote') ?>"></i></a>
 
-              <?php if(has_permission('purchase_estimate_change_approve_status', '', 'edit')){ ?>
+              <?php if(has_permission('purchase_estimate_change_approve_status', '', 'edit') && $check_approval_setting){ ?>
                  <select name="status" id="status" class="selectpicker pull-right mright10" onchange="change_status_pur_estimate(this,<?php echo pur_html_entity_decode($estimate->id); ?>); return false;" data-live-search="true" data-width="35%" data-none-selected-text="<?php echo _l('pur_change_status_to'); ?>">
                    <option value=""></option>
                    <option value="1" class="<?php if($estimate->status == 1) { echo 'hide';}?>"><?php echo _l('purchase_draft'); ?></option>

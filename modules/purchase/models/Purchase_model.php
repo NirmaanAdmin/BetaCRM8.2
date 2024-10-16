@@ -696,21 +696,24 @@ class Purchase_model extends App_Model
     {
         unset($data['approval_setting_id']);
 
-        if(isset($data['approver'])){
-            $setting = [];
-            foreach ($data['approver'] as $key => $value) {
-                $node = [];
-                $node['approver'] = $data['approver'][$key];
-                $node['staff'] = $data['staff'][$key];
-                $node['action'] = $data['action'][$key];
-
-                $setting[] = $node;
+        $setting = [];
+        if(isset($data['approver'])) {
+            $approver = $data['approver'];
+            foreach ($approver as $key => $value) {
+               $node = [];
+               $node['approver'] = "staff";
+               $node['staff'] = $value;
+               $node['action'] = "approve";
+               $setting[] = $node;
             }
-            unset($data['approver']);
-            unset($data['staff']);
-            unset($data['action']);
         }
         $data['setting'] = json_encode($setting);
+
+        if(isset($data['approver'])) {
+            $data['approver'] = implode(',', $data['approver']);
+        } else {
+            $data['approver'] = NULL;
+        }
 
         $this->db->insert(db_prefix() .'pur_approval_setting', $data);
         $insert_id = $this->db->insert_id();
@@ -732,21 +735,24 @@ class Purchase_model extends App_Model
     {
         unset($data['approval_setting_id']);
 
-        if(isset($data['approver'])){
-            $setting = [];
-            foreach ($data['approver'] as $key => $value) {
-                $node = [];
-                $node['approver'] = $data['approver'][$key];
-                $node['staff'] = $data['staff'][$key];
-                $node['action'] = $data['action'][$key];
-
-                $setting[] = $node;
+        $setting = [];
+        if(isset($data['approver'])) {
+            $approver = $data['approver'];
+            foreach ($approver as $key => $value) {
+               $node = [];
+               $node['approver'] = "staff";
+               $node['staff'] = $value;
+               $node['action'] = "approve";
+               $setting[] = $node;
             }
-            unset($data['approver']);
-            unset($data['staff']);
-            unset($data['action']);
         }
         $data['setting'] = json_encode($setting);
+
+        if(isset($data['approver'])) {
+            $data['approver'] = implode(',', $data['approver']);
+        } else {
+            $data['approver'] = NULL;
+        }
 
         $this->db->where('id', $id);
         $this->db->update(db_prefix() .'pur_approval_setting', $data);
@@ -1118,13 +1124,15 @@ class Purchase_model extends App_Model
      */
     public function add_pur_request($data){
         $data['request_date'] = date('Y-m-d H:i:s');
-        $check_appr = $this->get_approve_setting('pur_request');
-        $data['status'] = 1;
-        if($check_appr && $check_appr != false){
-            $data['status'] = 1;
-        }else{
-            $data['status'] = 2;
-        }
+        $check_appr = $this->check_approval_setting($data['project'], 'pur_request', 0);
+        $data['status'] = ($check_appr == true) ? 2 : 1;
+        // $check_appr = $this->get_approve_setting('pur_request');
+        // $data['status'] = 1;
+        // if($check_appr && $check_appr != false){
+        //     $data['status'] = 1;
+        // }else{
+        //     $data['status'] = 2;
+        // }
 
         $detail_data = [];
         if(isset($data['newitems'])){
@@ -1639,13 +1647,15 @@ class Purchase_model extends App_Model
             unset($data['tax_select']);
         }
 
-        $check_appr = $this->get_approve_setting('pur_quotation');
-        $data['status'] = 1;
-        if($check_appr && $check_appr != false){
-            $data['status'] = 1;
-        }else{
-            $data['status'] = 2;
-        }
+        // $check_appr = $this->get_approve_setting('pur_quotation');
+        // $data['status'] = 1;
+        // if($check_appr && $check_appr != false){
+        //     $data['status'] = 1;
+        // }else{
+        //     $data['status'] = 2;
+        // }
+        $check_appr = $this->check_approval_setting($data['project'], 'pur_quotation', 0);
+        $data['status'] = ($check_appr == true) ? 2 : 1;
 
         $data['to_currency'] = $data['currency'];
 
@@ -2208,13 +2218,15 @@ class Purchase_model extends App_Model
             unset($data['tax_select']);
         }
 
-        $check_appr = $this->get_approve_setting('pur_order');
-        $data['approve_status'] = 1;
-        if($check_appr && $check_appr != false){
-            $data['approve_status'] = 1;
-        }else{
-            $data['approve_status'] = 2;
-        }
+        // $check_appr = $this->get_approve_setting('pur_order');
+        // $data['approve_status'] = 1;
+        // if($check_appr && $check_appr != false){
+        //     $data['approve_status'] = 1;
+        // }else{
+        //     $data['approve_status'] = 2;
+        // }
+        $check_appr = $this->check_approval_setting($data['project'], 'pur_order', 0);
+        $data['approve_status'] = ($check_appr == true) ? 2 : 1;
 
         $data['to_currency'] = $data['currency'];
 
@@ -2950,74 +2962,97 @@ class Purchase_model extends App_Model
      *
      * @return     boolean   
      */
-    public function send_request_approve($data){
+    public function send_request_approve($data)
+    {
         if(!isset($data['status'])){
             $data['status'] = '';
         }
         $date_send = date('Y-m-d H:i:s');
-        $data_new = $this->get_approve_setting($data['rel_type'], $data['status']);
-        if(!$data_new){
-            return false;
-        }
-        $this->delete_approval_details($data['rel_id'], $data['rel_type']);
-        $list_staff = $this->staff_model->get();
-        $list = [];
-        $staff_addedfrom = $data['addedfrom'];
+        // $data_new = $this->get_approve_setting($data['rel_type'], $data['status']);
+        // if(!$data_new){
+        //     return false;
+        // }
+        // $this->delete_approval_details($data['rel_id'], $data['rel_type']);
+        // $list_staff = $this->staff_model->get();
+        // $list = [];
+        // $staff_addedfrom = $data['addedfrom'];
         $sender = get_staff_user_id();
-        
-        foreach ($data_new as $value) {
-            $row = [];
-            
-            if($value->approver !== 'staff'){
-            $value->staff_addedfrom = $staff_addedfrom;
-            $value->rel_type = $data['rel_type'];
-            $value->rel_id = $data['rel_id'];
-            
-                $approve_value = $this->get_staff_id_by_approve_value($value, $value->approver);
-
-                if(is_numeric($approve_value) && $approve_value != 0){
-                    $approve_value = $this->staff_model->get($approve_value)->email;
-                }else{
-
-                    $this->db->where('rel_id', $data['rel_id']);
-                    $this->db->where('rel_type', $data['rel_type']);
-                    $this->db->delete('tblpur_approval_details');
-
-
-                    return $value->approver;
-                }
-                $row['approve_value'] = $approve_value;
-            
-            $staffid = $this->get_staff_id_by_approve_value($value, $value->approver);
-            
-            if(empty($staffid)){
-                $this->db->where('rel_id', $data['rel_id']);
-                $this->db->where('rel_type', $data['rel_type']);
-                $this->db->delete('tblpur_approval_details');
-
-
-                return $value->approver;
-            }
-
-                $row['action'] = $value->action;
-                $row['staffid'] = $staffid;
-                $row['date_send'] = $date_send;
-                $row['rel_id'] = $data['rel_id'];
-                $row['rel_type'] = $data['rel_type'];
-                $row['sender'] = $sender;
-                $this->db->insert('tblpur_approval_details', $row);
-
-            }else if($value->approver == 'staff'){
-                $row['action'] = $value->action;
-                $row['staffid'] = $value->staff;
-                $row['date_send'] = $date_send;
-                $row['rel_id'] = $data['rel_id'];
-                $row['rel_type'] = $data['rel_type'];
-                $row['sender'] = $sender;
-
-                $this->db->insert('tblpur_approval_details', $row);
-            }
+        $project = 0;
+        if($data['rel_type'] == 'pur_request') {
+            $project = $this->get_purchase_request($data['rel_id'])->project;
         }
+        if($data['rel_type'] == 'pur_order') {
+            $project = $this->get_pur_order($data['rel_id'])->project;
+        }
+        if($data['rel_type'] == 'pur_quotation') {
+            $project = $this->get_estimate($data['rel_id'])->project;
+        }
+        $data_new = $this->check_approval_setting($project, $data['rel_type'], 1);
+        
+        foreach ($data_new as $key => $value) {
+            $row = [];
+            $row['action'] = 'approve';
+            $row['staffid'] = $value['id'];
+            $row['date_send'] = $date_send;
+            $row['rel_id'] = $data['rel_id'];
+            $row['rel_type'] = $data['rel_type'];
+            $row['sender'] = $sender;
+            $this->db->insert('tblpur_approval_details', $row);
+        }
+        
+        // foreach ($data_new as $value) {
+        //     $row = [];
+            
+        //     if($value->approver !== 'staff'){
+        //     $value->staff_addedfrom = $staff_addedfrom;
+        //     $value->rel_type = $data['rel_type'];
+        //     $value->rel_id = $data['rel_id'];
+            
+        //         $approve_value = $this->get_staff_id_by_approve_value($value, $value->approver);
+
+        //         if(is_numeric($approve_value)){
+        //             $approve_value = $this->staff_model->get($approve_value)->email;
+        //         }else{
+
+        //             $this->db->where('rel_id', $data['rel_id']);
+        //             $this->db->where('rel_type', $data['rel_type']);
+        //             $this->db->delete('tblpur_approval_details');
+
+
+        //             return $value->approver;
+        //         }
+        //         $row['approve_value'] = $approve_value;
+            
+        //     $staffid = $this->get_staff_id_by_approve_value($value, $value->approver);
+            
+        //     if(empty($staffid)){
+        //         $this->db->where('rel_id', $data['rel_id']);
+        //         $this->db->where('rel_type', $data['rel_type']);
+        //         $this->db->delete('tblpur_approval_details');
+
+
+        //         return $value->approver;
+        //     }
+
+        //         $row['action'] = $value->action;
+        //         $row['staffid'] = $staffid;
+        //         $row['date_send'] = $date_send;
+        //         $row['rel_id'] = $data['rel_id'];
+        //         $row['rel_type'] = $data['rel_type'];
+        //         $row['sender'] = $sender;
+        //         $this->db->insert('tblpur_approval_details', $row);
+
+        //     }else if($value->approver == 'staff'){
+        //         $row['action'] = $value->action;
+        //         $row['staffid'] = $value->staff;
+        //         $row['date_send'] = $date_send;
+        //         $row['rel_id'] = $data['rel_id'];
+        //         $row['rel_type'] = $data['rel_type'];
+        //         $row['sender'] = $sender;
+
+        //         $this->db->insert('tblpur_approval_details', $row);
+        //     }
+        // }
         return true;
     }
 
@@ -13905,5 +13940,73 @@ class Purchase_model extends App_Model
      */
     public function get_payment_by_vendor_v2($vendor){
         return  $this->db->query('select pop.pur_invoice, pop.id as pop_id, pop.amount, pop.date, pop.paymentmode, pop.transactionid from '.db_prefix().'pur_invoice_payment pop left join '.db_prefix().'pur_invoices po on po.id = pop.pur_invoice where po.vendor = '.$vendor)->result_array();
+    }
+
+    public function find_approval_setting($data)
+    {
+        $this->db->where('project_id', $data['project_id']);
+        $this->db->where('related', $data['related']);
+        if(!empty($data['approval_setting_id'])) {
+            $this->db->where('id !=', $data['approval_setting_id']);
+        }
+        $approval_setting = $this->db->get(db_prefix() . 'pur_approval_setting')->result_array();
+        if(!empty($approval_setting)) {
+            $response['success'] = true;
+        } else {
+            $response['success'] = false;
+        }
+
+        return $response;
+    }
+
+    public function check_approval_setting($project, $related, $response = 0)
+    {
+        $check_status = false;
+        $intersect = array();
+        $this->db->select('*');
+        $this->db->where('related', $related);
+        $this->db->where('project_id', $project);
+        $project_members = $this->db->get(db_prefix().'pur_approval_setting')->row();
+
+        if(!empty($project_members)) {
+            if(!empty($project_members->approver)) {
+                $approver = $project_members->approver;
+                $approver = explode(',',$approver);
+                $this->db->select('staffid as id, "approve" as action', FALSE);
+                $this->db->where_in('staffid', $approver);
+                $intersect = $this->db->get(db_prefix().'staff')->result_array();
+            }
+        }
+
+        if($response == 1) {
+            $intersect = array_values($intersect);
+            $this->db->select('staffid as id, "approve" as action', FALSE);
+            $this->db->where('admin', 1);
+            $this->db->order_by('staffid','desc');
+            $this->db->limit(1);  
+            $staffs = $this->db->get('tblstaff')->result_array();
+            $intersect = array_merge($intersect, $staffs);
+            $intersect = array_unique($intersect, SORT_REGULAR);
+            $intersect = array_values($intersect);
+            return $intersect;
+        } else {
+            if(!empty($intersect)) {
+                $intersect = array_filter($intersect, function ($var) {
+                    return ($var['id'] == get_staff_user_id());
+                });
+                if(!empty($intersect)) {
+                    $check_status = true;
+                }
+            }
+        }
+
+        $this->db->select('staffid as id', 'email', 'firstname', 'lastname');
+        $this->db->where('staffid', get_staff_user_id());
+        $this->db->where('admin', 1);
+        $staffs = $this->db->get('tblstaff')->result_array();
+        if(count($staffs) > 0) {
+            $check_status = true;
+        }
+        return $check_status;
     }
 }

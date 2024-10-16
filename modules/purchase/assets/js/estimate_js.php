@@ -20,7 +20,8 @@
         currency: 'required',
         number: {
             required: true
-        }
+        },
+        project: 'required',
     });
 
     $("body").find('input[name="number"]').rules('add', {

@@ -219,7 +219,7 @@
                   </div>
                <?php } ?>
 
-               <?php if(has_permission('purchase_order_change_approve_status', '', 'edit')){ ?>     
+               <?php if(has_permission('purchase_order_change_approve_status', '', 'edit') && $check_approval_setting == true){ ?>     
                <select name="status" id="status" class="selectpicker pull-right mright10" onchange="change_status_pur_order(this,<?php echo ($estimate->id); ?>); return false;" data-live-search="true" data-width="35%" data-none-selected-text="<?php echo _l('pur_change_status_to'); ?>">
                  <option value=""></option>
                  <option value="1" class="<?php if($estimate->approve_status == 1) { echo 'hide';}?>"><?php echo _l('purchase_draft'); ?></option>

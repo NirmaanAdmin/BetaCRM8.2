@@ -45,7 +45,7 @@
                                <a href="#attachment" aria-controls="attachment" role="tab" data-toggle="tab">
                                <?php echo _l('pur_attachment'); ?>
                                </a>
-                            </li>  
+                            </li>
                             
                             <?php $quotations = get_quotations_by_pur_request($pur_request->id); ?>
                             <li role="presentation" class="">
@@ -53,6 +53,12 @@
                                <?php echo _l('compare_quotes').'('.count($quotations).')'; ?>
                                </a>
                             </li> 
+
+                            <div>
+                              <?php if($pur_request->status == 2) { ?>
+                               <a href="<?php echo admin_url('purchase/pur_order?pr='.$pur_request->id); ?>" class="btn btn-info save_detail pull-right" target="_blank"><?php echo _l('convert_to_po'); ?></a>
+                              <?php } ?>
+                           </div>
                             
                          </ul>
                       </div>
@@ -94,6 +100,7 @@
                             </h5>
                             <?php } ?>
                          </div>
+
                     </div>
                   <div class=" col-md-12">
                     <hr class="hr_style" />
@@ -124,6 +131,10 @@
                        <tr class="project-overview">
                           <td class="bold"><?php echo _l('request_date'); ?></td>
                           <td><?php echo _dt($pur_request->request_date); ?></td>
+                       </tr>
+                       <tr class="project-overview">
+                          <td class="bold"><?php echo _l('project'); ?></td>
+                          <td><?php echo get_project_name_by_id($pur_request->project); ?></td>
                        </tr>
                        <tr>
                         <td class="bold"><?php echo _l('pdf'); ?></td>
@@ -176,7 +187,8 @@
                               <thead>
                                  <tr>
                                
-                                  <th width="25%" align="left"><?php echo _l('debit_note_table_item_heading'); ?></th>
+                                  <th width="20%" align="left"><?php echo _l('debit_note_table_item_heading'); ?></th>
+                                  <th width="15%" align="right" class="qty"><?php echo _l('decription'); ?></th>
                                   <th width="10%" align="right" class="qty"><?php echo _l('purchase_quantity'); ?></th>
                                   <th width="10%" align="right"><?php echo _l('unit_price'); ?></th>
                                   
@@ -210,6 +222,7 @@
                                     <?php
                                        $unit_name = pur_get_unit_name($es['unit_id']); 
                                     ?>
+                                    <td align="right"><?php echo nl2br($es['description']); ?></td>
                                     <td align="right"  width="12%"><?php echo pur_html_entity_decode($es['quantity']). ' '.$unit_name; ?></td>
                                     <td align="right"><?php echo app_format_money($es['unit_price'],$base_currency->symbol); ?></td>
                                     <td align="right"><?php echo app_format_money($es['into_money'],$base_currency->symbol); ?></td>
@@ -400,48 +413,29 @@
                 </div>
 
                 <div role="tabpanel" class="tab-pane  <?php if($this->input->get('tab') == 'attachment'){ echo 'active'; } ?>" id="attachment">
-                   <?php echo form_open_multipart(admin_url('purchase/purchase_request_attachment/'.$pur_request->id),array('id'=>'partograph-attachments-upload')); ?>
-                    
-
                     <div class="col-md-12">
-                      <?php echo render_input('file','pur_file','','file'); ?>
-                   </div>
-                   <div class="col-md-12">
-                       <button id="obgy_btn2" type="submit" class="btn btn-info pull-right"><?php echo _l('submit'); ?></button>
-                   </div>
-                    <?php echo form_close(); ?>
-                   
-                   <div class="col-md-12" id="purrequest_pv_file">
-                                        <?php
-                                            $file_html = '';
-                                            if(count($pur_request_attachments) > 0){
-                                                $file_html .= '<hr />';
-                                                foreach ($pur_request_attachments as $f) {
-                                                    $href_url = site_url(PURCHASE_PATH.'pur_request/'.$f['rel_id'].'/'.$f['file_name']).'" download';
-                                                                    if(!empty($f['external'])){
-                                                                      $href_url = $f['external_link'];
-                                                                    }
-                                                   $file_html .= '<div class="mbot15 row inline-block full-width" data-attachment-id="'. $f['id'].'">
-                                                  <div class="col-md-8">
-                                                     <a name="preview-purorder-btn" onclick="preview_purrequest_btn(this); return false;" rel_id = "'. $f['rel_id']. '" id = "'.$f['id'].'" href="Javascript:void(0);" class="mbot10 mright5 btn btn-success pull-left" data-toggle="tooltip" title data-original-title="'. _l('preview_file').'"><i class="fa fa-eye"></i></a>
-                                                     <div class="pull-left"><i class="'. get_mime_class($f['filetype']).'"></i></div>
-                                                     <a href=" '. $href_url.'" target="_blank" download>'.$f['file_name'].'</a>
-                                                     <br />
-                                                     <small class="text-muted">'.$f['filetype'].'</small>
-                                                  </div>
-                                                  <div class="col-md-4 text-right">';
-                                                    if($f['staffid'] == get_staff_user_id() || is_admin()){
-                                                    $file_html .= '<a href="#" class="text-danger" onclick="delete_purrequest_attachment('. $f['id'].'); return false;"><i class="fa fa-times"></i></a>';
-                                                    } 
-                                                   $file_html .= '</div></div>';
-                                                }
-                                                
-                                                echo pur_html_entity_decode($file_html);
-                                            }
-                                         ?>
-                                      </div>
-
-                   <div id="purrequest_file_data"></div>
+                        <?php
+                         if(isset($attachments) && count($attachments) > 0) { 
+                           foreach($attachments as $value){
+                             echo '<div class="col-md-3">';
+                             $path = get_upload_path_by_type('purchase').'pur_request/'.$value['rel_id'].'/'.$value['file_name'];
+                             $is_image = is_image($path);
+                             if($is_image){
+                                echo '<div class="preview_image">';
+                             }
+                             ?>
+                             <a href="<?php echo site_url('download/file/purchase/'. $value['id']); ?>" class="display-block mbot5"<?php if($is_image){ ?> data-lightbox="attachment-purchase-<?php echo $value['rel_id']; ?>" <?php } ?>>
+                               <i class="<?php echo get_mime_class($value['filetype']); ?>"></i> <?php echo $value['file_name']; ?>
+                               <?php if($is_image){ ?>
+                                  <img class="mtop5" src="<?php echo site_url('download/preview_image?path='.protected_file_url_by_path($path).'&type='.$value['filetype']); ?>" style="height: 165px;">
+                               <?php } ?>
+                             </a>
+                             <?php if($is_image){
+                               echo '</div>';
+                               echo '<a href="'.admin_url('purchase/delete_attachment/'.$value['id']).'" class="text-danger _delete">'._l('delete').'</a>';
+                             } ?>
+                         <?php echo '</div>'; } } ?>
+                    </div>                 
                 </div>
 
                 <div role="tabpanel" class="tab-pane ptop10 " id="compare_quotes">

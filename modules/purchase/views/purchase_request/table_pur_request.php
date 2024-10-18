@@ -7,16 +7,22 @@ $aColumns = [
     'pur_rq_code',
     'pur_rq_name',
     'requester',
-    'department', 
+    // 'department', 
     'request_date',
-    'status',
     'project',
+    'status',
+    // 'project',
     'id',
     ];
 $sIndexColumn = 'id';
 $sTable       = db_prefix().'pur_request';
 $join         = [ 'LEFT JOIN '.db_prefix().'departments ON '.db_prefix().'departments.departmentid = '.db_prefix().'pur_request.department' ];
 $where = [];
+
+$having = '';
+if(!is_admin()) {
+    $having = "FIND_IN_SET('".get_staff_user_id()."', member_list) != 0";
+}
 
 if ($this->ci->input->post('from_date')
     && $this->ci->input->post('from_date') != '') {
@@ -47,7 +53,12 @@ if(!has_permission('purchase_request', '', 'view')){
   array_push($where, 'AND (' . db_prefix() . 'pur_request.requester = '.get_staff_user_id().  $or_where. ' OR '.get_staff_user_id().' IN (SELECT staffid FROM ' . db_prefix() . 'pur_approval_details WHERE ' . db_prefix() . 'pur_approval_details.rel_type = "pur_request" AND ' . db_prefix() . 'pur_approval_details.rel_id = '.db_prefix().'pur_request.id))');
 }
 
-$result = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where, ['id','name','pur_rq_code']);
+$result = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where, [
+    'id',
+    'name',
+    'pur_rq_code',
+    '(SELECT GROUP_CONCAT(' . db_prefix() . 'project_members.staff_id SEPARATOR ",") FROM ' . db_prefix() . 'project_members WHERE ' . db_prefix() . 'project_members.project_id=' . db_prefix() . 'pur_request.project) as member_list',
+], '', [], $having);
 
 $output  = $result['output'];
 $rResult = $result['rResult'];
@@ -175,7 +186,8 @@ foreach ($rResult as $aRow) {
             $_data = '<a href="' . admin_url('purchase/view_pur_request/' . $aRow['id'] ).'">'.$aRow['pur_rq_code'] . '</a>';
         }elseif($aColumns[$i] == 'project'){
 
-            $_data = get_po_html_by_pur_request($aRow['id']);
+            // $_data = get_po_html_by_pur_request($aRow['id']);
+            $_data = get_project_name_by_id($aRow['project']);
         }
 
 

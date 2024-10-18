@@ -147,7 +147,12 @@ if (isset($tags_ft)) {
     }
 }
 
-$result = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where, [db_prefix().'pur_orders.id as id','company','pur_order_number','expense_convert',db_prefix().'projects.name as project_name',db_prefix().'departments.name as department_name', 'currency']);
+$having = '';
+if(!is_admin()) {
+    $having = "FIND_IN_SET('".get_staff_user_id()."', member_list) != 0";
+}
+
+$result = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where, [db_prefix().'pur_orders.id as id','company','pur_order_number','expense_convert',db_prefix().'projects.name as project_name',db_prefix().'departments.name as department_name', 'currency', '(SELECT GROUP_CONCAT(' . db_prefix() . 'project_members.staff_id SEPARATOR ",") FROM ' . db_prefix() . 'project_members WHERE ' . db_prefix() . 'project_members.project_id=' . db_prefix() . 'pur_orders.project) as member_list'], '', [], $having);
 
 $output  = $result['output'];
 $rResult = $result['rResult'];

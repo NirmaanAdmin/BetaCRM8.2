@@ -4,7 +4,7 @@
   <div class="content">
     <div class="row">
       <?php
-      echo form_open($this->uri->uri_string(),array('id'=>'pur_order-form','class'=>'_transaction_form'));
+      echo form_open_multipart($this->uri->uri_string(),array('id'=>'pur_order-form','class'=>'_transaction_form'));
       if(isset($pur_order)){
         echo form_hidden('isedit');
       }
@@ -83,6 +83,13 @@
                           
                         </div>
 
+                        <?php 
+                          if($convert_po && $selected_pr && $selected_project) {
+                            $pur_order['pur_request'] = $selected_pr;
+                            $pur_order['project'] = $selected_project;
+                            $pur_order = (object) $pur_order;
+                          }
+                        ?>
                         <div class="col-md-6 form-group">
                         <label for="pur_request"><?php echo _l('pur_request'); ?></label>
                         <select name="pur_request" id="pur_request" class="selectpicker" onchange="coppy_pur_request(); return false;"  data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>" >
@@ -148,13 +155,22 @@
                             </select>
                         </div>
                       </div>
+
+                      <div class="row">
+                        <div class="col-md-12 form-group">
+                          <div id="inputTagsWrapper">
+                             <label for="tags" class="control-label"><i class="fa fa-tag" aria-hidden="true"></i> <?php echo _l('tags'); ?></label>
+                             <input type="text" class="tagsinput" id="tags" name="tags" value="<?php echo (isset($pur_order) ? prep_tags_input(get_tags_in($pur_order->id,'pur_order')) : ''); ?>" data-role="tagsinput">
+                          </div>
+                        </div>
+                      </div>
                      
                    </div>
                    <div class="col-md-6">
                     <div class="row">
                       <div class="col-md-6 ">
                      <?php
-                        $currency_attr = array('data-show-subtext'=>true);
+                        $currency_attr = array('disabled'=>true,'data-show-subtext'=>true);
 
                         $selected = '';
                         foreach($currencies as $currency){
@@ -174,11 +190,21 @@
                   </div>
 
                       <div class="col-md-6 mbot10 form-group">
-                       
-                        <div id="inputTagsWrapper">
-                           <label for="tags" class="control-label"><i class="fa fa-tag" aria-hidden="true"></i> <?php echo _l('tags'); ?></label>
-                           <input type="text" class="tagsinput" id="tags" name="tags" value="<?php echo (isset($pur_order) ? prep_tags_input(get_tags_in($pur_order->id,'pur_order')) : ''); ?>" data-role="tagsinput">
-                        </div>
+                        <?php
+                        $selected = '';
+                        foreach($staff as $member){
+                         if(isset($pur_order)){
+                           if($pur_order->delivery_person == $member['staffid']) {
+                             $selected = $member['staffid'];
+                           }
+                         }else{
+                          if($member['staffid'] == get_staff_user_id()){
+                            $selected = $member['staffid'];
+                          }
+                         }
+                        }
+                        echo render_select('delivery_person',$staff,array('staffid',array('firstname','lastname')),'delivery_person',$selected);
+                        ?>
                      </div>
                    </div>
                    <div class="row">
@@ -201,7 +227,7 @@
                                     }
                                    }
                                   }
-                                  echo render_select('buyer',$staff,array('staffid',array('firstname','lastname')),'person_in_charge',$selected);
+                                  echo render_select('buyer',$staff,array('staffid',array('firstname','lastname')),'buyer',$selected);
                                   ?>
                       </div>
                     </div>
@@ -345,6 +371,46 @@
               
             </div>
         </div>
+
+        <div class="panel-body">
+          <label for="attachment"><?php echo _l('attachment'); ?></label>
+          <div class="attachments">
+            <div class="attachment">
+              <div class="col-md-5 form-group" style="padding-left: 0px;">
+                <div class="input-group">
+                   <input type="file" extension="<?php echo str_replace(['.', ' '], '', get_option('ticket_attachments_file_extensions')); ?>" filesize="<?php echo file_upload_max_size(); ?>" class="form-control" name="attachments[0]" accept="<?php echo get_ticket_form_accepted_mimes(); ?>">
+                   <span class="input-group-btn">
+                   <button class="btn btn-success add_more_attachments p8" type="button"><i class="fa fa-plus"></i></button>
+                   </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <br /> <br />
+
+          <?php
+          if(isset($attachments) && count($attachments) > 0) { 
+            foreach($attachments as $value){
+              echo '<div class="col-md-3">';
+              $path = get_upload_path_by_type('purchase').'pur_order/'.$value['rel_id'].'/'.$value['file_name'];
+              $is_image = is_image($path);
+              if($is_image){
+                 echo '<div class="preview_image">';
+              }
+              ?>
+              <a href="<?php echo site_url('download/file/purchase/'. $value['id']); ?>" class="display-block mbot5"<?php if($is_image){ ?> data-lightbox="attachment-purchase-<?php echo $value['rel_id']; ?>" <?php } ?>>
+                <i class="<?php echo get_mime_class($value['filetype']); ?>"></i> <?php echo $value['file_name']; ?>
+                <?php if($is_image){ ?>
+                   <img class="mtop5" src="<?php echo site_url('download/preview_image?path='.protected_file_url_by_path($path).'&type='.$value['filetype']); ?>" style="height: 165px;">
+                <?php } ?>
+              </a>
+              <?php if($is_image){
+                echo '</div>';
+                echo '<a href="'.admin_url('purchase/delete_attachment/'.$value['id']).'" class="text-danger _delete">'._l('delete').'</a>';
+              } ?>
+          <?php echo '</div>'; } } ?>
+        </div>
+
         <div class="panel-body mtop10 invoice-item">
 
         <div class="row">
@@ -505,5 +571,45 @@
 <?php init_tail(); ?>
 </body>
 </html>
+
+<script type="text/javascript">
+  var convert_po = '<?php echo $convert_po; ?>';
+  if(convert_po) {
+    $('#project').attr('disabled', true);
+    $('#pur_request').attr('disabled', true);
+  } else {
+    $('#project').attr('disabled', false);
+    $('#pur_request').attr('disabled', false);
+  }
+
+  var pur_request = $('select[name="pur_request"]').val();
+  var vendor = $('select[name="vendor"]').val();
+  if(pur_request != ''){
+    $.post(admin_url + 'purchase/coppy_pur_request_for_po/'+pur_request+'/'+vendor).done(function(response){
+        response = JSON.parse(response);
+        if(response){ 
+          $('select[name="estimate"]').html(response.estimate_html);
+          $('select[name="estimate"]').selectpicker('refresh');
+
+          $('select[name="currency"]').val(response.currency).change();
+          $('input[name="currency_rate"]').val(response.currency_rate).change();
+
+          $('.invoice-item table.invoice-items-table.items tbody').html('');
+          $('.invoice-item table.invoice-items-table.items tbody').append(response.list_item);
+
+          setTimeout(function () {
+            pur_calculate_total();
+          }, 15);
+
+          init_selectpicker();
+          pur_reorder_items('.invoice-item');
+          pur_clear_item_preview_values('.invoice-item');
+          $('body').find('#items-warning').remove();
+          $("body").find('.dt-loader').remove();
+          $('#item_select').selectpicker('val', '');
+        }   
+    });
+  }
+</script>
 
 <?php require 'modules/purchase/assets/js/pur_order_js.php';?>

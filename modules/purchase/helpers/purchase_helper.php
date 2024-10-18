@@ -3112,3 +3112,92 @@ function pur_check_csrf_protection()
     }
     return 'false';
 }
+
+function format_po_ship_to_info($pur_order) {
+    $html = '';
+    $CI = & get_instance();
+
+    if(!empty($pur_order->shipping_address) || !empty($pur_order->shipping_city) || !empty($pur_order->shipping_state) || !empty($pur_order->shipping_zip)) {
+        $html .= '<b>'._l('ship_to').'</b>';
+        if(!empty($pur_order->shipping_address)) {
+            $html .= '<br />'.$pur_order->shipping_address;
+        }
+        if(!empty($pur_order->shipping_city) || !empty($pur_order->shipping_state)) {
+            $html .= '<br />';
+            if(!empty($pur_order->shipping_city)) {
+                $html .= $pur_order->shipping_city." ";
+            }
+            if(!empty($pur_order->shipping_state)) {
+                $html .= $pur_order->shipping_state;
+            }
+        }
+        if(!empty($pur_order->shipping_country) || !empty($pur_order->shipping_zip)) {
+            $html .= '<br />';
+            if(!empty($pur_order->shipping_country)) {
+                $shipping_country = $CI->db->select('short_name')
+                ->where('country_id', $pur_order->shipping_country)
+                ->from(db_prefix() . 'countries')
+                ->get()
+                ->row();
+                $html .= $shipping_country->short_name." ";
+            }
+            if(!empty($pur_order->shipping_zip)) {
+                $html .= $pur_order->shipping_zip;
+            }
+        }
+    }
+
+    return $html;
+}
+
+function format_pdf_vendor_info($vendor_id) {
+    $html = '';
+    $CI = & get_instance();
+
+    if(!empty($vendor_id)) {
+        $vendor = $CI->db->select('*')
+        ->where('userid', $vendor_id)
+        ->from(db_prefix() . 'pur_vendor')
+        ->get()
+        ->row();
+
+        if(!empty($vendor)) {
+            $html .= '<b>'._l('vendor').'</b>';
+            $html .= '<br /><b>'.$vendor->company.'</b>';
+            if(!empty($vendor->address)) {
+                $html .= '<br />'.$vendor->address;
+            }
+            if(!empty($vendor->city) || !empty($vendor->state)) {
+                $html .= '<br />';
+                if(!empty($vendor->city)) {
+                    $html .= $vendor->city." ";
+                }
+                if(!empty($vendor->state)) {
+                    $html .= $vendor->state;
+                }
+            }
+            if(!empty($vendor->country) || !empty($vendor->zip)) {
+                $html .= '<br />';
+                if(!empty($vendor->country)) {
+                    $country = $CI->db->select('short_name')
+                    ->where('country_id', $vendor->country)
+                    ->from(db_prefix() . 'countries')
+                    ->get()
+                    ->row();
+                    $html .= $country->short_name." ";
+                }
+                if(!empty($vendor->zip)) {
+                    $html .= $vendor->zip;
+                }
+            }
+            if(!empty($vendor->vat)) {
+                $html .= '<br />'._l('company_vat_number').': '.$vendor->vat;
+            }
+            if(!empty($vendor->phonenumber)) {
+                $html .= '<br />'.$vendor->phonenumber;
+            }
+        }
+
+        return $html;
+    }
+}

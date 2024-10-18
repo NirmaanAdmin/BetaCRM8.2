@@ -38,10 +38,11 @@
                         _l('pur_rq_code'),
                         _l('pur_rq_name'),
                         _l('requester'),
-                        _l('department'),
+                        // _l('department'),
                         _l('request_date'),
+                        _l('project'),
                         _l('status'),
-                        _l('po_no'),
+                        // _l('po_no'),
                         _l('options'),
                         ),'table_pur_request'); ?>
             

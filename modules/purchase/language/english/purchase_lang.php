@@ -694,3 +694,5 @@ $lang['vendor_vat'] = 'GST Number';
 $lang['purchase_order_change_approve_status'] = 'Change the approval status of purchase orders';
 $lang['purchase_request_change_approve_status'] = 'Change the approval status of purchase requests';
 $lang['purchase_quotations_change_approve_status'] = 'Change the approval status of purchase quotations';
+$lang['convert_to_po'] = 'Convert to PO';
+$lang['delivery_person'] = 'Delivered by';

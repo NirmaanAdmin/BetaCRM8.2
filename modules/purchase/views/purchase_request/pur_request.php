@@ -4,7 +4,7 @@
 
 <div id="wrapper">
    <div class="content">
-    <?php echo form_open($this->uri->uri_string(),array('id'=>'add_edit_pur_request-form','class'=>'_transaction_form')); ?>
+    <?php echo form_open_multipart($this->uri->uri_string(),array('id'=>'add_edit_pur_request-form','class'=>'_transaction_form')); ?>
       <div class="row">
          <div class="col-md-12">
             <div class="panel_s">
@@ -77,7 +77,7 @@
 
                           <div class="col-md-3 ">
                            <?php
-                              $currency_attr = array();
+                              $currency_attr = array('disabled'=>true,'data-show-subtext'=>true);
 
                               $selected = (isset($pur_request) && $pur_request->currency != 0) ? $pur_request->currency : '';
                               if($selected == ''){
@@ -155,6 +155,47 @@
               </div>
             </div>
 
+            <div class="panel_s">
+              <div class="panel-body">
+                <label for="attachment"><?php echo _l('attachment'); ?></label>
+                <div class="attachments">
+                  <div class="attachment">
+                    <div class="col-md-5 form-group" style="padding-left: 0px;">
+                      <div class="input-group">
+                         <input type="file" extension="<?php echo str_replace(['.', ' '], '', get_option('ticket_attachments_file_extensions')); ?>" filesize="<?php echo file_upload_max_size(); ?>" class="form-control" name="attachments[0]" accept="<?php echo get_ticket_form_accepted_mimes(); ?>">
+                         <span class="input-group-btn">
+                         <button class="btn btn-success add_more_attachments p8" type="button"><i class="fa fa-plus"></i></button>
+                         </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <br /> <br />
+
+                <?php
+                if(isset($attachments) && count($attachments) > 0) { 
+                  foreach($attachments as $value){
+                    echo '<div class="col-md-3">';
+                    $path = get_upload_path_by_type('purchase').'pur_request/'.$value['rel_id'].'/'.$value['file_name'];
+                    $is_image = is_image($path);
+                    if($is_image){
+                       echo '<div class="preview_image">';
+                    }
+                    ?>
+                    <a href="<?php echo site_url('download/file/purchase/'. $value['id']); ?>" class="display-block mbot5"<?php if($is_image){ ?> data-lightbox="attachment-purchase-<?php echo $value['rel_id']; ?>" <?php } ?>>
+                      <i class="<?php echo get_mime_class($value['filetype']); ?>"></i> <?php echo $value['file_name']; ?>
+                      <?php if($is_image){ ?>
+                         <img class="mtop5" src="<?php echo site_url('download/preview_image?path='.protected_file_url_by_path($path).'&type='.$value['filetype']); ?>" style="height: 165px;">
+                      <?php } ?>
+                    </a>
+                    <?php if($is_image){
+                      echo '</div>';
+                      echo '<a href="'.admin_url('purchase/delete_attachment/'.$value['id']).'" class="text-danger _delete">'._l('delete').'</a>';
+                    } ?>
+                <?php echo '</div>'; } } ?>
+              </div>
+            </div>
+
           <div class="row ">
             <div class="col-md-12">
             <div class="panel_s">
@@ -198,11 +239,12 @@
                           <thead>
                             <tr>
                               <th></th>
-                              <th width="25%" align="left"><i class="fa fa-exclamation-circle" aria-hidden="true" data-toggle="tooltip" data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i> <?php echo _l('debit_note_table_item_heading'); ?></th>
+                              <th width="15%" align="left"><i class="fa fa-exclamation-circle" aria-hidden="true" data-toggle="tooltip" data-title="<?php echo _l('item_description_new_lines_notice'); ?>"></i> <?php echo _l('debit_note_table_item_heading'); ?></th>
+                              <th width="15%" align="right"><?php echo _l('description'); ?></th>
                               <th width="10%" align="right"><?php echo _l('unit_price'); ?><span class="th_currency"><?php echo '('.$pur_request_currency->name.')'; ?></span></th>
                               <th width="10%" align="right" class="qty"><?php echo _l('purchase_quantity'); ?></th>
                               <th width="10%" align="right"><?php echo _l('subtotal'); ?><span class="th_currency"><?php echo '('.$pur_request_currency->name.')'; ?></span></th>
-                              <th width="15%" align="right"><?php echo _l('debit_note_table_tax_heading'); ?></th>
+                              <th width="10%" align="right"><?php echo _l('debit_note_table_tax_heading'); ?></th>
                               <th width="10%" align="right"><?php echo _l('tax_value'); ?><span class="th_currency"><?php echo '('.$pur_request_currency->name.')'; ?></span></th>
                               <th width="10%" align="right"><?php echo _l('debit_note_total'); ?><span class="th_currency"><?php echo '('.$pur_request_currency->name.')'; ?></span></th>
                               <th align="right"><i class="fa fa-cog"></i></th>

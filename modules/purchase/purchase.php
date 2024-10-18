@@ -117,6 +117,12 @@ register_merge_fields('purchase/merge_fields/vendor_merge_fields');
 register_merge_fields('purchase/merge_fields/purchase_contract_merge_fields');
 register_merge_fields('purchase/merge_fields/purchase_approve_merge_fields');
 register_merge_fields('purchase/merge_fields/purchase_request_approval_merge_fields');
+register_merge_fields('purchase/merge_fields/purchase_request_to_approver_merge_fields');
+register_merge_fields('purchase/merge_fields/purchase_request_to_sender_merge_fields');
+register_merge_fields('purchase/merge_fields/purchase_order_to_approver_merge_fields');
+register_merge_fields('purchase/merge_fields/purchase_order_to_sender_merge_fields');
+register_merge_fields('purchase/merge_fields/purchase_quotation_to_approver_merge_fields');
+register_merge_fields('purchase/merge_fields/purchase_quotation_to_sender_merge_fields');
 
 
 hooks()->add_filter('other_merge_fields_available_for', 'purchase_register_other_merge_fields');

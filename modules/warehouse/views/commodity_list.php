@@ -497,16 +497,21 @@
                             </div>
 
                             <div class="row">
-                               <div class="col-md-6">
-                                     <?php echo render_input('commodity_barcode', 'commodity_barcode','','text'); ?>
+                                <div class="col-md-6">
+                                  <?php echo render_select('group_id',$commodity_groups,array('id','name'),'commodity_group'); ?>
                                 </div>
-                              <div class="col-md-3">
-                                <a href="#" class="pull-right display-block input_method"><i class="fa fa-question-circle skucode-tooltip"  data-toggle="tooltip" title="" data-original-title="<?php echo _l('commodity_sku_code_tooltip'); ?>"></i></a>
-                                <?php echo render_input('sku_code', 'sku_code','',''); ?>
-                              </div>
-                              <div class="col-md-3">
-                                <?php echo render_input('sku_name', 'sku_name'); ?>
-                              </div>
+                                <div class="col-md-6">
+                                  <?php echo render_select('sub_group',$sub_groups,array('id','sub_group_name'),'sub_group'); ?>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <?php echo render_select('area',$area,array('id','name'),'area'); ?>
+                                </div>
+                                <div class="col-md-6">
+                                     <?php echo render_select('specification',$specification,array('id','name'),'specification'); ?>
+                                </div>
                             </div>
 
                             <div class="row">
@@ -545,14 +550,17 @@
                             </div>
 
 
-                             <div class="row">
-                              
-                                <div class="col-md-6">
-                                     <?php echo render_select('group_id',$commodity_groups,array('id','name'),'commodity_group'); ?>
+                            <div class="row">
+                              <div class="col-md-6">
+                                     <?php echo render_input('commodity_barcode', 'commodity_barcode','','text'); ?>
                                 </div>
-                                 <div class="col-md-6">
-                                     <?php echo render_select('sub_group',$sub_groups,array('id','sub_group_name'),'sub_group'); ?>
-                                </div>
+                              <div class="col-md-3">
+                                <a href="#" class="pull-right display-block input_method"><i class="fa fa-question-circle skucode-tooltip"  data-toggle="tooltip" title="" data-original-title="<?php echo _l('commodity_sku_code_tooltip'); ?>"></i></a>
+                                <?php echo render_input('sku_code', 'sku_code','',''); ?>
+                              </div>
+                              <div class="col-md-3">
+                                <?php echo render_input('sku_name', 'sku_name'); ?>
+                              </div>
                             </div>
 
                             <div class="row">

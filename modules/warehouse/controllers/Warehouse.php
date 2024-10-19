@@ -578,6 +578,8 @@ class warehouse extends AdminController {
 		$data['sub_groups'] = $this->warehouse_model->get_sub_group();
 		$data['colors'] = $this->warehouse_model->get_color_add_commodity();
 		$data['item_tags'] = $this->warehouse_model->get_item_tag_filter();
+		$data['area'] = $this->warehouse_model->get_area();
+        $data['specification'] = $this->warehouse_model->get_specification();
 
 		$data['title'] = _l('commodity_list');
 

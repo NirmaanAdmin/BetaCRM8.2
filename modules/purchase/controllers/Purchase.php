@@ -2950,6 +2950,8 @@ class purchase extends AdminController
         $data['taxes'] = $this->purchase_model->get_taxes();
         $data['commodity_groups'] = $this->purchase_model->get_commodity_group_add_commodity();
         $data['sub_groups'] = $this->purchase_model->get_sub_group();
+        $data['area'] = $this->purchase_model->get_area();
+        $data['specification'] = $this->purchase_model->get_specification();
         $data['title'] = _l('item_list');
 
         $data['item_id'] = $id;

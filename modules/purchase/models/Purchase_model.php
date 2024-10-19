@@ -13972,4 +13972,38 @@ class Purchase_model extends App_Model
 
         return $deleted;
     }
+
+    /**
+     * @param  boolean $id
+     * @return array  or object
+     */
+    public function get_area($id = false) {
+
+        if (is_numeric($id)) {
+            $this->db->where('id', $id);
+
+            return $this->db->get(db_prefix() . 'area')->row();
+        }
+        if ($id == false) {
+            return $this->db->query('select * from tblarea')->result_array();
+        }
+
+    }
+
+    /**
+     * @param  boolean $id
+     * @return array  or object
+     */
+    public function get_specification($id = false) {
+
+        if (is_numeric($id)) {
+            $this->db->where('id', $id);
+
+            return $this->db->get(db_prefix() . 'specification')->row();
+        }
+        if ($id == false) {
+            return $this->db->query('select * from tblspecification')->result_array();
+        }
+
+    }
 }

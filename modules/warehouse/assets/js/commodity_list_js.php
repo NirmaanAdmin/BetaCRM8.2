@@ -742,6 +742,16 @@ warehouse_type_value = warehouse_type;
 
       $('#commodity_list-add-edit input[name="commodity_code"]').val($(invoker).data('commodity_code'));
       $('#commodity_list-add-edit input[name="commodity_barcode"]').val($(invoker).data('commodity_barcode'));
+      if($(invoker).data('area') != '0' && $(invoker).data('area') != ''){
+        $('#commodity_list-add-edit select[name="area"]').val($(invoker).data('area')).change();
+      }else{
+        $('#commodity_list-add-edit select[name="area"]').val('').change();
+      }
+      if($(invoker).data('specification') != '0' && $(invoker).data('specification') != ''){
+        $('#commodity_list-add-edit select[name="specification"]').val($(invoker).data('specification')).change();
+      }else{
+        $('#commodity_list-add-edit select[name="specification"]').val('').change();
+      }
       $('#commodity_list-add-edit textarea[name="long_description"]').val($(invoker).data('long_description'));
       $('#commodity_list-add-edit input[name="description"]').val($(invoker).data('description'));
 

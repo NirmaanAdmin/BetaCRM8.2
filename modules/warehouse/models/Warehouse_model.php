@@ -5291,6 +5291,12 @@ class Warehouse_model extends App_Model {
 				if(preg_match('/^name/', $value_cf['name'])){
 					$variation_name_temp = $value_cf['value'];
 				}
+				if(preg_match('/^area/', $value_cf['name'])){
+					$data['area'] = $value_cf['value'];
+				}
+				if(preg_match('/^specification/', $value_cf['name'])){
+					$data['specification'] = $value_cf['value'];
+				}
 
 				if(preg_match('/^options/', $value_cf['name'])){
 					$variation_option_temp = $value_cf['value'];
@@ -5581,6 +5587,12 @@ class Warehouse_model extends App_Model {
 				//get variation (parent attribute)
 				if(preg_match('/^name/', $value_cf['name'])){
 					$variation_name_temp = $value_cf['value'];
+				}
+				if(preg_match('/^area/', $value_cf['name'])){
+					$data['area'] = $value_cf['value'];
+				}
+				if(preg_match('/^specification/', $value_cf['name'])){
+					$data['specification'] = $value_cf['value'];
 				}
 
 				if(preg_match('/^options/', $value_cf['name'])){
@@ -19958,5 +19970,39 @@ class Warehouse_model extends App_Model {
 
 		return $affectedRows;
 	}
+
+	/**
+     * @param  boolean $id
+     * @return array  or object
+     */
+    public function get_area($id = false) {
+
+        if (is_numeric($id)) {
+            $this->db->where('id', $id);
+
+            return $this->db->get(db_prefix() . 'area')->row();
+        }
+        if ($id == false) {
+            return $this->db->query('select * from tblarea')->result_array();
+        }
+
+    }
+
+    /**
+     * @param  boolean $id
+     * @return array  or object
+     */
+    public function get_specification($id = false) {
+
+        if (is_numeric($id)) {
+            $this->db->where('id', $id);
+
+            return $this->db->get(db_prefix() . 'specification')->row();
+        }
+        if ($id == false) {
+            return $this->db->query('select * from tblspecification')->result_array();
+        }
+
+    }
 
 }

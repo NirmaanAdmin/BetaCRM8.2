@@ -206,7 +206,7 @@
                   ?>
                         </span>
                         <input type="text" name="number" class="form-control"
-                            value="<?php echo ($_is_draft) ? 'DRAFT' : $_invoice_number; ?>"
+                            value="<?php echo ($_is_draft) ? 'PROFORMA' : $_invoice_number; ?>"
                             data-isedit="<?php echo e($isedit); ?>"
                             data-original-number="<?php echo e($data_original_number); ?>"
                             <?php echo ($_is_draft) ? 'disabled' : '' ?>>

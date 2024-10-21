@@ -2643,12 +2643,12 @@ $lang['only_show_contact_tickets']                          = 'In customers area
 $lang['cancel_overdue_reminders_invoice']                   = 'Prevent sending overdue reminders for this invoice';
 $lang['customer_shipping_address_notice']                   = 'Do not fill shipping address information if you won\'t use shipping address on customer invoices';
 $lang['timesheets_overview']                                = 'Timesheets overview';
-$lang['invoice_status_draft']                               = 'Draft';
-$lang['save_as_draft']                                      = 'Save as Draft';
+$lang['invoice_status_draft']                               = 'Proforma';
+$lang['save_as_draft']                                      = 'Save as Proforma';
 $lang['convert_and_save_as_draft']                          = 'Convert and save as draft';
 $lang['convert']                                            = 'Convert';
 $lang['exclude_invoices_draft_from_client_area']            = 'Exclude invoices with draft status from customers area';
-$lang['invoice_draft_status_info']                          = 'This invoice is with status Draft, status will be auto changed when you send the invoice to the customer or mark as sent.';
+$lang['invoice_draft_status_info']                          = 'This invoice is with status Proforma, status will be auto changed when you send the invoice to the customer or mark as sent.';
 $lang['task_info']                                          = 'Task Info';
 $lang['recurring_tasks']                                    = 'Recurring';
 // don't translate these, already translated
@@ -3165,7 +3165,7 @@ $lang['disable_all']                                       = 'Disable All';
 $lang['enable_all']                                        = 'Enable All';
 $lang['reccuring_invoice_option_gen_and_send']             = 'Generate and autosend the renewed invoice to the customer';
 $lang['reccuring_invoice_option_gen_unpaid']               = 'Generate a Unpaid Invoice';
-$lang['reccuring_invoice_option_gen_draft']                = 'Generate a Draft Invoice';
+$lang['reccuring_invoice_option_gen_draft']                = 'Generate a Proforma Invoice';
 $lang['event_created_by']                                  = 'This event is created by %s';
 
 # Version 1.9.5

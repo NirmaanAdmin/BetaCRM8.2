@@ -459,7 +459,7 @@ function format_invoice_number($id)
     }
 
     if ($invoice->status == Invoices_model::STATUS_DRAFT) {
-        $number = $invoice->prefix . 'DRAFT';
+        $number = $invoice->prefix . 'PROFORMA';
     } else {
         $number = sales_number_format($invoice->number, $invoice->number_format, $invoice->prefix, $invoice->date);
     }

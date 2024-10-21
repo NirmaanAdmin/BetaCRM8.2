@@ -20000,7 +20000,7 @@ class Warehouse_model extends App_Model {
             return $this->db->get(db_prefix() . 'specification')->row();
         }
         if ($id == false) {
-            return $this->db->query('select * from tblspecification')->result_array();
+            return $this->db->query('select id, CONCAT(code, ": ", name) as name from tblspecification')->result_array();
         }
 
     }

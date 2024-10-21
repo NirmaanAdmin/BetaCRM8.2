@@ -260,10 +260,10 @@
                             </div>
 
                             <div class="row">
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <?php echo render_select('area',$area,array('id','name'),'area'); ?>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-8">
                                      <?php echo render_select('specification',$specification,array('id','name'),'specification'); ?>
                                 </div>
                             </div>

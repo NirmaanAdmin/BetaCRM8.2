@@ -121,22 +121,22 @@
       data_select.group_id = $('select[name="group_id"]').val();
 
 
-      $.post(admin_url + 'warehouse/get_subgroup_fill_data',data_select).done(function(response){
-       response = JSON.parse(response);
-       $("select[name='sub_group']").html('');
+    //   $.post(admin_url + 'warehouse/get_subgroup_fill_data',data_select).done(function(response){
+    //    response = JSON.parse(response);
+    //    $("select[name='sub_group']").html('');
 
-       $("select[name='sub_group']").append(response.subgroup);
-       $("select[name='sub_group']").selectpicker('refresh');
+    //    $("select[name='sub_group']").append(response.subgroup);
+    //    $("select[name='sub_group']").selectpicker('refresh');
 
-       if(sub_group_value != ''){
+    //    if(sub_group_value != ''){
 
-        $("select[name='sub_group']").val(sub_group_value).change();
-        sub_group_value = '';
-      }
+    //     $("select[name='sub_group']").val(sub_group_value).change();
+    //     sub_group_value = '';
+    //   }
 
 
 
-    });
+    // });
 
     });
 

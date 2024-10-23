@@ -5485,11 +5485,12 @@ class Purchase_model extends App_Model
      */
     public function list_subgroup_by_group($group)
     {
-        $this->db->where('group_id', $group);
+        // $this->db->where('group_id', $group);
         $arr_subgroup = $this->db->get(db_prefix().'wh_sub_group')->result_array();
 
         $options = '';
         if(count($arr_subgroup) > 0){
+            $options .= '<option value=""></option>';
             foreach ($arr_subgroup as $value) {
 
               $options .= '<option value="' . $value['id'] . '">' . $value['sub_group_name'] . '</option>';

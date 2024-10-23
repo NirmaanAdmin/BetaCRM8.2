@@ -46,14 +46,14 @@ var hidden_columns = [3,7];
         data_select.group_id = $('select[name="group_id"]').val();
 
 
-          $.post(admin_url + 'purchase/get_subgroup_fill_data',data_select).done(function(response){
-             response = JSON.parse(response);
-             $("select[name='sub_group']").html('');
+          // $.post(admin_url + 'purchase/get_subgroup_fill_data',data_select).done(function(response){
+          //    response = JSON.parse(response);
+          //    $("select[name='sub_group']").html('');
              
-             $("select[name='sub_group']").append(response.subgroup);
-             $("select[name='sub_group']").selectpicker('refresh');
+          //    $("select[name='sub_group']").append(response.subgroup);
+          //    $("select[name='sub_group']").selectpicker('refresh');
 
-           });
+          //  });
 
     });
 

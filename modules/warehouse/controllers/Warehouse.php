@@ -2639,7 +2639,7 @@ class warehouse extends AdminController {
 
 									} else {
 										/*case input name*/
-										$this->db->like(db_prefix() . 'ware_unit_type.unit_code', $value_cell_unit_id);
+										$this->db->like(db_prefix() . 'ware_unit_type.unit_name', $value_cell_unit_id);
 
 										$unit_id_value = $this->db->get(db_prefix() . 'ware_unit_type')->result_array();
 										if (count($unit_id_value) == 0) {

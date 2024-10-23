@@ -5386,7 +5386,7 @@ class purchase extends AdminController
                                     }
                                 } else {
                                     /*case input name*/
-                                    $this->db->like(db_prefix() . 'ware_unit_type.unit_code', $value_unit_id);
+                                    $this->db->like(db_prefix() . 'ware_unit_type.unit_name', $value_unit_id);
                                     $unit_id_value = $this->db->get(db_prefix() . 'ware_unit_type')->result_array();
                                     if (count($unit_id_value) == 0) {
                                         $string_error .= _l('unit_id') . _l('does_not_exist');

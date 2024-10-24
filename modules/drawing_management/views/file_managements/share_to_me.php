@@ -161,7 +161,7 @@
 													<tr>
 														<th scope="col"><input type="checkbox" id="mass_select_all" data-to-table="checkout_managements"></th>
 														<th scope="col"><?php echo _l('dmg_name'); ?></th>
-														<th scope="col"><?php echo _l('dmg_date'); ?></th>
+														<th scope="col"><?php echo _l('dms_date'); ?></th>
 														<th scope="col"><?php echo _l('dmg_option'); ?></th>
 													</tr>
 												</thead>

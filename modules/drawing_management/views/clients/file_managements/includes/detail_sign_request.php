@@ -76,7 +76,7 @@
 										echo drawing_htmldecode($signed_by_html); ?></td>
 									</tr>
 									<tr>
-										<td class="text-nowrap"><?php echo _l('dmg_date'); ?></td>
+										<td class="text-nowrap"><?php echo _l('dms_date'); ?></td>
 										<td><?php echo _dt($item->dateadded); ?></td>
 									</tr>
 									<tr>

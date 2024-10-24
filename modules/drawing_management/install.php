@@ -222,3 +222,67 @@ if (!$CI->db->table_exists(db_prefix() . 'dms_items')) {
     ');
   }
 
+  if (!$CI->db->field_exists('issue_date' ,db_prefix() . 'dms_items')) {
+    $CI->db->query('ALTER TABLE `' . db_prefix() . 'dms_items`
+    ADD COLUMN `issue_date` datetime NULL AFTER duedate
+    ');
+  }
+
+  if (!$CI->db->field_exists('design_stage' ,db_prefix() . 'dms_items')) {
+    $CI->db->query('ALTER TABLE `' . db_prefix() . 'dms_items`
+    ADD COLUMN `design_stage` TEXT NULL AFTER issue_date
+    ');
+  }
+
+  if (!$CI->db->field_exists('purpose' ,db_prefix() . 'dms_items')) {
+    $CI->db->query('ALTER TABLE `' . db_prefix() . 'dms_items`
+    ADD COLUMN `purpose` TEXT NULL AFTER design_stage
+    ');
+  }
+
+  if (!$CI->db->field_exists('discipline' ,db_prefix() . 'dms_items')) {
+    $CI->db->query('ALTER TABLE `' . db_prefix() . 'dms_items`
+    ADD COLUMN `discipline` longtext NULL AFTER purpose
+    ');
+  }
+
+  if (!$CI->db->table_exists(db_prefix() . 'dms_discipline')) {
+    $CI->db->query('CREATE TABLE `' . db_prefix() . "dms_discipline` (
+      `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+      `name` text NOT NULL,
+      PRIMARY KEY (`id`)
+      ) ENGINE=InnoDB DEFAULT CHARSET=" . $CI->db->char_set . ';');
+    $CI->db->query('INSERT INTO `tbldms_discipline` (`name`) VALUES
+      ("Acoustic"), 
+      ("Architecture"), 
+      ("Audiovisual"), 
+      ("Building Management & Automation Systems"), 
+      ("Civil & Structure"), 
+      ("Electrical"), 
+      ("Engineering (multi-discipline),"), 
+      ("Facilities"), 
+      ("Façade Engineering"), 
+      ("Fire Alarm & Public Address"), 
+      ("Fire Fighting"), 
+      ("Fire & Life Safety (Passive),"), 
+      ("Field Survey"),
+      ("HVAC"), 
+      ("Information & Communication Systems"), 
+      ("Interior Design"),
+      ("Landscaping"), 
+      ("Lighting"), 
+      ("Traffic"), 
+      ("Master Antenna TV"), 
+      ("Mechanical"), 
+      ("MEP Coordination (multi-discipline),"), 
+      ("Operations"), 
+      ("Owner Plumbing"), 
+      ("Project Management"), 
+      ("Quantity Survey"), 
+      ("Signage"), 
+      ("Security & Loss Prevention"), 
+      ("Sustainability"), 
+      ("Vertical Transportation");
+    ');
+  }
+

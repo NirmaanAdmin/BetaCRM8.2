@@ -14,7 +14,7 @@
 			<h4><?php echo drawing_htmldecode($item->name); ?></h4>
 			<table class="table">
 				<tr>
-					<td class="text-nowrap"><?php echo _l('dmg_tags'); ?></td>
+					<?php /* <td class="text-nowrap"><?php echo _l('dmg_tags'); ?></td>
 					<td><?php 
 					$tag_html = '';
 					if(!($item->tag == '' && $item->tag == null)){
@@ -23,7 +23,15 @@
 							$tag_html .= '<span class="badge badge-light mleft5">'.$text.'</span>';
 						}
 					}
-					echo drawing_htmldecode($tag_html); ?></td>
+					echo drawing_htmldecode($tag_html); ?></td> */ ?>
+					<td class="text-nowrap"><?php echo _l('discipline'); ?></td>
+					<td>
+						<?php
+						if(!empty($item->discipline)) {
+							echo drawing_discipline($item->discipline);
+						}
+						?>
+					</td>
 				</tr>
 				<tr>
 					<td class="text-nowrap"><?php echo _l('dmg_signed_by'); ?></td>
@@ -38,12 +46,24 @@
 					echo drawing_htmldecode($signed_by_html); ?></td>
 				</tr>
 				<tr>
-					<td class="text-nowrap"><?php echo _l('dmg_date'); ?></td>
+					<td class="text-nowrap"><?php echo _l('dms_date'); ?></td>
 					<td><?php echo _dt($item->dateadded); ?></td>
 				</tr>
-				<tr>
+				<?php /* <tr>
 					<td class="text-nowrap"><?php echo _l('dmg_due_date'); ?></td>
 					<td><?php echo _dt($item->duedate); ?></td>
+				</tr> */ ?>
+				<tr>
+					<td class="text-nowrap"><?php echo _l('issue_date'); ?></td>
+					<td><?php echo _dt($item->issue_date); ?></td>
+				</tr>
+				<tr>
+					<td class="text-nowrap"><?php echo _l('design_stage'); ?></td>
+					<td><?php echo ($item->design_stage != null ? $item->design_stage : ''); ?></td>
+				</tr>
+				<tr>
+					<td class="text-nowrap"><?php echo _l('purpose'); ?></td>
+					<td><?php echo ($item->purpose != null ? $item->purpose : ''); ?></td>
 				</tr>
 				<tr>
 					<td class="text-nowrap"><?php echo _l('dmg_ocr_language'); ?></td>
@@ -118,11 +138,11 @@
 				if(count($data_log_version) > 0){ ?>
 					<tr>
 						<td class="text-nowrap" colspan="2">
-							<?php echo _l('dmg_other_version'); ?>
+							<?php echo _l('dms_other_version'); ?>
 							<table class="table no-mtop table-striped">
 								<thead>
 									<tr>
-										<th class="bold"><?php echo _l('dmg_date'); ?></th>
+										<th class="bold"><?php echo _l('dms_date'); ?></th>
 										<th class="bold"><?php echo _l('dmg_file_name'); ?></th>
 										<th class="bold" width="5%"><?php echo _l('dmg_action'); ?></th>
 									</tr>
@@ -167,7 +187,7 @@
 							<table class="table no-mtop table-striped">
 								<thead>
 									<tr>
-										<th class="bold"><?php echo _l('dmg_date'); ?></th>
+										<th class="bold"><?php echo _l('dms_date'); ?></th>
 										<th class="bold"><?php echo _l('dmg_user'); ?></th>
 										<th class="bold"><?php echo _l('dmg_action'); ?></th>
 									</tr>
@@ -481,7 +501,7 @@
 					<div class="col-md-12">
 						<input type="hidden" name="file_id" value="">
 						<input type="hidden" name="id" value="">
-						<?php echo render_datetime_input('date', 'dmg_date', date('Y-m-d H:i')); ?>
+						<?php echo render_datetime_input('date', 'dms_date', date('Y-m-d H:i')); ?>
 					</div>
 					<div class="col-md-12">
 						<?php echo render_input('email', 'dmg_email','','email'); ?>

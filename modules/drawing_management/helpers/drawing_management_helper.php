@@ -385,3 +385,17 @@ function drawing_doc_get_client_ip() {
 	}
 	return $ip;
 }
+
+function drawing_discipline($discipline){
+	$discipline = explode(',', $discipline);
+	$CI = & get_instance();
+	$CI->db->select('name');
+	$CI->db->where_in('id', $discipline);
+	$data = $CI->db->get(db_prefix().'dms_discipline')->result_array();
+	if($data){
+		$data = array_column($data, 'name');
+		$data = implode(",", $data);
+		return $data;
+	}
+	return '';
+}

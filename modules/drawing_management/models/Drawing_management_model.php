@@ -118,6 +118,15 @@ class drawing_management_model extends app_model
 		if(isset($data['dateadded']) && $data['dateadded'] == ''){
 			$data['dateadded'] = null;
 		}
+		if(isset($data['dateadded']) && $data['dateadded'] != ''){
+			$data['dateadded'] = date('Y-m-d H:i:s', strtotime($data['dateadded']));
+		}
+		if(isset($data['issue_date']) && $data['issue_date'] != ''){
+			$data['issue_date'] = date('Y-m-d H:i:s', strtotime($data['issue_date']));
+		}
+		if(isset($data['discipline']) && $data['discipline'] != ''){
+			$data['discipline'] = implode(",", $data['discipline']);
+		}
 		$customfield = [];
 		if(isset($data['customfield'])){
 			$customfield = $data['customfield'];
@@ -1794,6 +1803,10 @@ class drawing_management_model extends app_model
 		$API = new Convertio("9cebcf2b7088b5c95a637a07cf395936");    
 		$API->settings(array('api_protocol' => 'http', 'http_timeout' => 10));       
 		$API->start($from_path, 'docx')->wait()->download($to_path)->delete();
+	}
+
+	public function get_discipline() {
+		return $this->db->get(db_prefix().'dms_discipline')->result_array();
 	}
 
 

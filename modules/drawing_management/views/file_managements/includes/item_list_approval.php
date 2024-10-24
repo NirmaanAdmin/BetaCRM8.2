@@ -2,7 +2,7 @@
 		<thead class="bg-light-gray">
 			<tr>
 				<th scope="col"><?php echo _l('dmg_name'); ?></th>
-				<th scope="col"><?php echo _l('dmg_date'); ?></th>
+				<th scope="col"><?php echo _l('dms_date'); ?></th>
 			</tr>
 		</thead>
 		<tbody>

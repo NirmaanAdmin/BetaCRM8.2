@@ -86,6 +86,7 @@ class drawing_management extends AdminController
 		$data['customers'] = $this->clients_model->get();
 		$this->load->model('client_groups_model');
 		$data['customer_groups'] = $this->client_groups_model->get_groups();
+		$data['discipline'] = $this->drawing_management_model->get_discipline();
 
 		$this->load->view('file_managements/file_management.php', $data);
 	}

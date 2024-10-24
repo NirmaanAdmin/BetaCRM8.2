@@ -502,7 +502,7 @@
 					<div class="col-md-12">
 						<input type="hidden" name="file_id" value="">
 						<input type="hidden" name="id" value="">
-						<?php echo render_datetime_input('date', '<small class="text-danger">*</small> '._l('dmg_date'), date('Y-m-d H:i'), ['required' => true]); ?>
+						<?php echo render_datetime_input('date', '<small class="text-danger">*</small> '._l('dms_date'), date('Y-m-d H:i'), ['required' => true]); ?>
 					</div>
 					<div class="col-md-12">
 						<?php echo render_input('email', '<small class="text-danger">*</small> '._l('dmg_email'),'','email', ['required' => true]); ?>

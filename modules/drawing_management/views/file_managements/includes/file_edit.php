@@ -15,12 +15,19 @@ if(isset($item)){
 					<?php echo render_input('name', 'dmg_name', $item->name); ?>				
 				</div>
 				<div class="col-md-12">
-					<div class="form-group">
+					<?php /* <div class="form-group">
 						<div id="inputTagsWrapper">
 							<label for="tag" class="control-label"><i class="fa fa-tag" aria-hidden="true"></i> <?php echo _l('tags'); ?></label>
 							<input type="text" class="tagsinput" id="tag" name="tag" value="<?php echo ($item->tag != null ? drawing_htmldecode($item->tag) : ''); ?>" data-role="tagsinput">
 						</div>
-					</div>
+					</div> */ ?>
+					<?php
+					$selected = [];
+					if(!empty($item->discipline)) {
+						$selected = explode(',', $item->discipline);
+					}
+					echo render_select('discipline[]', $discipline, ['id', 'name'], 'discipline', $selected, ['multiple' => true, 'data-actions-box' => true], [], '', '', false);
+					?>
 				</div>
 				<div class="col-md-12">
 					<div class="form-group">
@@ -31,10 +38,37 @@ if(isset($item)){
 					</div>
 				</div>
 				<div class="col-sm-6">
-					<?php echo render_datetime_input('dateadded', 'dmg_date', $item->dateadded); ?>				
+					<?php echo render_datetime_input('dateadded', 'dms_date', $item->dateadded); ?>				
+				</div>
+				<?php /* <div class="col-sm-6">
+					<?php echo render_datetime_input('duedate', 'dmg_due_date', $item->duedate); ?>				
+				</div> */ ?>
+				<div class="col-sm-6">
+					<?php echo render_datetime_input('issue_date', 'issue_date', $item->issue_date); ?>	
 				</div>
 				<div class="col-sm-6">
-					<?php echo render_datetime_input('duedate', 'dmg_due_date', $item->duedate); ?>				
+					<div class="form-group">
+						<label for="design_stage" class="control-label"><?php echo _l('design_stage'); ?></label>
+						<select id="design_stage" name="design_stage" class="selectpicker" data-width="100%" data-none-selected-text="None selected" tabindex="-98">
+							<option value=""></option>
+							<option value="Concept Design" <?php echo ($item->design_stage == "Concept Design" ? 'selected' : '') ?> >Concept Design</option>
+							<option value="Schematic Design" <?php echo ($item->design_stage == "Schematic Design" ? 'selected' : '') ?> >Schematic Design</option>
+							<option value="Design Development" <?php echo ($item->design_stage == "Design Development" ? 'selected' : '') ?> >Design Development</option>
+							<option value="Construction Documents" <?php echo ($item->design_stage == "Construction Documents" ? 'selected' : '') ?> >Construction Documents</option>
+						</select>
+					</div>
+				</div>
+				<div class="col-sm-6">
+					<div class="form-group">
+						<label for="purpose" class="control-label"><?php echo _l('purpose'); ?></label>
+						<select id="purpose" name="purpose" class="selectpicker" data-width="100%" data-none-selected-text="None selected" tabindex="-98">
+							<option value=""></option>
+							<option value="Issue for Information" <?php echo ($item->purpose == "Issue for Information" ? 'selected' : '') ?> >Issue for Information</option>
+							<option value="Issue for construction" <?php echo ($item->purpose == "Issue for construction" ? 'selected' : '') ?> >Issue for construction</option>
+							<option value="Issue for approval" <?php echo ($item->purpose == "Issue for approval" ? 'selected' : '') ?> >Issue for approval</option>
+							<option value="Issue for review" <?php echo ($item->purpose == "Issue for review" ? 'selected' : '') ?> >Issue for review</option>
+						</select>
+					</div>
 				</div>
 				<div class="col-sm-6">
 					<div class="form-group" app-field-wrapper="duedate">

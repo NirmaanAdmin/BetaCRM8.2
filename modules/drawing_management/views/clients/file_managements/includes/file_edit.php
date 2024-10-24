@@ -34,7 +34,7 @@ if(isset($item)){
 					</div>
 				</div>
 				<div class="col-sm-6">
-					<?php echo render_datetime_input('dateadded', 'dmg_date', $item->dateadded); ?>				
+					<?php echo render_datetime_input('dateadded', 'dms_date', $item->dateadded); ?>				
 				</div>
 				<div class="col-sm-6">
 					<?php echo render_datetime_input('duedate', 'dmg_due_date', $item->duedate); ?>				

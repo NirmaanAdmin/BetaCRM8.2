@@ -4293,9 +4293,9 @@ class Purchase_model extends App_Model
         if(!empty($pur_order->buyer)) {
             $buyer = '<span style="text-align: right;"><b>'. _l('buyer').':</b> '. get_staff_full_name($pur_order->buyer).'</span><br />';
         }
-        if(!empty($pur_order->delivery_person)) {
-            $delivery_person = '<span style="text-align: right;"><b>'. _l('delivery_person').':</b> '. get_staff_full_name($pur_order->delivery_person).'</span><br />';
-        }
+        // if(!empty($pur_order->delivery_person)) {
+        //     $delivery_person = '<span style="text-align: right;"><b>'. _l('delivery_person').':</b> '. get_staff_full_name($pur_order->delivery_person).'</span><br />';
+        // }
         $pur_request = $this->get_purchase_request($pur_order->pur_request);
         $pur_request_name = '';
         if(!empty($pur_request)) {

@@ -15,7 +15,7 @@ $aColumns = [
     'project',
     'status',
     // 'project',
-    db_prefix() . 'pur_request'.'.id as pur_id',
+    db_prefix().'pur_request'.'.id',
     ];
 $sIndexColumn = 'id';
 $sTable       = db_prefix().'pur_request';
@@ -62,7 +62,7 @@ if(!has_permission('purchase_request', '', 'view')){
 }
 
 $result = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where, [
-    db_prefix() . 'pur_request'.'.id as id',
+    db_prefix().'pur_request'.'.id',
     'name',
     'pur_rq_code',
     '(SELECT GROUP_CONCAT(' . db_prefix() . 'project_members.staff_id SEPARATOR ",") FROM ' . db_prefix() . 'project_members WHERE ' . db_prefix() . 'project_members.project_id=' . db_prefix() . 'pur_request.project) as member_list',
@@ -173,7 +173,7 @@ foreach ($rResult as $aRow) {
             $name .= '</div>';
 
             $_data = $name;
-        }elseif($aColumns[$i] == 'pur_id'){
+        }elseif($aColumns[$i] == db_prefix().'pur_request'.'.id'){
             if($aRow['status'] == 2){
                 $_data = '<div class="btn-group mright5" data-toggle="tooltip" title="'._l('request_quotation_tooltip').'">
                            <a href="#" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ><i class="fa fa-file-pdf"></i><span class="caret"></span></a>

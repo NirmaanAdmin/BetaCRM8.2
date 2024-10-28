@@ -15,7 +15,7 @@ $aColumns = [
     'project',
     'status',
     // 'project',
-    db_prefix() . 'pur_request'.'.id as id',
+    db_prefix() . 'pur_request'.'.id as pur_id',
     ];
 $sIndexColumn = 'id';
 $sTable       = db_prefix().'pur_request';
@@ -173,7 +173,7 @@ foreach ($rResult as $aRow) {
             $name .= '</div>';
 
             $_data = $name;
-        }elseif($aColumns[$i] == 'id'){
+        }elseif($aColumns[$i] == 'pur_id'){
             if($aRow['status'] == 2){
                 $_data = '<div class="btn-group mright5" data-toggle="tooltip" title="'._l('request_quotation_tooltip').'">
                            <a href="#" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ><i class="fa fa-file-pdf"></i><span class="caret"></span></a>

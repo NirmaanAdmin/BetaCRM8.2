@@ -287,7 +287,34 @@
                     </div>
 
                     <div class="row">
-                      <?php $clients_ed = (isset($pur_order) ? explode(',', $pur_order->clients ?? '') : []); ?>
+                      <div class="col-md-6 ">
+                        <?php
+                        $selected = '';
+                        foreach ($commodity_groups_pur as $group) {
+                          if (isset($pur_order)) {
+                            if ($pur_order->group_pur == $group['id']) {
+                              $selected = $group['id'];
+                            }
+                          }
+                        }
+                        echo render_select('group_pur', $commodity_groups_pur, array('id', 'name'), 'Budget Head', $selected);
+                        ?>
+                      </div>
+                      <div class="col-md-6 ">
+
+                        <?php
+
+                        $selected = '';
+                        foreach ($sub_groups_pur as $sub_group) {
+                          if (isset($pur_order)) {
+                            if ($pur_order->sub_groups_pur == $sub_group['id']) {
+                              $selected = $sub_group['id'];
+                            }
+                          }
+                        }
+                        echo render_select('sub_groups_pur', $sub_groups_pur, array('id', 'sub_group_name'), 'Budget Sub Head', $selected);
+                        ?>
+                      </div>
                       <!-- <div class="col-md-6 form-group select-placeholder">
                         <label for="clients" class="control-label"><?php echo _l('clients'); ?></label>
                         <select id="clients" name="clients[]" data-live-search="true" onchange="client_change(this); return false;" multiple data-width="100%" class="ajax-search client-ajax-search" data-none-selected-text="<?php echo _l('dropdown_non_selected_tex'); ?>">
@@ -329,7 +356,20 @@
                     </div> -->
 
                     <div class="row">
+                      <div class="col-md-6 ">
 
+                        <?php
+                        $selected = '';
+                        foreach ($area_pur as $area) {
+                          if (isset($pur_order)) {
+                            if ($pur_order->area_pur == $area['id']) {
+                              $selected = $area['id'];
+                            }
+                          }
+                        }
+                        echo render_select('area_pur', $area_pur, array('id', 'area_name'), 'Area', $selected);
+                        ?>
+                      </div>
                     </div>
                   </div>
                 </div>

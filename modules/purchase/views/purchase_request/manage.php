@@ -37,6 +37,9 @@
                     <?php render_datatable(array(
                         _l('pur_rq_code'),
                         _l('pur_rq_name'),
+                        _l('group_pur'),
+                        _l('sub_groups_pur'),
+                        _l('area_pur'),
                         _l('requester'),
                         // _l('department'),
                         _l('request_date'),

@@ -6,17 +6,25 @@ $aColumns = [
      
     'pur_rq_code',
     'pur_rq_name',
+    'group_name',
+    'sub_group_name',
+    'area_name',
     'requester',
     // 'department', 
     'request_date',
     'project',
     'status',
     // 'project',
-    'id',
+    db_prefix() . 'pur_request'.'.id as id',
     ];
 $sIndexColumn = 'id';
 $sTable       = db_prefix().'pur_request';
-$join         = [ 'LEFT JOIN '.db_prefix().'departments ON '.db_prefix().'departments.departmentid = '.db_prefix().'pur_request.department' ];
+$join         = [
+    'LEFT JOIN ' . db_prefix() . 'departments ON ' . db_prefix() . 'departments.departmentid = ' . db_prefix() . 'pur_request.department',
+    'LEFT JOIN ' . db_prefix() . 'assets_group ON ' . db_prefix() . 'assets_group.group_id = ' . db_prefix() . 'pur_request.group_pur',
+    'LEFT JOIN ' . db_prefix() . 'wh_sub_group ON ' . db_prefix() . 'wh_sub_group.id = ' . db_prefix() . 'pur_request.sub_groups_pur',
+    'LEFT JOIN '.db_prefix().'area ON '.db_prefix().'area.id = '.db_prefix().'pur_request.area_pur',
+];
 $where = [];
 
 $having = '';
@@ -54,7 +62,7 @@ if(!has_permission('purchase_request', '', 'view')){
 }
 
 $result = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where, [
-    'id',
+    db_prefix() . 'pur_request'.'.id as id',
     'name',
     'pur_rq_code',
     '(SELECT GROUP_CONCAT(' . db_prefix() . 'project_members.staff_id SEPARATOR ",") FROM ' . db_prefix() . 'project_members WHERE ' . db_prefix() . 'project_members.project_id=' . db_prefix() . 'pur_request.project) as member_list',

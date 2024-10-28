@@ -104,7 +104,7 @@
             </div>
          </div>
          <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-4" style="padding: 0px 0px 0px 10px">
               <p class="bold p_mar"><?php echo _l('vendor').': '?><a href="<?php echo admin_url('purchase/vendor/'.$estimate->vendor); ?>"><?php echo get_vendor_company_name($estimate->vendor); ?></a></p>
               <?php 
                 $order_status_class = '';
@@ -133,12 +133,29 @@
 
                <?php $clients_ids = explode(',', $estimate->clients ?? ''); ?>
                <?php if(count($clients_ids) > 0){ ?>
+               
               <p class="bold p_mar"><?php echo _l('clients').': '?></p>
                 <?php  foreach ($clients_ids as $ids) {
                 ?>
                   <a href="<?php echo admin_url('clients/client/'.$ids); ?>"><span class="label label-tag"><?php echo get_company_name($ids); ?></span></a>
                <?php } ?>
              <?php } ?>
+             
+             <p class="bold p_mar"><?php echo _l('group_pur').': '?> <?php  foreach ($commodity_groups as $group) {
+               if($group['id'] == $pur_order->group_pur){
+                 echo $group['name'];
+               }
+             }?> </p>
+             <p class="bold p_mar"><?php echo _l('sub_groups_pur').': '?> <?php  foreach ($sub_groups as $group) {
+               if($group['id'] == $pur_order->sub_groups_pur){
+                 echo $group['sub_group_name'];
+               }
+             }?> </p>
+             <p class="bold p_mar"><?php echo _l('area_pur').': '?> <?php  foreach ($area as $area) {
+               if($area['id'] == $pur_order->area_pur){
+                 echo $area['name'];
+               }
+             }?> </p>
               
             </div>
             <div class="col-md-8">
@@ -228,7 +245,7 @@
                  <option value="4" class="<?php if($estimate->approve_status == 4) { echo 'hide';}?>"><?php echo _l('pur_canceled'); ?></option>
                </select>
               <?php } ?>
-               
+   
                <div class="col-md-12 padr_div_0">
                   <br>
                   <div class="pull-right _buttons  ">
@@ -248,6 +265,7 @@
          <div class="clearfix"></div>
          <hr class="hr-panel-heading" />
          <div class="tab-content">
+         
             <?php if($customer_custom_fields) { ?>
               <div role="tabpanel" class="tab-pane" id="custom_fields">
                 <?php echo form_open(admin_url('purchase/update_customfield_po/'.$estimate->id)); ?>

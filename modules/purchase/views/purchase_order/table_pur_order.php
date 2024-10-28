@@ -10,6 +10,9 @@ $aColumns = [
     'pur_order_number',
     'vendor',
     'order_date',
+    'group_name',
+    'sub_group_name',
+    'area_name',
     'type',
     'project',
     'department',
@@ -44,6 +47,9 @@ $join         = [
                     'LEFT JOIN '.db_prefix().'pur_vendor ON '.db_prefix().'pur_vendor.userid = '.db_prefix().'pur_orders.vendor',
                     'LEFT JOIN '.db_prefix().'departments ON '.db_prefix().'departments.departmentid = '.db_prefix().'pur_orders.department',
                     'LEFT JOIN '.db_prefix().'projects ON '.db_prefix().'projects.id = '.db_prefix().'pur_orders.project',
+                    'LEFT JOIN '.db_prefix().'assets_group ON '.db_prefix().'assets_group.group_id = '.db_prefix().'pur_orders.group_pur',
+                    'LEFT JOIN '.db_prefix().'wh_sub_group ON '.db_prefix().'wh_sub_group.id = '.db_prefix().'pur_orders.sub_groups_pur',
+                    'LEFT JOIN '.db_prefix().'area ON '.db_prefix().'area.id = '.db_prefix().'pur_orders.area_pur',
                 ];
 $i = 0;
 foreach ($custom_fields as $field) {

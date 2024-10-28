@@ -1,4 +1,7 @@
 <?php
+$lang['group_pur'] = 'Budget Head';
+$lang['sub_groups_pur'] = 'Sub Head';
+$lang['area_pur'] = 'Area';
 $lang['purchase']  = 'Procurement';
 $lang['create_new_estimate_po']  = 'Create Quotation';
 $lang['vendor']  = 'Vendors';

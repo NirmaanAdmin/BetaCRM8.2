@@ -112,6 +112,9 @@
                            _l('purchase_order'),
                            _l('vendor'),
                            _l('order_date'),
+                           _l('group_pur'),
+                           _l('sub_groups_pur'),
+                           _l('area_pur'),
                            _l('type'),
                            _l('project'),
                            _l('department'),
@@ -127,10 +130,12 @@
                            _l('convert_expense'),
                            );
                        $custom_fields = get_custom_fields('pur_order',array('show_on_table'=>1));
+                    
                         foreach($custom_fields as $field){
                          array_push($table_data,$field['name']);
                         }
-                       render_datatable($table_data,'table_pur_order'); ?>
+                       render_datatable($table_data,'table_pur_order');
+                        ?>
 							
 						</div>
 					</div>

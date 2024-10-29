@@ -6,7 +6,7 @@
 
 
 	<?php if(isset($income_tax_rebates)){?>
-		var dataObject_pu = <?php echo html_entity_decode($income_tax_rebates); ?>;
+		var dataObject_pu = <?php echo new_html_entity_decode($income_tax_rebates); ?>;
 	<?php }else{ ?>
 		var dataObject_pu = [];
 	<?php } ?>

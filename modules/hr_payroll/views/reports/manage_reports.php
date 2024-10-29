@@ -69,10 +69,10 @@
 										<div class="form-group hide" id="year_requisition">
 											<label for="months-report"><?php echo _l('period_datepicker'); ?></label><br />
 											<select  name="year_requisition" id="year_requisition"  class="selectpicker"  data-width="100%" data-none-selected-text="<?php echo _l('filter_by').' '._l('year'); ?>">
-												<option value="<?php echo html_entity_decode($y0) ; ?>" <?php echo 'selected' ?>><?php echo _l('year').' '. $y0 ; ?></option>
-												<option value="<?php echo html_entity_decode($y1) ; ?>"><?php echo _l('year').' '. $y1 ; ?></option>
-												<option value="<?php echo html_entity_decode($y2) ; ?>"><?php echo _l('year').' '. $y2 ; ?></option>
-												<option value="<?php echo html_entity_decode($y3) ; ?>"><?php echo _l('year').' '. $y3 ; ?></option>
+												<option value="<?php echo new_html_entity_decode($y0) ; ?>" <?php echo 'selected' ?>><?php echo _l('year').' '. $y0 ; ?></option>
+												<option value="<?php echo new_html_entity_decode($y1) ; ?>"><?php echo _l('year').' '. $y1 ; ?></option>
+												<option value="<?php echo new_html_entity_decode($y2) ; ?>"><?php echo _l('year').' '. $y2 ; ?></option>
+												<option value="<?php echo new_html_entity_decode($y3) ; ?>"><?php echo _l('year').' '. $y3 ; ?></option>
 
 											</select>
 										</div>
@@ -119,7 +119,7 @@
 										<label for="annual_leave"><?php echo _l('staff_departments'); ?></label>
 										<select name="department[]" class="selectpicker" data-live-search="true" multiple data-width="100%" data-actions-box="true" data-none-selected-text="<?php echo _l('invoice_status_report_all'); ?>">
 											<?php foreach($department as $value){ ?>
-												<option value="<?php echo html_entity_decode($value['departmentid']); ?>"><?php echo html_entity_decode($value['name']); ?></option>
+												<option value="<?php echo new_html_entity_decode($value['departmentid']); ?>"><?php echo new_html_entity_decode($value['name']); ?></option>
 											<?php } ?>
 										</select>
 									</div>
@@ -129,7 +129,7 @@
 										<label for="annual_leave"><?php echo _l('staff'); ?></label>
 										<select name="staff[]" class="selectpicker" data-live-search="true" multiple data-width="100%" data-actions-box="true" data-none-selected-text="<?php echo _l('invoice_status_report_all'); ?>">
 											<?php foreach($staff as $item){ ?>
-												<option value="<?php echo html_entity_decode($item['staffid']); ?>"><?php echo html_entity_decode($item['firstname'].' '.$item['lastname']); ?></option>
+												<option value="<?php echo new_html_entity_decode($item['staffid']); ?>"><?php echo new_html_entity_decode($item['firstname'].' '.$item['lastname']); ?></option>
 											<?php } ?>
 										</select>
 									</div>
@@ -143,7 +143,7 @@
 										<label for="annual_leave"><?php echo _l('staff'); ?></label>
 										<select name="staff" class="selectpicker" data-live-search="true" data-width="100%" data-actions-box="true" data-none-selected-text="<?php echo _l('invoice_status_report_all'); ?>">
 											<?php foreach($staff as $item){ ?>
-												<option value="<?php echo html_entity_decode($item['staffid']); ?>"><?php echo html_entity_decode($item['firstname'].' '.$item['lastname']); ?></option>
+												<option value="<?php echo new_html_entity_decode($item['staffid']); ?>"><?php echo new_html_entity_decode($item['firstname'].' '.$item['lastname']); ?></option>
 											<?php } ?>
 										</select>
 									</div>

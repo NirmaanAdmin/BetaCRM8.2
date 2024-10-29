@@ -583,7 +583,7 @@ class PHPExcel_Reader_OOCalc extends PHPExcel_Reader_Abstract implements PHPExce
                                             $type = PHPExcel_Cell_DataType::TYPE_NUMERIC;
                                             $dateObj = new DateTime($cellDataOfficeAttributes['date-value'], $GMT);
                                             $dateObj->setTimeZone($timezoneObj);
-                                            list($year, $month, $day, $hour, $minute, $second) = explode(' ', $dateObj->format('Y m d H i s'));
+                                            list($year, $month, $day, $hour, $minute, $second) = new_explode(' ', $dateObj->format('Y m d H i s'));
                                             $dataValue = PHPExcel_Shared_Date::FormattedPHPToExcel($year, $month, $day, $hour, $minute, $second);
                                             if ($dataValue != floor($dataValue)) {
                                                 $formatting = PHPExcel_Style_NumberFormat::FORMAT_DATE_XLSX15.' '.PHPExcel_Style_NumberFormat::FORMAT_DATE_TIME4;
@@ -610,7 +610,7 @@ class PHPExcel_Reader_OOCalc extends PHPExcel_Reader_Abstract implements PHPExce
                                     $type = PHPExcel_Cell_DataType::TYPE_FORMULA;
 //                                    echo 'Formula: ', $cellDataFormula, PHP_EOL;
                                     $cellDataFormula = substr($cellDataFormula, strpos($cellDataFormula, ':=')+1);
-                                    $temp = explode('"', $cellDataFormula);
+                                    $temp = new_explode('"', $cellDataFormula);
                                     $tKey = false;
                                     foreach ($temp as &$value) {
                                         //    Only replace in alternate array entries (i.e. non-quoted blocks)

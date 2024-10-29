@@ -10,7 +10,7 @@
 		initDataTable(staff_payslip, admin_url+'hr_payroll/table_staff_payslip', [], [], ContractsServerParams,[2, 'desc']);
 
 		 //hide first column
-	    var hidden_columns = [0];
+	    var hidden_columns = [];
 	        $('.table-staff_payslip').DataTable().columns(hidden_columns).visible(false, false);
 	});
 

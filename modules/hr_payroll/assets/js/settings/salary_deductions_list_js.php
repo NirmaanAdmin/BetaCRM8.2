@@ -6,7 +6,7 @@
 
 
 	<?php if(isset($salary_deductions_list)){?>
-		var dataObject_pu = <?php echo html_entity_decode($salary_deductions_list); ?>;
+		var dataObject_pu = <?php echo new_html_entity_decode($salary_deductions_list); ?>;
 	<?php }else{ ?>
 		var dataObject_pu = [];
 	<?php } ?>

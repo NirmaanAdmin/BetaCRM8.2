@@ -335,7 +335,7 @@ class PHPExcel_Shared_Date
             //        we don't want to test for any of our characters within the quoted blocks
             if (strpos($pFormatCode, '"') !== false) {
                 $segMatcher = false;
-                foreach (explode('"', $pFormatCode) as $subVal) {
+                foreach (new_explode('"', $pFormatCode) as $subVal) {
                     //    Only test in alternate array entries (the non-quoted blocks)
                     if (($segMatcher = !$segMatcher) &&
                         (preg_match('/(^|\])[^\[]*['.self::$possibleDateFormatCharacters.']/i', $subVal))) {
@@ -360,7 +360,7 @@ class PHPExcel_Shared_Date
      */
     public static function stringToExcel($dateValue = '')
     {
-        if (strlen($dateValue) < 2) {
+        if (new_strlen($dateValue) < 2) {
             return false;
         }
         if (!preg_match('/^(\d{1,4}[ \.\/\-][A-Z]{3,9}([ \.\/\-]\d{1,4})?|[A-Z]{3,9}[ \.\/\-]\d{1,4}([ \.\/\-]\d{1,4})?|\d{1,4}[ \.\/\-]\d{1,4}([ \.\/\-]\d{1,4})?)( \d{1,2}:\d{1,2}(:\d{1,2})?)?$/iu', $dateValue)) {
@@ -409,7 +409,7 @@ class PHPExcel_Shared_Date
      */
     public static function dayStringToNumber($day)
     {
-        $strippedDayValue = (str_replace(self::$numberSuffixes, '', $day));
+        $strippedDayValue = (new_str_replace(self::$numberSuffixes, '', $day));
         if (is_numeric($strippedDayValue)) {
             return (integer) $strippedDayValue;
         }

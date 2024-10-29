@@ -464,7 +464,7 @@ class PHPExcel_Style_NumberFormat extends PHPExcel_Style_Supervisor implements P
         $format = preg_replace_callback('/(?:^|")([^"]*)(?:$|")/', array('self', 'setLowercaseCallback'), $format);
 
         // Only process the non-quoted blocks for date format characters
-        $blocks = explode('"', $format);
+        $blocks = new_explode('"', $format);
         foreach($blocks as $key => &$block) {
             if ($key % 2 == 0) {
                 $block = strtr($block, self::$dateFormatReplacements);
@@ -492,13 +492,13 @@ class PHPExcel_Style_NumberFormat extends PHPExcel_Style_Supervisor implements P
             $value = round((100 * $value), 0) . '%';
         } else {
             if (preg_match('/\.[#0]+/i', $format, $m)) {
-                $s = substr($m[0], 0, 1) . (strlen($m[0]) - 1);
-                $format = str_replace($m[0], $s, $format);
+                $s = substr($m[0], 0, 1) . (new_strlen($m[0]) - 1);
+                $format = new_str_replace($m[0], $s, $format);
             }
             if (preg_match('/^[#0]+/', $format, $m)) {
-                $format = str_replace($m[0], strlen($m[0]), $format);
+                $format = new_str_replace($m[0], new_strlen($m[0]), $format);
             }
-            $format = '%' . str_replace('%', 'f%%', $format);
+            $format = '%' . new_str_replace('%', 'f%%', $format);
 
             $value = sprintf($format, 100 * $value);
         }
@@ -510,7 +510,7 @@ class PHPExcel_Style_NumberFormat extends PHPExcel_Style_Supervisor implements P
 
         $integerPart = floor(abs($value));
         $decimalPart = trim(fmod(abs($value), 1), '0.');
-        $decimalLength = strlen($decimalPart);
+        $decimalLength = new_strlen($decimalPart);
         $decimalDivisor = pow(10, $decimalLength);
 
         $GCD = PHPExcel_Calculation_MathTrig::GCD($decimalPart, $decimalDivisor);
@@ -534,8 +534,8 @@ class PHPExcel_Style_NumberFormat extends PHPExcel_Style_Supervisor implements P
         $sign = ($number < 0.0);
         $number = abs($number);
         if (strpos($mask, '.') !== false) {
-            $numbers = explode('.', $number . '.0');
-            $masks = explode('.', $mask . '.0');
+            $numbers = new_explode('.', $number . '.0');
+            $masks = new_explode('.', $mask . '.0');
             $result1 = self::complexNumberFormatMask($numbers[0], $masks[0], 1);
             $result2 = strrev(self::complexNumberFormatMask(strrev($numbers[1]), strrev($masks[1]), 1));
             return (($sign) ? '-' : '') . $result1 . '.' . $result2;
@@ -547,7 +547,7 @@ class PHPExcel_Style_NumberFormat extends PHPExcel_Style_Supervisor implements P
 
             foreach ($result as $block) {
                 $divisor = 1 . $block[0];
-                $size = strlen($block[0]);
+                $size = new_strlen($block[0]);
                 $offset = $block[1];
 
                 $blockValue = sprintf(
@@ -555,10 +555,10 @@ class PHPExcel_Style_NumberFormat extends PHPExcel_Style_Supervisor implements P
                     fmod($number, $divisor)
                 );
                 $number = floor($number / $divisor);
-                $mask = substr_replace($mask, $blockValue, $offset, $size);
+                $mask = subnew_str_replace($mask, $blockValue, $offset, $size);
             }
             if ($number > 0) {
-                $mask = substr_replace($mask, $number, $offset, 0);
+                $mask = subnew_str_replace($mask, $number, $offset, 0);
             }
             $result = $mask;
         } else {
@@ -653,7 +653,7 @@ class PHPExcel_Style_NumberFormat extends PHPExcel_Style_Supervisor implements P
                 $value = 'EUR ' . sprintf('%1.2f', $value);
             } else {
                 // Some non-number strings are quoted, so we'll get rid of the quotes, likewise any positional * symbols
-                $format = str_replace(array('"', '*'), '', $format);
+                $format = new_str_replace(array('"', '*'), '', $format);
 
                 // Find out if we need thousands separator
                 // This is indicated by a comma enclosed by a digit placeholder:
@@ -670,7 +670,7 @@ class PHPExcel_Style_NumberFormat extends PHPExcel_Style_Supervisor implements P
                 $scale = 1; // same as no scale
                 $matches = array();
                 if (preg_match('/(#|0)(,+)/', $format, $matches)) {
-                    $scale = pow(1000, strlen($matches[2]));
+                    $scale = pow(1000, new_strlen($matches[2]));
 
                     // strip the commas
                     $format = preg_replace('/0,+/', '0', $format);
@@ -701,11 +701,11 @@ class PHPExcel_Style_NumberFormat extends PHPExcel_Style_Supervisor implements P
                         $right = $matches[3];
 
                         // minimun width of formatted number (including dot)
-                        $minWidth = strlen($left) + strlen($dec) + strlen($right);
+                        $minWidth = new_strlen($left) + new_strlen($dec) + new_strlen($right);
                         if ($useThousands) {
                             $value = number_format(
                                 $value,
-                                strlen($right),
+                                new_strlen($right),
                                 PHPExcel_Shared_String::getDecimalSeparator(),
                                 PHPExcel_Shared_String::getThousandsSeparator()
                             );
@@ -717,7 +717,7 @@ class PHPExcel_Style_NumberFormat extends PHPExcel_Style_Supervisor implements P
                             } elseif (preg_match('/0([^\d\.]+)0/', $format)) {
                                 $value = self::complexNumberFormatMask($value, $format);
                             } else {
-                                $sprintf_pattern = "%0$minWidth." . strlen($right) . "f";
+                                $sprintf_pattern = "%0$minWidth." . new_strlen($right) . "f";
                                 $value = sprintf($sprintf_pattern, $value);
                                 $value = preg_replace($number_regex, $value, $format);
                             }
@@ -728,7 +728,7 @@ class PHPExcel_Style_NumberFormat extends PHPExcel_Style_Supervisor implements P
                     //  Currency or Accounting
                     $currencyFormat = $m[0];
                     $currencyCode = $m[1];
-                    list($currencyCode) = explode('-', $currencyCode);
+                    list($currencyCode) = new_explode('-', $currencyCode);
                     if ($currencyCode == '') {
                         $currencyCode = PHPExcel_Shared_String::getCurrencyCode();
                     }

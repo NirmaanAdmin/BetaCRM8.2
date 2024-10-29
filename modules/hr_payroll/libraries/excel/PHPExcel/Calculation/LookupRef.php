@@ -123,10 +123,10 @@ class PHPExcel_Calculation_LookupRef
             }
         } else {
             if (strpos($cellAddress, '!') !== false) {
-                list($sheet, $cellAddress) = explode('!', $cellAddress);
+                list($sheet, $cellAddress) = new_explode('!', $cellAddress);
             }
             if (strpos($cellAddress, ':') !== false) {
-                list($startAddress, $endAddress) = explode(':', $cellAddress);
+                list($startAddress, $endAddress) = new_explode(':', $cellAddress);
                 $startAddress = preg_replace('/[^a-z]/i', '', $startAddress);
                 $endAddress = preg_replace('/[^a-z]/i', '', $endAddress);
                 $returnValue = array();
@@ -201,10 +201,10 @@ class PHPExcel_Calculation_LookupRef
             }
         } else {
             if (strpos($cellAddress, '!') !== false) {
-                list($sheet, $cellAddress) = explode('!', $cellAddress);
+                list($sheet, $cellAddress) = new_explode('!', $cellAddress);
             }
             if (strpos($cellAddress, ':') !== false) {
-                list($startAddress, $endAddress) = explode(':', $cellAddress);
+                list($startAddress, $endAddress) = new_explode(':', $cellAddress);
                 $startAddress = preg_replace('/[^0-9]/', '', $startAddress);
                 $endAddress = preg_replace('/[^0-9]/', '', $endAddress);
                 $returnValue = array();
@@ -213,7 +213,7 @@ class PHPExcel_Calculation_LookupRef
                 } while ($startAddress++ != $endAddress);
                 return $returnValue;
             } else {
-                list($cellAddress) = explode(':', $cellAddress);
+                list($cellAddress) = new_explode(':', $cellAddress);
                 return (integer) preg_replace('/[^0-9]/', '', $cellAddress);
             }
         }
@@ -315,7 +315,7 @@ class PHPExcel_Calculation_LookupRef
         $cellAddress1 = $cellAddress;
         $cellAddress2 = null;
         if (strpos($cellAddress, ':') !== false) {
-            list($cellAddress1, $cellAddress2) = explode(':', $cellAddress);
+            list($cellAddress1, $cellAddress2) = new_explode(':', $cellAddress);
         }
 
         if ((!preg_match('/^'.PHPExcel_Calculation::CALCULATION_REGEXP_CELLREF.'$/i', $cellAddress1, $matches)) ||
@@ -325,7 +325,7 @@ class PHPExcel_Calculation_LookupRef
             }
 
             if (strpos($cellAddress, '!') !== false) {
-                list($sheetName, $cellAddress) = explode('!', $cellAddress);
+                list($sheetName, $cellAddress) = new_explode('!', $cellAddress);
                 $sheetName = trim($sheetName, "'");
                 $pSheet = $pCell->getWorksheet()->getParent()->getSheetByName($sheetName);
             } else {
@@ -336,7 +336,7 @@ class PHPExcel_Calculation_LookupRef
         }
 
         if (strpos($cellAddress, '!') !== false) {
-            list($sheetName, $cellAddress) = explode('!', $cellAddress);
+            list($sheetName, $cellAddress) = new_explode('!', $cellAddress);
             $sheetName = trim($sheetName, "'");
             $pSheet = $pCell->getWorksheet()->getParent()->getSheetByName($sheetName);
         } else {
@@ -390,11 +390,11 @@ class PHPExcel_Calculation_LookupRef
 
         $sheetName = null;
         if (strpos($cellAddress, "!")) {
-            list($sheetName, $cellAddress) = explode("!", $cellAddress);
+            list($sheetName, $cellAddress) = new_explode("!", $cellAddress);
             $sheetName = trim($sheetName, "'");
         }
         if (strpos($cellAddress, ":")) {
-            list($startCell, $endCell) = explode(":", $cellAddress);
+            list($startCell, $endCell) = new_explode(":", $cellAddress);
         } else {
             $startCell = $endCell = $cellAddress;
         }

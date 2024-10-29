@@ -6,6 +6,7 @@
 				<th>ID #</th>
 			
 				<th><?php echo _l('month'); ?></th>
+				<th><?php echo _l('ps_payment_run_date'); ?></th>
 				<th><?php echo _l('ps_pay_slip_number'); ?></th>
 				<th><?php echo _l('employee_name'); ?></th>
 				<th><?php echo _l('ps_gross_pay'); ?></th>

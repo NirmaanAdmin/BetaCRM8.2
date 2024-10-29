@@ -464,7 +464,7 @@ class PHPExcel_Reader_Excel5 extends PHPExcel_Reader_Abstract implements PHPExce
         $this->loadOLE($pFilename);
 
         // total byte size of Excel data (workbook global substream + sheet substreams)
-        $this->dataSize = strlen($this->data);
+        $this->dataSize = new_strlen($this->data);
 
         $this->pos        = 0;
         $this->sheets    = array();
@@ -521,7 +521,7 @@ class PHPExcel_Reader_Excel5 extends PHPExcel_Reader_Abstract implements PHPExce
         $this->loadOLE($pFilename);
 
         // total byte size of Excel data (workbook global substream + sheet substreams)
-        $this->dataSize = strlen($this->data);
+        $this->dataSize = new_strlen($this->data);
 
         // initialize
         $this->pos    = 0;
@@ -636,7 +636,7 @@ class PHPExcel_Reader_Excel5 extends PHPExcel_Reader_Abstract implements PHPExce
         $this->readDocumentSummaryInformation();
 
         // total byte size of Excel data (workbook global substream + sheet substreams)
-        $this->dataSize = strlen($this->data);
+        $this->dataSize = new_strlen($this->data);
 
         // initialize
         $this->pos                 = 0;
@@ -1122,7 +1122,7 @@ class PHPExcel_Reader_Excel5 extends PHPExcel_Reader_Abstract implements PHPExce
 //                    echo '<b>Cell annotation ', $note,'</b><br />';
 //                    var_dump($noteDetails);
 //                    echo '<br />';
-                    $cellAddress = str_replace('$', '', $noteDetails['cellRef']);
+                    $cellAddress = new_str_replace('$', '', $noteDetails['cellRef']);
                     $this->phpSheet->getComment($cellAddress)->setAuthor($noteDetails['author'])->setText($this->parseRichText($noteDetails['objTextData']['text']));
                 }
             }
@@ -1135,20 +1135,20 @@ class PHPExcel_Reader_Excel5 extends PHPExcel_Reader_Abstract implements PHPExce
                     case pack('C', 0x06):
                         // print area
                         //    in general, formula looks like this: Foo!$C$7:$J$66,Bar!$A$1:$IV$2
-                        $ranges = explode(',', $definedName['formula']); // FIXME: what if sheetname contains comma?
+                        $ranges = new_explode(',', $definedName['formula']); // FIXME: what if sheetname contains comma?
 
                         $extractedRanges = array();
                         foreach ($ranges as $range) {
                             // $range should look like one of these
                             //        Foo!$C$7:$J$66
                             //        Bar!$A$1:$IV$2
-                            $explodes = explode('!', $range);    // FIXME: what if sheetname contains exclamation mark?
+                            $explodes = new_explode('!', $range);    // FIXME: what if sheetname contains exclamation mark?
                             $sheetName = trim($explodes[0], "'");
                             if (count($explodes) == 2) {
                                 if (strpos($explodes[1], ':') === false) {
                                     $explodes[1] = $explodes[1] . ':' . $explodes[1];
                                 }
-                                $extractedRanges[] = str_replace('$', '', $explodes[1]); // C7:J66
+                                $extractedRanges[] = new_str_replace('$', '', $explodes[1]); // C7:J66
                             }
                         }
                         if ($docSheet = $this->phpExcel->getSheetByName($sheetName)) {
@@ -1166,18 +1166,18 @@ class PHPExcel_Reader_Excel5 extends PHPExcel_Reader_Abstract implements PHPExce
                         //        columns A-B repeat
                         // 3. both repeating rows and repeating columns
                         //        formula looks like this: Sheet!$A$1:$B$65536,Sheet!$A$1:$IV$2
-                        $ranges = explode(',', $definedName['formula']); // FIXME: what if sheetname contains comma?
+                        $ranges = new_explode(',', $definedName['formula']); // FIXME: what if sheetname contains comma?
                         foreach ($ranges as $range) {
                             // $range should look like this one of these
                             //        Sheet!$A$1:$B$65536
                             //        Sheet!$A$1:$IV$2
-                            $explodes = explode('!', $range);
+                            $explodes = new_explode('!', $range);
                             if (count($explodes) == 2) {
                                 if ($docSheet = $this->phpExcel->getSheetByName($explodes[0])) {
                                     $extractedRange = $explodes[1];
-                                    $extractedRange = str_replace('$', '', $extractedRange);
+                                    $extractedRange = new_str_replace('$', '', $extractedRange);
 
-                                    $coordinateStrings = explode(':', $extractedRange);
+                                    $coordinateStrings = new_explode(':', $extractedRange);
                                     if (count($coordinateStrings) == 2) {
                                         list($firstColumn, $firstRow) = PHPExcel_Cell::coordinateFromString($coordinateStrings[0]);
                                         list($lastColumn, $lastRow) = PHPExcel_Cell::coordinateFromString($coordinateStrings[1]);
@@ -1197,13 +1197,13 @@ class PHPExcel_Reader_Excel5 extends PHPExcel_Reader_Abstract implements PHPExce
                 }
             } else {
                 // Extract range
-                $explodes = explode('!', $definedName['formula']);
+                $explodes = new_explode('!', $definedName['formula']);
 
                 if (count($explodes) == 2) {
                     if (($docSheet = $this->phpExcel->getSheetByName($explodes[0])) ||
                         ($docSheet = $this->phpExcel->getSheetByName(trim($explodes[0], "'")))) {
                         $extractedRange = $explodes[1];
-                        $extractedRange = str_replace('$', '', $extractedRange);
+                        $extractedRange = new_str_replace('$', '', $extractedRange);
 
                         $localOnly = ($definedName['scope'] == 0) ? false : true;
 
@@ -1627,7 +1627,7 @@ class PHPExcel_Reader_Excel5 extends PHPExcel_Reader_Abstract implements PHPExce
             }
 //            echo 'Note Address=', $cellAddress,'<br />';
 
-            $cellAddress = str_replace('$', '', $cellAddress);
+            $cellAddress = new_str_replace('$', '', $cellAddress);
             $noteLength = self::getInt2d($recordData, 4);
             $noteText = trim(substr($recordData, 6));
 //            echo 'Note Length=', $noteLength,'<br />';
@@ -1810,7 +1810,7 @@ class PHPExcel_Reader_Excel5 extends PHPExcel_Reader_Abstract implements PHPExce
     {
         $pwarray = str_repeat("\0", 64);
 
-        for ($i = 0; $i < strlen($password); $i++) {
+        for ($i = 0; $i < new_strlen($password); $i++) {
             $o = ord(substr($password, $i, 1));
             $pwarray[2 * $i] = chr($o & 0xff);
             $pwarray[2 * $i + 1] = chr(($o >> 8) & 0xff);
@@ -2662,7 +2662,7 @@ class PHPExcel_Reader_Excel5 extends PHPExcel_Reader_Abstract implements PHPExce
         $offset = 0;
 
         // there are 4 types of records
-        if (strlen($recordData) > 4) {
+        if (new_strlen($recordData) > 4) {
             // external reference
             // offset: 0; size: 2; number of sheet names ($nm)
             $nm = self::getInt2d($recordData, 0);
@@ -2985,7 +2985,7 @@ class PHPExcel_Reader_Excel5 extends PHPExcel_Reader_Abstract implements PHPExce
                         // 1st fragment compressed
                         // this fragment uncompressed
                         $newstr = '';
-                        for ($j = 0; $j < strlen($retstr); ++$j) {
+                        for ($j = 0; $j < new_strlen($retstr); ++$j) {
                             $newstr .= $retstr[$j] . chr(0);
                         }
                         $retstr = $newstr;
@@ -4861,7 +4861,7 @@ class PHPExcel_Reader_Excel5 extends PHPExcel_Reader_Abstract implements PHPExce
 
             // in list type validity, null characters are used as item separators
             if ($type == PHPExcel_Cell_DataValidation::TYPE_LIST) {
-                $formula1 = str_replace(chr(0), ',', $formula1);
+                $formula1 = new_str_replace(chr(0), ',', $formula1);
             }
         } catch (PHPExcel_Exception $e) {
             return;
@@ -5161,7 +5161,7 @@ class PHPExcel_Reader_Excel5 extends PHPExcel_Reader_Abstract implements PHPExce
 
                 $rgbString = substr($iData, 12);
                 $rgbTriples = array();
-                while (strlen($rgbString) > 0) {
+                while (new_strlen($rgbString) > 0) {
                     $rgbTriples[] = unpack('Cb/Cg/Cr', $rgbString);
                     $rgbString = substr($rgbString, 3);
                 }
@@ -5302,7 +5302,7 @@ class PHPExcel_Reader_Excel5 extends PHPExcel_Reader_Abstract implements PHPExce
         //echo "\n----\n";
 
         // offset: 2 + sz; size: variable (optional)
-        if (strlen($formulaStructure) > 2 + $sz) {
+        if (new_strlen($formulaStructure) > 2 + $sz) {
             $additionalData = substr($formulaStructure, 2 + $sz);
 
             // for debug: dump the additional data
@@ -5330,7 +5330,7 @@ class PHPExcel_Reader_Excel5 extends PHPExcel_Reader_Abstract implements PHPExce
         // start parsing the formula data
         $tokens = array();
 
-        while (strlen($formulaData) > 0 and $token = $this->getNextToken($formulaData, $baseCell)) {
+        while (new_strlen($formulaData) > 0 and $token = $this->getNextToken($formulaData, $baseCell)) {
             $tokens[] = $token;
             $formulaData = substr($formulaData, $token['size']);
 
@@ -5723,7 +5723,7 @@ class PHPExcel_Reader_Excel5 extends PHPExcel_Reader_Abstract implements PHPExce
                 $name = 'tNum';
                 $size = 9;
                 $data = self::extractNumber(substr($formulaData, 1));
-                $data = str_replace(',', '.', (string)$data); // in case non-English locale
+                $data = new_str_replace(',', '.', (string)$data); // in case non-English locale
                 break;
             case 0x20:    //    array constant
             case 0x40:
@@ -7172,7 +7172,7 @@ class PHPExcel_Reader_Excel5 extends PHPExcel_Reader_Abstract implements PHPExce
                     }
 
                     // escape the single-quotes
-                    $sheetRange = str_replace("'", "''", $sheetRange);
+                    $sheetRange = new_str_replace("'", "''", $sheetRange);
 
                     // if there are special characters, we need to enclose the range in single-quotes
                     // todo: check if we have identified the whole set of special characters
@@ -7446,7 +7446,7 @@ class PHPExcel_Reader_Excel5 extends PHPExcel_Reader_Abstract implements PHPExce
      */
     private static function UTF8toExcelDoubleQuoted($value)
     {
-        return '"' . str_replace('"', '""', $value) . '"';
+        return '"' . new_str_replace('"', '""', $value) . '"';
     }
 
 
@@ -7531,7 +7531,7 @@ class PHPExcel_Reader_Excel5 extends PHPExcel_Reader_Abstract implements PHPExce
     private static function uncompressByteString($string)
     {
         $uncompressedString = '';
-        $strLen = strlen($string);
+        $strLen = new_strlen($string);
         for ($i = 0; $i < $strLen; ++$i) {
             $uncompressedString .= $string[$i] . "\0";
         }

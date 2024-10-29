@@ -649,3 +649,157 @@ if (!$CI->db->field_exists('bank_name' ,db_prefix() . 'hrp_employees_value')) {
 ;");
 }
 
+if (!$CI->db->table_exists(db_prefix() . 'hrp_employees_timeshee_leaves')) {
+    $CI->db->query('CREATE TABLE `' . db_prefix() . "hrp_employees_timeshee_leaves` (
+      `id` INT(11) NOT NULL AUTO_INCREMENT,
+      `staff_id` INT(11) NULL,
+      `month` DATE NOT NULL,
+
+      `day_1`  TEXT  DEFAULT '',
+      `day_2`  TEXT  DEFAULT '',
+      `day_3`  TEXT  DEFAULT '',
+      `day_4`  TEXT  DEFAULT '',
+      `day_5`  TEXT  DEFAULT '',
+      `day_6`  TEXT  DEFAULT '',
+      `day_7`  TEXT  DEFAULT '',
+      `day_8`  TEXT  DEFAULT '',
+      `day_9`  TEXT  DEFAULT '',
+      `day_10`  TEXT  DEFAULT '',
+      `day_11`  TEXT  DEFAULT '',
+      `day_12`  TEXT  DEFAULT '',
+      `day_13`  TEXT  DEFAULT '',
+      `day_14`  TEXT  DEFAULT '',
+      `day_15`  TEXT  DEFAULT '',
+      `day_16`  TEXT  DEFAULT '',
+      `day_17`  TEXT  DEFAULT '',
+      `day_18`  TEXT  DEFAULT '',
+      `day_19`  TEXT  DEFAULT '',
+      `day_20`  TEXT  DEFAULT '',
+      `day_21`  TEXT  DEFAULT '',
+      `day_22`  TEXT  DEFAULT '',
+      `day_23`  TEXT  DEFAULT '',
+      `day_24`  TEXT  DEFAULT '',
+      `day_25`  TEXT  DEFAULT '',
+      `day_26`  TEXT  DEFAULT '',
+      `day_27`  TEXT  DEFAULT '',
+      `day_28`  TEXT  DEFAULT '',
+      `day_29`  TEXT  DEFAULT '',
+      `day_30`  TEXT  DEFAULT '',
+      `day_31`  TEXT  DEFAULT '',
+
+      `paid_leave` DECIMAL(15,2)  NULL,
+      `unpaid_leave` DECIMAL(15,2)  NULL,
+
+      `rel_type` VARCHAR(100),
+
+      PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=" . $CI->db->char_set . ';');
+}
+
+if (!$CI->db->field_exists('payslip_range' ,db_prefix() . 'hrp_payslips')) { 
+  $CI->db->query('ALTER TABLE `' . db_prefix() . "hrp_payslips`
+
+    ADD COLUMN `payslip_range` VARCHAR(500)
+
+;");
+}
+
+// Verison 1.0.7
+if (row_hr_payroll_options_exist('"hrp_customize_staff_payslip_column"') == 0){
+  $CI->db->query('INSERT INTO `' . db_prefix() . 'hr_payroll_option` (`option_name`,`option_val`, `auto`) VALUES ("hrp_customize_staff_payslip_column", "0", "1");
+    ');
+}
+
+if (!$CI->db->table_exists(db_prefix() . 'hrp_customize_staff_payslip_columns')) {
+    $CI->db->query('CREATE TABLE `' . db_prefix() . "hrp_customize_staff_payslip_columns` (
+
+      `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+      `column_name` TEXT NULL,
+      `order_number` INT(11) NULL,
+
+      PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=" . $CI->db->char_set . ';');
+}
+
+if (!$CI->db->table_exists(db_prefix() . 'hrp_payslip_pdf_templates')) {
+    $CI->db->query('CREATE TABLE `' . db_prefix() . "hrp_payslip_pdf_templates` (
+    `id` INT(11) NOT NULL AUTO_INCREMENT,
+    `name` TEXT NULL,
+    `payslip_template_id` INT(11) NULL,
+    `content` LONGTEXT NULL,
+
+    PRIMARY KEY (`id`)
+  ) ENGINE=InnoDB DEFAULT CHARSET=" . $CI->db->char_set . ';');
+}
+
+if (!$CI->db->field_exists('pdf_template_id' ,db_prefix() . 'hrp_payslips')) { 
+  $CI->db->query('ALTER TABLE `' . db_prefix() . "hrp_payslips`
+
+    ADD COLUMN `pdf_template_id` int(11)
+
+;");
+}
+
+if (!$CI->db->field_exists('epf_no' ,db_prefix() . 'hrp_employees_value')) { 
+  $CI->db->query('ALTER TABLE `' . db_prefix() . "hrp_employees_value`
+
+    ADD COLUMN `epf_no` TEXT ,
+    ADD COLUMN `social_security_no` TEXT
+
+;");
+}
+
+if (hr_payroll_payroll_column_exist('"epf_no"') == 0){
+  $CI->db->query('INSERT INTO `' . db_prefix() . 'hrp_payroll_columns` (`column_key`, `taking_method`, `function_name`, `value_related_to`, `display_with_staff`, `description`, `date_created`, `staff_id_created`, `order_display`, `is_edit`) VALUES ("EPF No", "system", "epf_no", "", "true", "EPF No", "'.date("Y-m-d H:i:s").'", "'.get_staff_user_id().'", "17", "no");
+');
+}
+
+if (hr_payroll_payroll_column_exist('"social_security_no"') == 0){
+  $CI->db->query('INSERT INTO `' . db_prefix() . 'hrp_payroll_columns` (`column_key`, `taking_method`, `function_name`, `value_related_to`, `display_with_staff`, `description`, `date_created`, `staff_id_created`, `order_display`, `is_edit`) VALUES ("Social Security No", "system", "social_security_no", "", "true", "Social Security No", "'.date("Y-m-d H:i:s").'", "'.get_staff_user_id().'", "17", "no");
+');
+}
+
+if (!$CI->db->table_exists(db_prefix() . 'currency_rates')) {
+  $CI->db->query('CREATE TABLE `' . db_prefix() . "currency_rates` (
+    `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `from_currency_id` int(11) NULL,
+    `from_currency_name` VARCHAR(100) NULL,
+    `from_currency_rate` decimal(15,6) NOT NULL DEFAULT '0.000000',
+    `to_currency_id` int(11) NULL,
+    `to_currency_name` VARCHAR(100) NULL,
+    `to_currency_rate` decimal(15,6) NOT NULL DEFAULT '0.000000',
+    `date_updated` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`)
+  ) ENGINE=InnoDB DEFAULT CHARSET=" . $CI->db->char_set . ';');
+}
+
+if (!$CI->db->table_exists(db_prefix() . 'currency_rate_logs')) {
+  $CI->db->query('CREATE TABLE `' . db_prefix() . "currency_rate_logs` (
+    `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `from_currency_id` int(11) NULL,
+    `from_currency_name` VARCHAR(100) NULL,
+    `from_currency_rate` decimal(15,6) NOT NULL DEFAULT '0.000000',
+    `to_currency_id` int(11) NULL,
+    `to_currency_name` VARCHAR(100) NULL,
+    `to_currency_rate` decimal(15,6) NOT NULL DEFAULT '0.000000',
+    `date` DATE NULL,
+
+    PRIMARY KEY (`id`)
+  ) ENGINE=InnoDB DEFAULT CHARSET=" . $CI->db->char_set . ';');
+}
+
+add_option('cr_date_cronjob_currency_rates', '');
+add_option('cr_automatically_get_currency_rate', 1);
+add_option('cr_global_amount_expiration', 0);
+
+if (!$CI->db->field_exists('from_currency_id' ,db_prefix() . 'hrp_payslips')) { 
+  $CI->db->query('ALTER TABLE `' . db_prefix() . "hrp_payslips`
+    ADD COLUMN `from_currency_id` int(11) NULL DEFAULT 0,
+    ADD COLUMN `from_currency_name` VARCHAR(100) NULL,
+    ADD COLUMN `from_currency_rate` decimal(15,6) NOT NULL DEFAULT '1',
+    ADD COLUMN `to_currency_id` int(11) NULL DEFAULT 0,
+    ADD COLUMN `to_currency_name` VARCHAR(100) NULL,
+    ADD COLUMN `to_currency_rate` decimal(15,6) NOT NULL DEFAULT '1'
+
+    ;");
+}

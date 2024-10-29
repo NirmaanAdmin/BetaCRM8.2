@@ -59,7 +59,7 @@ class PHPExcel_Shared_PasswordHasher
             $password        ^= ($value | $rotated_bits);
         }
 
-        $password ^= strlen($pPassword);
+        $password ^= new_strlen($pPassword);
         $password ^= 0xCE4B;
 
         return(strtoupper(dechex($password)));

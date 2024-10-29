@@ -304,12 +304,12 @@ class PHPExcel_Chart_DataSeriesValues
                 }
                 unset($dataValue);
             } else {
-                $cellRange = explode('!', $this->dataSource);
+                $cellRange = new_explode('!', $this->dataSource);
                 if (count($cellRange) > 1) {
                     list(, $cellRange) = $cellRange;
                 }
 
-                $dimensions = PHPExcel_Cell::rangeDimension(str_replace('$', '', $cellRange));
+                $dimensions = PHPExcel_Cell::rangeDimension(new_str_replace('$', '', $cellRange));
                 if (($dimensions[0] == 1) || ($dimensions[1] == 1)) {
                     $this->dataValues = PHPExcel_Calculation_Functions::flattenArray($newDataValues);
                 } else {

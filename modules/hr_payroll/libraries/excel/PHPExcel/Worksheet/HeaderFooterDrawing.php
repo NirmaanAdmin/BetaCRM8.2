@@ -285,7 +285,7 @@ class PHPExcel_Worksheet_HeaderFooterDrawing extends PHPExcel_Worksheet_Drawing 
      */
     public function getExtension()
     {
-        $parts = explode(".", basename($this->path));
+        $parts = new_explode(".", basename($this->path));
         return end($parts);
     }
 

@@ -271,7 +271,7 @@ class PHPExcel_Shared_OLE
             $nameLength = self::_readInt2($fh);
             $nameUtf16 = substr($nameUtf16, 0, $nameLength - 2);
             // Simple conversion from UTF-16LE to ISO-8859-1
-            $name = str_replace("\x00", "", $nameUtf16);
+            $name = new_str_replace("\x00", "", $nameUtf16);
             $type = self::_readInt1($fh);
             switch ($type) {
                 case self::OLE_PPS_TYPE_ROOT:
@@ -442,7 +442,7 @@ class PHPExcel_Shared_OLE
     public static function Asc2Ucs($ascii)
     {
         $rawname = '';
-        for ($i = 0; $i < strlen($ascii); ++$i) {
+        for ($i = 0; $i < new_strlen($ascii); ++$i) {
             $rawname .= $ascii{$i} . "\x00";
         }
         return $rawname;
@@ -503,7 +503,7 @@ class PHPExcel_Shared_OLE
     */
     public static function OLE2LocalDate($string)
     {
-        if (strlen($string) != 8) {
+        if (new_strlen($string) != 8) {
             return new PEAR_Error("Expecting 8 byte string");
         }
 

@@ -607,7 +607,7 @@ class PHPExcel_Cell
         if (strpos($pCoordinateString, ':') === false && strpos($pCoordinateString, ',') === false) {
             // Split out any worksheet name from the reference
             $worksheet = '';
-            $cellAddress = explode('!', $pCoordinateString);
+            $cellAddress = new_explode('!', $pCoordinateString);
             if (count($cellAddress) > 1) {
                 list($worksheet, $pCoordinateString) = $cellAddress;
             }
@@ -639,7 +639,7 @@ class PHPExcel_Cell
         if (strpos($pCoordinateString, ':') === false && strpos($pCoordinateString, ',') === false) {
             // Split out any worksheet name from the coordinate
             $worksheet = '';
-            $cellAddress = explode('!', $pCoordinateString);
+            $cellAddress = new_explode('!', $pCoordinateString);
             if (count($cellAddress) > 1) {
                 list($worksheet, $pCoordinateString) = $cellAddress;
             }
@@ -672,10 +672,10 @@ class PHPExcel_Cell
             $pRange = self::DEFAULT_RANGE;
         }
 
-        $exploded = explode(',', $pRange);
+        $exploded = new_explode(',', $pRange);
         $counter = count($exploded);
         for ($i = 0; $i < $counter; ++$i) {
-            $exploded[$i] = explode(':', $exploded[$i]);
+            $exploded[$i] = new_explode(':', $exploded[$i]);
         }
         return $exploded;
     }
@@ -726,7 +726,7 @@ class PHPExcel_Cell
         if (strpos($pRange, ':') === false) {
             $rangeA = $rangeB = $pRange;
         } else {
-            list($rangeA, $rangeB) = explode(':', $pRange);
+            list($rangeA, $rangeB) = new_explode(':', $pRange);
         }
 
         // Calculate range outer borders
@@ -775,7 +775,7 @@ class PHPExcel_Cell
         if (strpos($pRange, ':') === false) {
             $rangeA = $rangeB = $pRange;
         } else {
-            list($rangeA, $rangeB) = explode(':', $pRange);
+            list($rangeA, $rangeB) = new_explode(':', $pRange);
         }
 
         return array( self::coordinateFromString($rangeA), self::coordinateFromString($rangeB));
@@ -807,7 +807,7 @@ class PHPExcel_Cell
             'n' => 14, 'o' => 15, 'p' => 16, 'q' => 17, 'r' => 18, 's' => 19, 't' => 20, 'u' => 21, 'v' => 22, 'w' => 23, 'x' => 24, 'y' => 25, 'z' => 26
         );
 
-        //    We also use the language construct isset() rather than the more costly strlen() function to match the length of $pString
+        //    We also use the language construct isset() rather than the more costly new_strlen() function to match the length of $pString
         //        for improved performance
         if (isset($pString{0})) {
             if (!isset($pString{1})) {
@@ -865,7 +865,7 @@ class PHPExcel_Cell
         $returnValue = array();
 
         // Explode spaces
-        $cellBlocks = explode(' ', str_replace('$', '', strtoupper($pRange)));
+        $cellBlocks = new_explode(' ', new_str_replace('$', '', strtoupper($pRange)));
         foreach ($cellBlocks as $cellBlock) {
             // Single cell?
             if (strpos($cellBlock, ':') === false && strpos($cellBlock, ',') === false) {

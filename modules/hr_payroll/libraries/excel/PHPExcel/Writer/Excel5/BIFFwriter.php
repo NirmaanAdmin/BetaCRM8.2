@@ -74,7 +74,7 @@ class PHPExcel_Writer_Excel5_BIFFwriter
     public $_data;
 
     /**
-     * The size of the data in bytes. Should be the same as strlen($this->_data)
+     * The size of the data in bytes. Should be the same as new_strlen($this->_data)
      * @var integer
      */
     public $_datasize;
@@ -130,11 +130,11 @@ class PHPExcel_Writer_Excel5_BIFFwriter
      */
     protected function append($data)
     {
-        if (strlen($data) - 4 > $this->limit) {
+        if (new_strlen($data) - 4 > $this->limit) {
             $data = $this->addContinue($data);
         }
         $this->_data     .= $data;
-        $this->_datasize += strlen($data);
+        $this->_datasize += new_strlen($data);
     }
 
     /**
@@ -145,10 +145,10 @@ class PHPExcel_Writer_Excel5_BIFFwriter
      */
     public function writeData($data)
     {
-        if (strlen($data) - 4 > $this->limit) {
+        if (new_strlen($data) - 4 > $this->limit) {
             $data = $this->addContinue($data);
         }
-        $this->_datasize += strlen($data);
+        $this->_datasize += new_strlen($data);
 
         return $data;
     }
@@ -230,16 +230,16 @@ class PHPExcel_Writer_Excel5_BIFFwriter
         $header = pack("vv", $record, $limit);  // Headers for continue records
 
         // Retrieve chunks of 2080/8224 bytes +4 for the header.
-        $data_length = strlen($data);
+        $data_length = new_strlen($data);
         for ($i = $limit + 4; $i < ($data_length - $limit); $i += $limit) {
             $tmp .= $header;
             $tmp .= substr($data, $i, $limit);
         }
 
         // Retrieve the last chunk of data
-        $header  = pack("vv", $record, strlen($data) - $i);
+        $header  = pack("vv", $record, new_strlen($data) - $i);
         $tmp    .= $header;
-        $tmp    .= substr($data, $i, strlen($data) - $i);
+        $tmp    .= substr($data, $i, new_strlen($data) - $i);
 
         return $tmp;
     }

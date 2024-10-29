@@ -3805,6 +3805,9 @@ class Purchase_model extends App_Model
                 <span style="text-align: right;"><b>' . _l('date_request') . ':</b> ' . date('d-m-Y', strtotime($pur_request->request_date)) . '</span><br />
                 <span style="text-align: right;"><b>' . _l('project') . ':</b> ' . get_project_name_by_id($pur_request->project) . '</span><br />
                 <span style="text-align: right;"><b>' . _l('requester') . ':</b> ' . get_staff_full_name($pur_request->requester) . '</span><br />
+                <span style="text-align: right;"><b>' . _l('group_pur') . ':</b> ' . $this->get_budget_head($pur_request_id) . '</span><br />
+                <span style="text-align: right;"><b>' . _l('sub_groups_pur') . ':</b> ' . $this->get_budget_sub_head($pur_request_id) . '</span><br />
+                <span style="text-align: right;"><b>' . _l('area_pur') . ':</b> ' . $this->get_pur_request_area($pur_request_id) . '</span><br />
             </td>
           </tr>
         </tbody>

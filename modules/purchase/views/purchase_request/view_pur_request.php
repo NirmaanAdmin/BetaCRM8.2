@@ -58,11 +58,7 @@
                       </a>
                     </li>
 
-                    <div>
-                      <?php if ($pur_request->status == 2) { ?>
-                        <a href="<?php echo admin_url('purchase/pur_order?pr=' . $pur_request->id); ?>" class="btn btn-info save_detail pull-right" target="_blank"><?php echo _l('convert_to_po'); ?></a>
-                      <?php } ?>
-                    </div>
+
 
                   </ul>
                 </div>
@@ -74,7 +70,12 @@
 
                   <div class="row">
                     <div class="col-md-12">
-                      <p class="bold col-md-9 p_style"><?php echo _l('information'); ?></p>
+                      <p class="bold col-md-4 p_style"><?php echo _l('information'); ?></p>
+                      <div>
+                        <?php if ($pur_request->status == 2) { ?>
+                          <a href="<?php echo admin_url('purchase/pur_order?pr=' . $pur_request->id); ?>" class="btn btn-info save_detail pull-right" target="_blank"><?php echo _l('convert_to_po'); ?></a>
+                        <?php } ?>
+                      </div>
                       <div class="col-md-3 pull-right">
                         <div class="task-info task-status task-info-status pull-right">
                           <?php if ($check_approval_setting) { ?>
@@ -167,7 +168,7 @@
                             <span class="bold"><?php echo _l('area_pur'); ?> :</span>
                             <span><?php foreach ($area_request as $area) {
                                     if ($area['id'] == $pur_request->area_pur) {
-                                      echo $area['name'];
+                                      echo $area['area_name'];
                                     }
                                   } ?></span>
                           </td>

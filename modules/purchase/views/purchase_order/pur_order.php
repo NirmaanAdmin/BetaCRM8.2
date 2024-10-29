@@ -296,6 +296,11 @@
                               $selected = $group['id'];
                             }
                           }
+                          if (isset($selected_head)) {
+                            if ($selected_head == $group['id']) {
+                              $selected = $group['id'];
+                            }
+                          }
                         }
                         echo render_select('group_pur', $commodity_groups_pur, array('id', 'name'), 'Budget Head', $selected);
                         ?>
@@ -308,6 +313,11 @@
                         foreach ($sub_groups_pur as $sub_group) {
                           if (isset($pur_order)) {
                             if ($pur_order->sub_groups_pur == $sub_group['id']) {
+                              $selected = $sub_group['id'];
+                            }
+                          }
+                          if (isset($selected_sub_head)) {
+                            if ($selected_sub_head == $sub_group['id']) {
                               $selected = $sub_group['id'];
                             }
                           }
@@ -359,10 +369,16 @@
                       <div class="col-md-6 ">
 
                         <?php
+
                         $selected = '';
                         foreach ($area_pur as $area) {
                           if (isset($pur_order)) {
                             if ($pur_order->area_pur == $area['id']) {
+                              $selected = $area['id'];
+                            }
+                          }
+                          if (isset($selected_area)) {
+                            if ($selected_area == $area['id']) {
                               $selected = $area['id'];
                             }
                           }

@@ -153,7 +153,7 @@
              }?> </p>
              <p class="bold p_mar"><?php echo _l('area_pur').': '?> <?php  foreach ($area as $area) {
                if($area['id'] == $pur_order->area_pur){
-                 echo $area['name'];
+                 echo $area['area_name'];
                }
              }?> </p>
               

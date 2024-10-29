@@ -1589,18 +1589,14 @@ class purchase extends AdminController
                     $pur_order_row_template .= $this->purchase_model->create_purchase_order_row_template('items[' . $index_order . ']',  $item_name, $order_detail['description'], $order_detail['quantity'], $unit_name, $order_detail['unit_price'], $taxname, $order_detail['item_code'], $order_detail['unit_id'], $order_detail['tax_rate'],  $order_detail['total_money'], $order_detail['discount_%'], $order_detail['discount_money'], $order_detail['total'], $order_detail['into_money'], $order_detail['tax'], $order_detail['tax_value'], $order_detail['id'], true, $currency_rate, $to_currency);
                 }
             }
+
         }
         $data['pur_order_row_template'] = $pur_order_row_template;
-
-
         $data['currencies'] = $this->currencies_model->get();
-
         $this->load->model('clients_model');
         $data['clients'] = $this->clients_model->get();
-
         $this->load->model('departments_model');
         $data['departments'] = $this->departments_model->get();
-
         $data['invoices'] = $this->purchase_model->get_invoice_for_pr();
         $data['pur_request'] = $this->purchase_model->get_pur_request_by_status(2);
         $data['projects'] = $this->projects_model->get_items();
@@ -1615,6 +1611,7 @@ class purchase extends AdminController
         $data['area_pur'] = $this->purchase_model->get_area();
 
         $data['ajaxItems'] = false;
+        
         if (total_rows(db_prefix() . 'items') <= ajax_on_total_items()) {
             $data['items'] = $this->purchase_model->pur_get_grouped('can_be_purchased');
         } else {
@@ -1630,7 +1627,10 @@ class purchase extends AdminController
                 $data['convert_po'] = true;
                 $data['selected_pr'] = $purchase_request->id;
                 $data['selected_project'] = $purchase_request->project;
-            }
+                $data['selected_head'] = $purchase_request->group_pur;
+                $data['selected_sub_head'] = $purchase_request->sub_groups_pur;
+                $data['selected_area'] = $purchase_request->area_pur;
+             }
         }
 
         $data['title'] = $title;

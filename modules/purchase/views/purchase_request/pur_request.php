@@ -122,7 +122,7 @@
                   </div>
 
 
-                  <div class="col-md-3 form-group ">
+                  <!-- <div class="col-md-3 form-group ">
                     <label for="sale_invoice"><?php echo _l('sale_invoice'); ?></label>
                     <select name="sale_invoice" onchange="coppy_sale_invoice(); return false;" id="sale_invoice" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
                       <option value=""></option>
@@ -133,7 +133,7 @@
                       <?php } ?>
                     </select>
 
-                  </div>
+                  </div> -->
 
 
                   <div class="col-md-3 form-group">

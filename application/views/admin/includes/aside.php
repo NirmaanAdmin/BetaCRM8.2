@@ -72,7 +72,7 @@
                     <?php echo _l('setting_bar_heading'); ?>
                     <?php
                 if ($modulesNeedsUpgrade = $this->app_modules->number_of_modules_that_require_database_upgrade()) {
-                    echo '<span class="badge menu-badge !tw-bg-warning-600">' . $modulesNeedsUpgrade . '</span>';
+                    // echo '<span class="badge menu-badge !tw-bg-warning-600">' . $modulesNeedsUpgrade . '</span>';
                 }
             ?>
                 </span>

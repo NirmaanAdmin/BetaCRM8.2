@@ -345,7 +345,7 @@ class PHPExcel_Shared_String
      */
     public static function ControlCharacterOOXML2PHP($value = '')
     {
-        return new_str_replace(array_keys(self::$controlCharacters), array_values(self::$controlCharacters), $value);
+        return str_replace(array_keys(self::$controlCharacters), array_values(self::$controlCharacters), $value);
     }
 
     /**
@@ -364,7 +364,7 @@ class PHPExcel_Shared_String
      */
     public static function ControlCharacterPHP2OOXML($value = '')
     {
-        return new_str_replace(array_values(self::$controlCharacters), array_keys(self::$controlCharacters), $value);
+        return str_replace(array_values(self::$controlCharacters), array_keys(self::$controlCharacters), $value);
     }
 
     /**
@@ -410,7 +410,7 @@ class PHPExcel_Shared_String
     public static function FormatNumber($value)
     {
         if (is_float($value)) {
-            return new_str_replace(',', '.', $value);
+            return str_replace(',', '.', $value);
         }
         return (string) $value;
     }
@@ -520,7 +520,7 @@ class PHPExcel_Shared_String
      */
     public static function utf16_decode($str, $bom_be = true)
     {
-        if (new_strlen($str) < 2) {
+        if (strlen($str) < 2) {
             return $str;
         }
         $c0 = ord($str[0]);
@@ -531,7 +531,7 @@ class PHPExcel_Shared_String
             $str = substr($str, 2);
             $bom_be = false;
         }
-        $len = new_strlen($str);
+        $len = strlen($str);
         $newstr = '';
         for ($i=0; $i<$len; $i+=2) {
             if ($bom_be) {
@@ -556,15 +556,15 @@ class PHPExcel_Shared_String
     public static function CountCharacters($value, $enc = 'UTF-8')
     {
         if (self::getIsMbstringEnabled()) {
-            return new_strlen($value, $enc);
+            return mb_strlen($value, $enc);
         }
 
         if (self::getIsIconvEnabled()) {
-            return iconv_new_strlen($value, $enc);
+            return iconv_strlen($value, $enc);
         }
 
         // else strlen
-        return new_strlen($value);
+        return strlen($value);
     }
 
     /**
@@ -795,7 +795,7 @@ class PHPExcel_Shared_String
         }
 
         foreach (self::$SYLKCharacters as $k => $v) {
-            $pValue = new_str_replace($k, $v, $pValue);
+            $pValue = str_replace($k, $v, $pValue);
         }
 
         return $pValue;
@@ -814,6 +814,6 @@ class PHPExcel_Shared_String
             return $value;
         }
         $v = floatval($value);
-        return (is_numeric(substr($value, 0, new_strlen($v)))) ? $v : $value;
+        return (is_numeric(substr($value, 0, strlen($v)))) ? $v : $value;
     }
 }

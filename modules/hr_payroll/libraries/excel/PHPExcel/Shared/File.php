@@ -106,7 +106,7 @@ class PHPExcel_Shared_File
 
         // Found something?
         if ($returnValue == '' || ($returnValue === null)) {
-            $pathArray = new_explode('/', $pFilename);
+            $pathArray = explode('/', $pFilename);
             while (in_array('..', $pathArray) && $pathArray[0] != '..') {
                 for ($i = 0; $i < count($pathArray); ++$i) {
                     if ($pathArray[$i] == '..' && $i > 0) {

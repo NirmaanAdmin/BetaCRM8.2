@@ -420,7 +420,7 @@ class PHPExcel_Writer_HTML extends PHPExcel_Writer_Abstract implements PHPExcel_
             $html .= $this->generateTableHeader($sheet);
 
             // Get worksheet dimension
-            $dimension = new_explode(':', $sheet->calculateWorksheetDimension());
+            $dimension = explode(':', $sheet->calculateWorksheetDimension());
             $dimension[0] = PHPExcel_Cell::coordinateFromString($dimension[0]);
             $dimension[0][0] = PHPExcel_Cell::columnIndexFromString($dimension[0][0]) - 1;
             $dimension[1] = PHPExcel_Cell::coordinateFromString($dimension[1]);
@@ -1480,8 +1480,8 @@ class PHPExcel_Writer_HTML extends PHPExcel_Writer_Abstract implements PHPExcel_
 
         $color_regex = '/^\\[[a-zA-Z]+\\]/';
         if (preg_match($color_regex, $pFormat, $matches)) {
-            $color = new_str_replace('[', '', $matches[0]);
-            $color = new_str_replace(']', '', $color);
+            $color = str_replace('[', '', $matches[0]);
+            $color = str_replace(']', '', $color);
             $color = strtolower($color);
         }
 

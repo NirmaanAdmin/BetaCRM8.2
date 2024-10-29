@@ -258,7 +258,7 @@ class PHPExcel_Shared_Font
 
         // Special case if there are one or more newline characters ("\n")
         if (strpos($cellText, "\n") !== false) {
-            $lineTexts = new_explode("\n", $cellText);
+            $lineTexts = explode("\n", $cellText);
             $lineWidths = array();
             foreach ($lineTexts as $lineText) {
                 $lineWidths[] = self::calculateColumnWidth($font, $lineText, $rotation = 0, $defaultFont);

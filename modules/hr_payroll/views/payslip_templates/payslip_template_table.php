@@ -32,7 +32,7 @@ foreach ($rResult as $aRow) {
 			if($staffids != false){
 				$check_dp=false;
 
-				foreach (new_explode(',', $staffids) as $staffid) {
+				foreach (explode(',', $staffids) as $staffid) {
 				    if(in_array($staffid, $array_staffid_by_permission)){
 				    	$check_dp = true;//jump
 				    }

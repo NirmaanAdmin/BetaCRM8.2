@@ -41,7 +41,7 @@
 											<select name="staff_timesheets[]" class="form-control selectpicker" multiple="true" id="staff_timesheets" data-actions-box="true" data-width="100%" data-none-selected-text="<?php echo _l('dropdown_non_selected_tex'); ?>" data-live-search="true"> 
 												<?php foreach ($staffs as $key => $staff) { ?>
 
-													<option value="<?php echo new_html_entity_decode($staff['staffid']); ?>" ><?php  echo new_html_entity_decode($staff['firstname'].' '.$staff['lastname']); ?></option>
+													<option value="<?php echo html_entity_decode($staff['staffid']); ?>" ><?php  echo html_entity_decode($staff['firstname'].' '.$staff['lastname']); ?></option>
 												<?php } ?>
 											</select>
 										</div>
@@ -69,7 +69,7 @@
 						<div class="col-md-12">
 							<div class="modal-footer">
 								<?php if(has_permission('hrp_bonus_kpi', '', 'create') || has_permission('hrp_bonus_kpi', '', 'edit')){ ?>
-									<button type="button" class="btn btn-info pull-right save_bonus_kpi mleft5 " onclick="save_bonus_kpi(this); return false;"><?php echo new_html_entity_decode($button_name); ?></button>
+									<button type="button" class="btn btn-info pull-right save_bonus_kpi mleft5 " onclick="save_bonus_kpi(this); return false;"><?php echo html_entity_decode($button_name); ?></button>
 								<?php } ?>
 							</div>
 						</div>

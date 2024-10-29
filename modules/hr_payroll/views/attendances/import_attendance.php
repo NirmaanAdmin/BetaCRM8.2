@@ -57,11 +57,11 @@ $file_header[] = _l('standard_working_time_of_month');
 											for($i=0;$i<count($file_header);$i++){
 												if($i == 0 || $i == 1 ||$i == 2){
 													?>
-													<th class="bold"><span class="text-danger">*</span> <?php echo new_html_entity_decode($file_header[$i]) ?> </th>
+													<th class="bold"><span class="text-danger">*</span> <?php echo html_entity_decode($file_header[$i]) ?> </th>
 													<?php 
 												} else {
 													?>
-													<th class="bold"><?php echo new_html_entity_decode($file_header[$i]) ?> </th>
+													<th class="bold"><?php echo html_entity_decode($file_header[$i]) ?> </th>
 													
 													<?php
 

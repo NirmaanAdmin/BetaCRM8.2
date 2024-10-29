@@ -10,15 +10,9 @@
 					<div class="panel-body">
 
 						<div class="row mb-5">
-							<div class="col-md-6">
+							<div class="col-md-12">
 								<h4 class="no-margin"><?php echo _l('hr_manage_attendance') ?> </h4>
 							</div>
-							<div class="col-md-6">
-								<a href="<?php echo admin_url('hr_payroll/manage_attendance_timesheet_leaves/'.date('Y-m')); ?>" class=" btn mright5 btn-info pull-right timesheet_leaves_url">
-									<?php echo _l('hrp_timesheet_leaves'); ?>
-								</a>
-							</div>
-							
 							<div class="col-md-12">
 								<hr class="hr">
 							</div>
@@ -42,7 +36,7 @@
 											<label for="role_attendance" class="control-label"><?php echo _l('role'); ?></label>
 											<select name="role_attendance[]" class="form-control selectpicker" multiple="true" id="role_attendance" data-actions-box="true" data-width="100%" data-none-selected-text="<?php echo _l('dropdown_non_selected_tex'); ?>" data-live-search="true"> 
 												<?php foreach ($roles as $key => $role) { ?>
-													<option value="<?php echo new_html_entity_decode($role['roleid']); ?>" ><?php  echo new_html_entity_decode($role['name']); ?></option>
+													<option value="<?php echo html_entity_decode($role['roleid']); ?>" ><?php  echo html_entity_decode($role['name']); ?></option>
 												<?php } ?>
 											</select>
 										</div>
@@ -55,7 +49,7 @@
 											<select name="staff_attendance[]" class="form-control selectpicker" multiple="true" id="staff_attendance" data-actions-box="true" data-width="100%" data-none-selected-text="<?php echo _l('dropdown_non_selected_tex'); ?>" data-live-search="true"> 
 												<?php foreach ($staffs as $key => $staff) { ?>
 
-													<option value="<?php echo new_html_entity_decode($staff['staffid']); ?>" ><?php  echo new_html_entity_decode($staff['firstname'].' '.$staff['lastname']); ?></option>
+													<option value="<?php echo html_entity_decode($staff['staffid']); ?>" ><?php  echo html_entity_decode($staff['firstname'].' '.$staff['lastname']); ?></option>
 												<?php } ?>
 											</select>
 										</div>
@@ -95,7 +89,7 @@
 							<div class="modal-footer">
 								<?php if(has_permission('hrp_attendance', '', 'create') || has_permission('hrp_attendance', '', 'edit')){ ?>
 
-								<button type="button" class="btn btn-info pull-right save_attendance mleft5 " onclick="save_attendance(this); return false;"><?php echo new_html_entity_decode($button_name); ?></button>
+								<button type="button" class="btn btn-info pull-right save_attendance mleft5 " onclick="save_attendance(this); return false;"><?php echo html_entity_decode($button_name); ?></button>
 
 
 								<?php if(hrp_get_timesheets_status() == 'hr_timesheets'){ ?>

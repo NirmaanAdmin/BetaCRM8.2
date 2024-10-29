@@ -661,15 +661,6 @@ class Hr_payroll_model extends App_Model {
 	 */
 	public function update_data_integration($data)
 	{
-		if(isset($data['column_name'])){
-			$column_name = $data['column_name'];
-			unset($data['column_name']);
-		}
-		if(isset($data['order_number'])){
-			$order_number = $data['order_number'];
-			unset($data['order_number']);
-		}
-		
 		$affected_rows = 0;
 		
 		$data_integration = array(
@@ -678,7 +669,6 @@ class Hr_payroll_model extends App_Model {
 		$this->db->where('option_name', 'integrated_hrprofile');
 		$this->db->or_where('option_name', 'integrated_timesheets');
 		$this->db->or_where('option_name', 'integrated_commissions');
-		$this->db->or_where('option_name', 'hrp_customize_staff_payslip_column');
 		$this->db->update(db_prefix().'hr_payroll_option', $data_integration); 
 		if($this->db->affected_rows() > 0){
 			$affected_rows++;
@@ -721,29 +711,6 @@ class Hr_payroll_model extends App_Model {
 			}
 		}
 
-		$this->db->where('id > 0');
-		$this->db->delete(db_prefix().'hrp_customize_staff_payslip_columns');
-
-		if(isset($column_name)){
-			$hrp_customize_staff_payslip_columns = [];
-
-			foreach ($column_name as $key => $value) {
-				if(strlen($value) > 0){
-					$order_number_value = isset($order_number[$key]) ? $order_number[$key] : 1;
-					$hrp_customize_staff_payslip_columns[] = [
-						'column_name' => $value,
-						'order_number' => $order_number_value,
-					];
-				}
-			}
-			if(count($hrp_customize_staff_payslip_columns) > 0){
-				$total_row =  $this->db->insert_batch(db_prefix().'hrp_customize_staff_payslip_columns', $hrp_customize_staff_payslip_columns);
-				if($total_row > 0){
-					$affected_rows++;
-				}
-			}
-		}
-
 		if ($affected_rows > 0) {
 			return true;
 		}
@@ -760,7 +727,7 @@ class Hr_payroll_model extends App_Model {
 	{
 		$str_permissions ='';
 		foreach (list_hr_payroll_permisstion() as $per_key =>  $per_value) {
-			if(new_strlen($str_permissions) > 0){
+			if(strlen($str_permissions) > 0){
 				$str_permissions .= ",'".$per_value."'";
 			}else{
 				$str_permissions .= "'".$per_value."'";
@@ -792,9 +759,9 @@ class Hr_payroll_model extends App_Model {
 	    $unpaid_leave_type=[];
 
 	    $attendance_types = hrp_attendance_type();
-	    $actual_workday   = new_explode(',', get_hr_payroll_option('integration_actual_workday'));
-	    $paid_leave       = new_explode(',', get_hr_payroll_option('integration_paid_leave'));
-	    $unpaid_leave     = new_explode(',', get_hr_payroll_option('integration_unpaid_leave'));
+	    $actual_workday   = explode(',', get_hr_payroll_option('integration_actual_workday'));
+	    $paid_leave       = explode(',', get_hr_payroll_option('integration_paid_leave'));
+	    $unpaid_leave     = explode(',', get_hr_payroll_option('integration_unpaid_leave'));
 
 	    foreach ($attendance_types as $key => $value) {
 	    	//actual_workday
@@ -916,8 +883,8 @@ class Hr_payroll_model extends App_Model {
 			$allowance_types = $this->hr_profile_model->get_allowance_type();
 
 			foreach ($salary_types as $key=>  $value) {
-				$code = new_str_replace("-", "", strtoupper($value['form_name']));
-				$code = new_str_replace(" ", "_", strtoupper($value['form_name']));
+				$code = str_replace("-", "", strtoupper($value['form_name']));
+				$code = str_replace(" ", "_", strtoupper($value['form_name']));
 
 			    $array_salary_allowance['salary_'.$value['form_id']] = [
 			    	'code' 			=> $code,
@@ -931,8 +898,8 @@ class Hr_payroll_model extends App_Model {
 			}
 
 			foreach ($allowance_types as $key=>  $value) {
-				$code = new_str_replace("-", "", strtoupper($value['type_name']));
-				$code = new_str_replace(" ", "_", strtoupper($value['type_name']));
+				$code = str_replace("-", "", strtoupper($value['type_name']));
+				$code = str_replace(" ", "_", strtoupper($value['type_name']));
 			    $array_salary_allowance['allowance_'.$value['type_id']] = [
 			    	'code' 			=> $code,
 			    	'description' 	=> $value['type_name'],
@@ -1304,8 +1271,6 @@ order by staff_id, header_oder
 		$staff_information[] = 'income_tax_rate';
 		$staff_information[] = 'bank_name';
 		$staff_information[] = 'account_number';
-		$staff_information[] = 'epf_no';
-		$staff_information[] = 'social_security_no';
 
 		//get column header name, column format
 		$column_format=[];
@@ -1543,7 +1508,7 @@ order by staff_id, header_oder
 							}elseif($contract_detail_key == 'end_valid'){
 							    $contract_detail_temp['primary_expiration'] = $contract_detail_value;
 							}else{
-							    $contract_detail_key = new_str_replace('_', '2_', $contract_detail_key);
+							    $contract_detail_key = str_replace('_', '2_', $contract_detail_key);
 							    $contract_detail_temp[$contract_detail_key] = $contract_detail_value;
 							}
 						}
@@ -1560,7 +1525,7 @@ order by staff_id, header_oder
 							}elseif($contract_detail_key == 'end_valid'){
 							    $contract_detail_temp['probationary_expiration'] = $contract_detail_value;
 							}else{
-							    $contract_detail_key = new_str_replace('_', '1_', $contract_detail_key);
+							    $contract_detail_key = str_replace('_', '1_', $contract_detail_key);
 							    $contract_detail_temp[$contract_detail_key] = $contract_detail_value;
 							}
 						}
@@ -1582,7 +1547,7 @@ order by staff_id, header_oder
 							}elseif($contract_detail_key == 'end_valid'){
 							    $contract_detail_temp['primary_expiration'] = $contract_detail_value;
 							}else{
-								$contract_detail_key = new_str_replace('_', '2_', $contract_detail_key);
+								$contract_detail_key = str_replace('_', '2_', $contract_detail_key);
 								$contract_detail_temp[$contract_detail_key] = $contract_detail_value;
 							}
 					}
@@ -1598,7 +1563,7 @@ order by staff_id, header_oder
 							}elseif($contract_detail_key == 'end_valid'){
 							    $contract_detail_temp['probationary_expiration'] = $contract_detail_value;
 							}else{
-							$contract_detail_key = new_str_replace('_', '1_', $contract_detail_key);
+							$contract_detail_key = str_replace('_', '1_', $contract_detail_key);
 							$contract_detail_temp[$contract_detail_key] = $contract_detail_value;
 						}
 					}
@@ -1669,7 +1634,7 @@ order by staff_id, header_oder
 					if($rel_type == 'hr_records'){
 						//integration Hr records module
 						if(preg_match('/^st1_/', $combine_key) || preg_match('/^al1_/', $combine_key)){
-							$combine_value = 0;
+
 							//get value from staff contract if exist
 							if(isset($staff_contract[$combine_data['staff_id']]['probationary'][$combine_key])){
 								$combine_value = $staff_contract[$combine_data['staff_id']]['probationary'][$combine_key];
@@ -1680,8 +1645,6 @@ order by staff_id, header_oder
 							]);
 						}elseif(preg_match('/^st2_/', $combine_key) || preg_match('/^al2_/', $combine_key)){
 							//get value from staff contract if exist
-							$combine_value = 0;
-							
 							if(isset($staff_contract[$combine_data['staff_id']]['formal'][$combine_key])){
 								$combine_value = $staff_contract[$combine_data['staff_id']]['formal'][$combine_key];
 							}
@@ -1690,7 +1653,6 @@ order by staff_id, header_oder
 								$combine_key => $combine_value
 							]);
 						}elseif($combine_key == 'probationary_effective' ||$combine_key == 'probationary_expiration'){
-							$combine_value = null;
 
 							if(isset($staff_contract[$combine_data['staff_id']]['probationary'][$combine_key])){
 								$combine_value = $staff_contract[$combine_data['staff_id']]['probationary'][$combine_key];
@@ -1699,7 +1661,7 @@ order by staff_id, header_oder
 							$temp[$combine_key] = $combine_value;
 
 						}elseif($combine_key == 'primary_effective' ||$combine_key == 'primary_expiration' ){
-							$combine_value = null;
+
 							if(isset($staff_contract[$combine_data['staff_id']]['formal'][$combine_key])){
 								$combine_value = $staff_contract[$combine_data['staff_id']]['formal'][$combine_key];
 							}
@@ -1962,7 +1924,7 @@ order by staff_id, header_oder
 	 * @param  [type] $month 
 	 * @return [type]        
 	 */
-	public function get_day_header_in_month($month, $rel_type='', $timesheet = true)
+	public function get_day_header_in_month($month, $rel_type='')
 	{
 		$_month = (int)date('m',strtotime($month));
 		$_year = (int)date('Y',strtotime($month));
@@ -1984,16 +1946,11 @@ order by staff_id, header_oder
 		$staff_key[] = 'staff_name';
 		$staff_key[] = 'staff_departments';
 
-		if($timesheet){			
-			$attendance_key[] = 'actual_workday_probation';
-			$attendance_key[] = 'actual_workday';
-		}
-
+		$attendance_key[] = 'actual_workday_probation';
+		$attendance_key[] = 'actual_workday';
 		$attendance_key[] = 'paid_leave';
 		$attendance_key[] = 'unpaid_leave';
-		if($timesheet){
-			$attendance_key[] = 'standard_workday';
-		}
+		$attendance_key[] = 'standard_workday';
 
 		$total_day_in_month = cal_days_in_month(CAL_GREGORIAN,$_month,$_year);
 		for ($d = 1; $d <= $total_day_in_month; $d++) {
@@ -2003,83 +1960,47 @@ order by staff_id, header_oder
             $day=jddayofweek($jd,0);
                 switch($day){
                     case 0:
-                    if($timesheet){
-                    	$days_header['day_'.$d] = 0;
-                    }else{			
-                    	$days_header['day_'.$d] = '';
-                    }
+                       	$days_header['day_'.$d] = 0;
                        	$days_header_name[] = _l('sunday').' '. $d;
                         break;
                     case 1:
-                    if($timesheet){
-                    	$days_header['day_'.$d] = 0;
-                    }else{			
-                    	$days_header['day_'.$d] = '';
-                    }
+                       	$days_header['day_'.$d] = 0;
                        	$days_header_name[] = _l('monday').' '. $d;
 
                         break;
                     case 2:
-                    if($timesheet){
-                    	$days_header['day_'.$d] = 0;
-                    }else{			
-                    	$days_header['day_'.$d] = '';
-                    }
+                       	$days_header['day_'.$d] = 0;
                        	$days_header_name[] = _l('tuesday').' '. $d;
 
                         break;
                     case 3:
-                    if($timesheet){
-                    	$days_header['day_'.$d] = 0;
-                    }else{			
-                    	$days_header['day_'.$d] = '';
-                    }
+                       	$days_header['day_'.$d] = 0;
                        	$days_header_name[] = _l('wednesday').' '. $d;
 
                         break;
                     case 4:
-                    if($timesheet){
-                    	$days_header['day_'.$d] = 0;
-                    }else{			
-                    	$days_header['day_'.$d] = '';
-                    }
+                       	$days_header['day_'.$d] = 0;
                        	$days_header_name[] = _l('thursday').' '. $d;
 
                         break;
                     case 5:
-                    if($timesheet){
-                    	$days_header['day_'.$d] = 0;
-                    }else{			
-                    	$days_header['day_'.$d] = '';
-                    }
+                       	$days_header['day_'.$d] = 0;
                        	$days_header_name[] = _l('friday').' '. $d;
 
                         break;
                     case 6:
-                    if($timesheet){
-                    	$days_header['day_'.$d] = 0;
-                    }else{			
-                    	$days_header['day_'.$d] = '';
-                    }
+                       	$days_header['day_'.$d] = 0;
                        	$days_header_name[] = _l('saturday').' '. $d;
                         break;
                         
                 }
-
-                if($timesheet){			
-                	array_push($days_header_type, [
-                		'data' => 'day_'.$d,
-                		'type'=> 'numeric',
-                		'numericFormat'=> [
-                			'pattern' => '0,00',
-                		]
-                	]);
-                }else{
-                	array_push($days_header_type, [
-                		'data' => 'day_'.$d,
-                		'type'=> 'text',
-                	]);
-                }
+                array_push($days_header_type, [
+                	'data' => 'day_'.$d,
+                	'type'=> 'numeric',
+                	'numericFormat'=> [
+                		'pattern' => '0,00',
+                	]
+                ]);
 		}
 
 		$headers=[];
@@ -2231,7 +2152,6 @@ order by staff_id, header_oder
 
 		$attendance_month = date('Y-m-d',strtotime($data['attendance_fill_month'].'-01'));
 		$timesheets_data = $this->hrp_get_timesheets_data($attendance_month, $rel_type);
-
 		//get day header in month
 		$days_header_in_month = $this->get_day_header_in_month($attendance_month, $rel_type);
 		$header_key = array_merge($days_header_in_month['staff_key'], $days_header_in_month['days_key'], $days_header_in_month['attendance_key']);
@@ -2323,39 +2243,6 @@ order by staff_id, header_oder
 			}
 		}
 
-		//add or update data to staff_timesheet_leave_data
-		$staff_timesheet_leave_data = $timesheets_data['staff_timesheet_leave_data'];
-		$insert_batch_employees_timesheet = [];
-		$update_batch_employees_timesheet = [];
-		$str_select_day = '*, ';
-		$this->db->select($str_select_day);
-		$this->db->where('rel_type', $rel_type);
-		$this->db->where("date_format(month, '%Y-%m-%d') = '".$attendance_month."'");
-		$this->db->order_by('staff_id', 'asc');
-		$employees_timesheet_leaves = $this->db->get(db_prefix() . 'hrp_employees_timeshee_leaves')->result_array();
-		if(count($employees_timesheet_leaves) > 0){
-
-			foreach ($employees_timesheet_leaves as $key => $value) {
-				if(isset($staff_timesheet_leave_data[$value['staff_id']])){
-					$insert_batch_employees_timesheet[$key]['id'] = $value['id'] ;
-					$insert_batch_employees_timesheet[$key] = array_merge($insert_batch_employees_timesheet[$key], $staff_timesheet_leave_data[$value['staff_id']]);
-				}
-			}
-			if(count($insert_batch_employees_timesheet) > 0){
-				$this->db->update_batch(db_prefix().'hrp_employees_timeshee_leaves', $insert_batch_employees_timesheet, 'id');
-			}
-		}else{
-			foreach ($staff_timesheet_leave_data as $key => $batch_employees_timesheet) {
-				$staff_timesheet_leave_data[$key]['staff_id'] = $key;
-				$staff_timesheet_leave_data[$key]['month'] = $attendance_month;
-				$staff_timesheet_leave_data[$key]['rel_type'] = $rel_type;
-			}
-
-			if(count($staff_timesheet_leave_data) > 0){
-				$this->db->insert_batch(db_prefix().'hrp_employees_timeshee_leaves', $staff_timesheet_leave_data);
-			}
-		}
-
 		if ($affectedRows > 0) {
 			return true;
 		}
@@ -2379,9 +2266,9 @@ order by staff_id, header_oder
 
 		$y_month = date('Y-m',strtotime($month));
 		//get option for timesheets type
-		$actual_workday   = new_explode(',', get_hr_payroll_option('integration_actual_workday'));
-		$paid_leave       = new_explode(',', get_hr_payroll_option('integration_paid_leave'));
-		$unpaid_leave     = new_explode(',', get_hr_payroll_option('integration_unpaid_leave'));
+		$actual_workday   = explode(',', get_hr_payroll_option('integration_actual_workday'));
+		$paid_leave       = explode(',', get_hr_payroll_option('integration_paid_leave'));
+		$unpaid_leave     = explode(',', get_hr_payroll_option('integration_unpaid_leave'));
 
 		$date_to_column_name = date_to_column_name();
 
@@ -2396,17 +2283,17 @@ order by staff_id, header_oder
 		;";
 		
 
-		$staff_timesheet_leave_data=[];
 		$staff_timesheets=[];
 		$staff_timesheet_details=[];
 		$timesheets = $this->db->query($sql_where)->result_array();
+
 		foreach ($timesheets as $timesheet) {
 
 			$timesheet_rel_type ='';
 
 			if(in_array($timesheet['type'], $actual_workday)){
 
-				if(isset($employees_data[$timesheet['staff_id']]) && !is_null($employees_data[$timesheet['staff_id']]['probationary_expiration'])){
+				if(isset($employees_data[$timesheet['staff_id']])){
 
 					//check timesheet in formal contract or probationary contract.
 					$payslip_month = date("m", strtotime($month));
@@ -2432,38 +2319,9 @@ order by staff_id, header_oder
 
 			}elseif(in_array($timesheet['type'], $paid_leave)){
 				$timesheet_rel_type .= 'paid_leave';
-				$column_name = $date_to_column_name[$timesheet['date_work']];
-
-				if(isset($staff_timesheet_leave_data[$timesheet['staff_id']][$column_name])){
-					$temp = $staff_timesheet_leave_data[$timesheet['staff_id']][$column_name];
-					$staff_timesheet_leave_data[$timesheet['staff_id']][$column_name] = $temp.';PL:'.(float)$timesheet['value'];
-				}else{
-					$staff_timesheet_leave_data[$timesheet['staff_id']][$column_name] =  'PL:'.(float)$timesheet['value'];
-				}
-
-				if(isset($staff_timesheet_leave_data[$timesheet['staff_id']]['paid_leave'])){
-					$staff_timesheet_leave_data[$timesheet['staff_id']]['paid_leave'] += (float)$timesheet['value'];
-				}else{
-					$staff_timesheet_leave_data[$timesheet['staff_id']]['paid_leave'] = (float)$timesheet['value'];
-				}
 
 			}elseif(in_array($timesheet['type'], $unpaid_leave)){
 				$timesheet_rel_type .= 'unpaid_leave';
-				$column_name = $date_to_column_name[$timesheet['date_work']];
-
-				if(isset($staff_timesheet_leave_data[$timesheet['staff_id']][$column_name])){
-					$temp = $staff_timesheet_leave_data[$timesheet['staff_id']][$column_name];
-					$staff_timesheet_leave_data[$timesheet['staff_id']][$column_name] = $temp.';UPL:'.(float)$timesheet['value'];
-
-				}else{
-					$staff_timesheet_leave_data[$timesheet['staff_id']][$column_name] =  'UPL:'.(float)$timesheet['value'];
-				}
-
-				if(isset($staff_timesheet_leave_data[$timesheet['staff_id']]['unpaid_leave'])){
-					$staff_timesheet_leave_data[$timesheet['staff_id']]['unpaid_leave'] += (float)$timesheet['value'];
-				}else{
-					$staff_timesheet_leave_data[$timesheet['staff_id']]['unpaid_leave'] = (float)$timesheet['value'];
-				}
 			}
 
 			if($timesheet_rel_type != ''){
@@ -2499,11 +2357,10 @@ order by staff_id, header_oder
 			}
 
 		}
-		
+			
 		$results = [];
 		$results['staff_timesheets'] = $staff_timesheets;
 		$results['staff_timesheet_details'] = $staff_timesheet_details;
-		$results['staff_timesheet_leave_data'] = $staff_timesheet_leave_data;
 
 		return $results;
 
@@ -2551,7 +2408,7 @@ order by staff_id, header_oder
 					$arr_staff_ids = $this->payslip_template_get_staffid($value['department'], $value['position'], '');
 
 					if($arr_staff_ids != false){
-						$arr_staff_ids = new_explode(',', $arr_staff_ids );
+						$arr_staff_ids = explode(',', $arr_staff_ids );
 						foreach ($arr_staff_ids as $staff_id) {
 							foreach ($shift_details as $shift_detail) {
 							// if assigned 1 shift twice in the same day, only 1 time
@@ -2612,7 +2469,7 @@ order by staff_id, header_oder
 					foreach ($shift_details as $shift_detail) {
 
 						for ($day = $from_day; $day <= $to_day; $day++) { 
-							if(new_strlen($day) == 1){
+							if(strlen($day) == 1){
 								$day = '0'.$day;
 							}
 
@@ -2634,12 +2491,12 @@ order by staff_id, header_oder
 					$arr_staff_ids = $this->payslip_template_get_staffid($value['department'], $value['position'], '');
 
 					if($arr_staff_ids != false){
-						$arr_staff_ids = new_explode(',', $arr_staff_ids );
+						$arr_staff_ids = explode(',', $arr_staff_ids );
 						foreach ($arr_staff_ids as $staff_id) {
 
 							for ($day = $from_day; $day <= $to_day; $day++) { 
 
-								if(new_strlen($day) == 1){
+								if(strlen($day) == 1){
 									$day = '0'.$day;
 								}
 
@@ -2673,7 +2530,7 @@ order by staff_id, header_oder
 		$shift_by_staff=[];
 		foreach ($staff_shift as $key => $staff_shift) {
 
-			$staff_id = new_explode('_', $key)[0];
+			$staff_id = explode('_', $key)[0];
 
 			if(isset($shift_by_staff[$staff_id])){
 				$shift_by_staff[$staff_id] += (float)$staff_shift;
@@ -2772,8 +2629,8 @@ order by staff_id, header_oder
 
 					//check timesheet in formal contract or probationary contract.
 				$payslip_month = date("m", strtotime($month));
-				$probationary_expiration_month = date("m", strtotime($employees_data[$timesheet['staff_id']]['probationary_expiration'] ?? ''));
-				$probationary_expiration_day = date("d", strtotime($employees_data[$timesheet['staff_id']]['probationary_expiration'] ?? ''));
+				$probationary_expiration_month = date("m", strtotime($employees_data[$timesheet['staff_id']]['probationary_expiration']));
+				$probationary_expiration_day = date("d", strtotime($employees_data[$timesheet['staff_id']]['probationary_expiration']));
 
 					//if probationary_expiration month == payslip month
 				foreach ($timesheet as $timesheet_key => $timesheet_value) {
@@ -2781,7 +2638,7 @@ order by staff_id, header_oder
 
 						if(preg_match('/^day_/', $timesheet_key)){
 
-							$day = new_str_replace('day_', '', $timesheet_key);
+							$day = str_replace('day_', '', $timesheet_key);
 								//if probationary_expiration day <= timesheet day
 							if( (float)$day <= (float)$probationary_expiration_day){
 					
@@ -3254,16 +3111,15 @@ order by staff_id, header_oder
 		$total['total_amount'] = 0;
 		foreach ($es_detail as $key => $value) {
 
-			if(isset($value['employee_number']) || array_key_exists('employee_number', $value)){
+			if(isset($value['employee_number'])){
 				unset($value['employee_number']);
 			}
-			if(isset($value['employee_name']) || array_key_exists('employee_name', $value)){
+			if(isset($value['employee_name'])){
 				unset($value['employee_name']);
 			}
-			if(isset($value['department_name']) || array_key_exists('department_name', $value)){
+			if(isset($value['department_name'])){
 				unset($value['department_name']);
 			}
-
 			
 			if($value['id'] != 0){
 				$row['delete'][] = $value['id'];
@@ -3407,13 +3263,13 @@ order by staff_id, header_oder
 				$value['commission_amount'] = $staff_commissions[$value['staff_id']]['commission_amount'];
 			}
 
-			if(isset($value['employee_number']) || array_key_exists('employee_number', $value)){
+			if(isset($value['employee_number'])){
 				unset($value['employee_number']);
 			}
-			if(isset($value['employee_name']) || array_key_exists('employee_name', $value)){
+			if(isset($value['employee_name'])){
 				unset($value['employee_name']);
 			}
-			if(isset($value['department_name']) || array_key_exists('department_name', $value)){
+			if(isset($value['department_name'])){
 				unset($value['department_name']);
 			}
 			
@@ -3432,7 +3288,7 @@ order by staff_id, header_oder
 		}
 		if($data['department_commissions_filter'] == '' && $data['staff_commissions_filter'] == '' && $data['role_commissions_filter'] == ''){
 			$row['delete'] = implode(",",$row['delete']);
-			$this->db->where('id NOT IN ('.$row['delete'] .')  AND date_format(month,"%Y-%m-%d") = "'.$commissions_month.'" AND rel_type = "'.$rel_type.'"');
+			$this->db->where('id NOT IN ('.$row['delete'] .')  AND date_format(month,"%Y-%m-%d") = "'.$deductions_month.'" AND rel_type = "'.$rel_type.'"');
 			$this->db->delete(db_prefix().'hrp_commissions');
 			if($this->db->affected_rows() > 0){
 				$affectedRows++;
@@ -4201,7 +4057,7 @@ order by staff_id, header_oder
 		$payroll_column_options = '';
 
 		if(isset($payslip_columns) && $payslip_columns != ''){
-			$array_payslip_column = new_explode(",", $payslip_columns);
+			$array_payslip_column = explode(",", $payslip_columns);
 
 			foreach ($payroll_columns as $column_id) {
 					$select='';
@@ -4383,9 +4239,9 @@ order by staff_id, header_oder
 	public function update_payslip_templates_detail($data, $id){  
 		if(isset($data['image_flag'])){
 			if($data['image_flag'] == "true"){
-				$data['payslip_template_data'] = new_str_replace('[removed]', 'data:image/png;base64,', $data['payslip_template_data']); 
-				$data['payslip_template_data'] = new_str_replace('imga$imga', '"', $data['payslip_template_data']); 
-				$data['payslip_template_data'] = new_str_replace('""', '"', $data['payslip_template_data']); 
+				$data['payslip_template_data'] = str_replace('[removed]', 'data:image/png;base64,', $data['payslip_template_data']); 
+				$data['payslip_template_data'] = str_replace('imga$imga', '"', $data['payslip_template_data']); 
+				$data['payslip_template_data'] = str_replace('""', '"', $data['payslip_template_data']); 
 			}
 		}
 
@@ -4423,7 +4279,7 @@ order by staff_id, header_oder
 
 		if($payslip_templates){
 
-			$payslip_columns = new_explode(",", $payslip_templates->payslip_columns);
+			$payslip_columns = explode(",", $payslip_templates->payslip_columns);
 
 			$sql_where = "SELECT id, column_key, function_name, taking_method FROM ".db_prefix()."hrp_payroll_columns where find_in_set(id, '".$payslip_templates->payslip_columns."') order by order_display";
 			$payroll_columns = $this->db->query($sql_where)->result_array();
@@ -4485,9 +4341,6 @@ order by staff_id, header_oder
 								$f = $old_column_formular[$object_value['function_name']];
 							}
 
-							if($f == 0){
-								$f = '';
-							}
 
 			    			//calcChain: Formula chain, used when the cell linked by the formula is changed, all formulas referencing this cell will be refreshed.
 							array_push($calcChain, [
@@ -4806,7 +4659,7 @@ order by staff_id, header_oder
 		$old_column_formular = array_combine($array_cell_data['payroll_column_key'], $array_cell_data['payroll_formular']);
 
 		if($payslip_template){
-			$old_payslip_columns = new_explode(",", $payslip_template->payslip_columns);
+			$old_payslip_columns = explode(",", $payslip_template->payslip_columns);
 
 			$diff = array_diff($old_payslip_columns, $data['payslip_columns']);
 			$diff1 = array_diff($data['payslip_columns'], $old_payslip_columns);
@@ -4957,14 +4810,14 @@ order by staff_id, header_oder
 	public function add_bonus_kpi($data)
 	{
 
-		$data_bonus_kpi = new_str_replace(', ','|/\|',$data['bonus_kpi_value']);
+		$data_bonus_kpi = str_replace(', ','|/\|',$data['bonus_kpi_value']);
 
-		$data_data_bonus_kpi = new_explode( ',', $data_bonus_kpi);
+		$data_data_bonus_kpi = explode( ',', $data_bonus_kpi);
 		$results = 0;
 		$results_update = '';
 		$flag_empty = 0;
 
-		$month_add_update = new_str_replace('/', '-', $data['allowance_commodity_fill_month']);
+		$month_add_update = str_replace('/', '-', $data['allowance_commodity_fill_month']);
 		
 		foreach ($data_data_bonus_kpi as  $data_bonus_key => $data_bonus_value) {
 			if($data_bonus_value == ''){
@@ -5004,7 +4857,7 @@ order by staff_id, header_oder
 
 				switch (($data_bonus_key+1)%6) {
 					case 1:
-					 $arr_temp['staffid'] = new_str_replace('|/\|',', ',$data_bonus_value);
+					 $arr_temp['staffid'] = str_replace('|/\|',', ',$data_bonus_value);
 						break;
 										 
 				}
@@ -5070,10 +4923,10 @@ order by staff_id, header_oder
 	 */
 	public function payslip_template_get_staffid($department_ids, $role_ids, $staff_ids, $except_staff='')
 	{
-		if(new_strlen($staff_ids) > 0){
-			if( new_strlen($except_staff) > 0){
-				$array_except_staff = new_explode(",", $except_staff);
-				$array_staff_ids = new_explode(",", $staff_ids);
+		if(strlen($staff_ids) > 0){
+			if( strlen($except_staff) > 0){
+				$array_except_staff = explode(",", $except_staff);
+				$array_staff_ids = explode(",", $except_staff);
 
 				$new_staff_ids=[];
 				foreach ($array_staff_ids as $value) {
@@ -5095,7 +4948,7 @@ order by staff_id, header_oder
 		$role_querystring='';
 		$except_staff_querystring='';
 
-		if(new_strlen($department_ids) > 0){
+		if(strlen($department_ids) > 0){
 			$arrdepartment = $this->staff_model->get('', 'staffid in (select '.db_prefix().'staff_departments.staffid from '.db_prefix().'staff_departments where departmentid IN( '.$department_ids.'))');
 			$temp = '';
 			foreach ($arrdepartment as $value) {
@@ -5105,11 +4958,11 @@ order by staff_id, header_oder
 			$department_querystring = 'FIND_IN_SET(staffid, "'.$temp.'")';
 		}
 
-		if( new_strlen($role_ids) > 0){
+		if( strlen($role_ids) > 0){
 			$role_querystring = 'FIND_IN_SET(role, "'.$role_ids.'")';
 		}
 
-		if( new_strlen($except_staff) > 0){
+		if( strlen($except_staff) > 0){
 			$except_staff_querystring = 'staffid NOT IN ('.$except_staff .')' ;
 		}
 
@@ -5145,10 +4998,6 @@ order by staff_id, header_oder
 	 */
 	public function add_payslip($data)
 	{   	
-		$payslip_range = $data['payslip_range'];
-		$arr_payslip_range =explode(' to ', $data['payslip_range']);
-		// var_dump($arr_payslip_range);die;
-
 		$staff_departments = $this->get_all_staff_departments();
 		$render_income_tax_formular = $this->render_income_tax_formular('AX');
 		$number_to_anphabe = hrp_payslip_number_to_anphabe();
@@ -5200,42 +5049,15 @@ order by staff_id, header_oder
 				$staff_value['employee_number'] = $this->hrp_format_code('EXS', $staff_value['staffid'], 5);
 			}
 
-			$staff_value['pay_slip_number'] = $this->hrp_format_code('PS_'.date('Y-m', strtotime($data['payslip_month'])).'_', $staff_value['staffid'].rand(10,99), 5);
+			$staff_value['pay_slip_number'] = $this->hrp_format_code('PS_'.date('Y-m', strtotime($data['payslip_month'])).'_', $staff_value['staffid'], 3);
 
 			$staff_value['staff_id'] = $staff_value['staffid'];
 		    $staffs_id[$staff_value['staffid']] = $staff_value;
 
 		}
 
-		$payslip_range = '';
-
-		if($arr_payslip_range[0] != $arr_payslip_range[1] && ((int)date('m', strtotime($arr_payslip_range[0])) == (int)date('m', strtotime($arr_payslip_range[1])))){
-			$attendance_calculation_v2 = $this->attendance_calculation_v2($data['payslip_month'], $arr_payslip_range, $str_sql);
-
-			$salary_by_tasks_v2 = $this->get_tasks_timer_by_month($payslip_month, $str_sql, $str_sql1, $hr_profile_status, $arr_payslip_range);
-
-			$payslip_range = $data['payslip_range'];
-		}elseif($arr_payslip_range[0] != $arr_payslip_range[1] && ((int)date('m', strtotime($arr_payslip_range[0])) != (int)date('m', strtotime($arr_payslip_range[1])))){
-
-			$_month = (int)date('m',strtotime($arr_payslip_range[0]));
-			$_year = (int)date('y',strtotime($arr_payslip_range[0]));
-
-			$total_day_in_month = cal_days_in_month(CAL_GREGORIAN,$_month,$_year);
-			$last_day_of_month = date('Y-m-d', strtotime(date('Y',strtotime($arr_payslip_range[0])).'-'.date('m',strtotime($arr_payslip_range[0])).'-'.$total_day_in_month));
-			$arr_payslip_range[1] = $last_day_of_month;
-			$attendance_calculation_v2 = $this->attendance_calculation_v2($data['payslip_month'], $arr_payslip_range, $str_sql);
-			$salary_by_tasks_v2 = $this->get_tasks_timer_by_month($payslip_month, $str_sql, $str_sql1, $hr_profile_status, $arr_payslip_range);
-
-			$payslip_range = $arr_payslip_range[0].' to '.$arr_payslip_range[1];
-
-		}
-
 		//get attendance by month
 		$hrp_attendance = $this->get_hrp_attendance($payslip_month, $str_sql);
-		if(isset($attendance_calculation_v2)){
-			$hrp_attendance = $attendance_calculation_v2;
-		}
-
 		foreach ($hrp_attendance as $attendance_key => $attendance_value) {
 
 		    $attendances[$attendance_value['staff_id']] = $attendance_value;
@@ -5263,9 +5085,6 @@ order by staff_id, header_oder
 			$employee_value['income_tax_code'] = $employee_value['income_tax_rate'];
 			$employee_value['bank_name'] = $employee_value['bank_name'];
 			$employee_value['account_number'] = $employee_value['account_number'];
-			$employee_value['epf_no'] = $employee_value['epf_no'];
-			$employee_value['social_security_no'] = $employee_value['social_security_no'];
-
 
 			if(isset($ic_rebates[$employee_value['income_rebate_code']])){
 				$employee_value['it_rebate_value'] = $ic_rebates[$employee_value['income_rebate_code']];
@@ -5350,9 +5169,6 @@ order by staff_id, header_oder
 
     	//get salary by task
     	$salary_by_tasks = $this->get_tasks_timer_by_month($payslip_month, $str_sql, $str_sql1, $hr_profile_status);
-    	if(isset($salary_by_tasks_v2)){
-    		$salary_by_tasks = $salary_by_tasks_v2;
-    	}
     	foreach ($salary_by_tasks as $staff_id_key => $task_value) {
 
     		if(isset($staffs_id[$staff_id_key])){
@@ -5444,65 +5260,61 @@ order by staff_id, header_oder
 
 							$value= isset($staff_value[$payroll_key]) ? $staff_value[$payroll_key] : 0 ;
 
-							if(isset($salary_deductions_list_setting[$payroll_key])){
-								if($salary_deductions_list_setting[$payroll_key] == "gross"){
-									if(isset($gross_pay_index)){
+							if($salary_deductions_list_setting[$payroll_key] == "gross"){
+								if(isset($gross_pay_index)){
 			    				//6 is formular is row 6
-										$payroll_formular = "=".$number_to_anphabe[$gross_pay_index]."6*".$value."/100";
+									$payroll_formular = "=".$number_to_anphabe[$gross_pay_index]."6*".$value."/100";
+								}
+							}elseif(preg_match('/^st_/', $salary_deductions_list_setting[$payroll_key]) || preg_match('/^al_/', $salary_deductions_list_setting[$payroll_key]) || preg_match('/^earning_/', $salary_deductions_list_setting[$payroll_key])){
+
+								$salary_deductions_list_setting[$payroll_key];
+								$deduction_explode = explode("_", $salary_deductions_list_setting[$payroll_key]);
+								$deduction_prefix = $deduction_explode[0];
+								$deduction_salary_id = $deduction_explode[1];
+
+								$probationary_value = 0; 
+								$formal_value = 0;
+								$average_number = 0;
+
+								if(isset($staff_value[$deduction_prefix.'1_'.$deduction_salary_id])){
+									$probationary_value = $staff_value[$deduction_prefix.'1_'.$deduction_salary_id]; 
+
+									if((float)$staff_value[$deduction_prefix.'1_'.$deduction_salary_id] > 0){
+
+										$average_number ++;
 									}
-								}elseif(preg_match('/^st_/', $salary_deductions_list_setting[$payroll_key]) || preg_match('/^al_/', $salary_deductions_list_setting[$payroll_key]) || preg_match('/^earning_/', $salary_deductions_list_setting[$payroll_key])){
-
-									$salary_deductions_list_setting[$payroll_key];
-									$deduction_explode = new_explode("_", $salary_deductions_list_setting[$payroll_key]);
-									$deduction_prefix = $deduction_explode[0];
-									$deduction_salary_id = $deduction_explode[1];
-
-									$probationary_value = 0; 
-									$formal_value = 0;
-									$average_number = 0;
-
-									if(isset($staff_value[$deduction_prefix.'1_'.$deduction_salary_id])){
-										$probationary_value = $staff_value[$deduction_prefix.'1_'.$deduction_salary_id]; 
-
-										if((float)$staff_value[$deduction_prefix.'1_'.$deduction_salary_id] > 0){
-
-											$average_number ++;
-										}
-
-									}
-
-									if(isset($staff_value[$deduction_prefix.'2_'.$deduction_salary_id])){
-										$formal_value = $staff_value[$deduction_prefix.'2_'.$deduction_salary_id]; 
-
-										if((float)$staff_value[$deduction_prefix.'2_'.$deduction_salary_id] > 0){
-											$average_number ++;
-
-										}
-
-									}
-
-									if($average_number > 0){
-
-										$payroll_formular = "=".((float)$probationary_value + (float)$formal_value)/$average_number*($value/100);
-									}else{
-
-										$payroll_formular = "=0";
-
-									}
-
 
 								}
+
+								if(isset($staff_value[$deduction_prefix.'2_'.$deduction_salary_id])){
+									$formal_value = $staff_value[$deduction_prefix.'2_'.$deduction_salary_id]; 
+
+									if((float)$staff_value[$deduction_prefix.'2_'.$deduction_salary_id] > 0){
+										$average_number ++;
+
+									}
+
+								}
+
+								if($average_number > 0){
+
+									$payroll_formular = "=".((float)$probationary_value + (float)$formal_value)/$average_number*($value/100);
+								}else{
+
+									$payroll_formular = "=0";
+
+								}
+
+
 							}
 
 						}elseif(preg_match('/^st_insurance_/', $payroll_key)){
 							$value= isset($staff_value[$payroll_key]) ? $staff_value[$payroll_key] : 0 ;
 
-							if(isset($insurance_list_setting[$payroll_key])){
-								if($insurance_list_setting[$payroll_key] == "gross"){
-									if(isset($gross_pay_index)){
+							if($insurance_list_setting[$payroll_key] == "gross"){
+								if(isset($gross_pay_index)){
 			    				//6 is formular is row 6
-										$payroll_formular = "=".$number_to_anphabe[$gross_pay_index]."6*".$value."/100";
-									}
+									$payroll_formular = "=".$number_to_anphabe[$gross_pay_index]."6*".$value."/100";
 								}
 							}
 
@@ -5510,7 +5322,7 @@ order by staff_id, header_oder
 
 							if(isset($taxable_salary_index)){
 								if(isset($staff_value['income_tax_code']) && $staff_value['income_tax_code'] == 'A'){
-									$taxable_salary_formular = new_str_replace('AX', $number_to_anphabe[$taxable_salary_index]."6", $render_income_tax_formular);
+									$taxable_salary_formular = str_replace('AX', $number_to_anphabe[$taxable_salary_index]."6", $render_income_tax_formular);
 		    				//6 is formular is row 6
 		    						if($taxable_salary_formular != ''){
 		    							$payroll_formular = "=".$taxable_salary_formular;
@@ -5536,11 +5348,7 @@ order by staff_id, header_oder
 					}
 
 					if($payroll_formular != '0'){
-						if(isset($taxable_salary_index) &&  $payroll_key == 'income_tax_paye'){
-							$f = new_str_replace($number_to_anphabe[$taxable_salary_index].'6', $number_to_anphabe[$taxable_salary_index].$staff_row+1, $payroll_formular);
-						}else{
-							$f = new_str_replace('6', $staff_row+1, $payroll_formular);
-						}
+						$f = str_replace('6', $staff_row+1, $payroll_formular);
 
 
 			    	//calcChain: Formula chain, used when the cell linked by the formula is changed, all formulas referencing this cell will be refreshed.
@@ -5599,24 +5407,12 @@ order by staff_id, header_oder
 
 		$payslip_data[] = $payslip_template_data;
 
-        $get_currency_rate = $this->get_currency_rate_infor($data['to_currency_id']);
-        $from_currency_name = $get_currency_rate['base_currency_name'];
-        $from_currency_rate = $get_currency_rate['base_currency_rate'];
-        $to_currency_name = $get_currency_rate['to_currency_name'];
-        $to_currency_rate = $get_currency_rate['currency_rate'];
-
 		$this->db->insert(db_prefix().'hrp_payslips', [
 			'payslip_name' => $data['payslip_name'],
 			'payslip_month' => $payslip_month,
 			'payslip_template_id' => $data['payslip_template_id'],
 			'staff_id_created' => get_staff_user_id(),
 			'date_created' => date('Y-m-d H:i:s'),
-			'payslip_range' => $payslip_range,
-			'pdf_template_id' => $data['pdf_template_id'],
-			'from_currency_name' => $from_currency_name,
-			'from_currency_rate' => $from_currency_rate,
-			'to_currency_name' => $to_currency_name,
-			'to_currency_rate' => $to_currency_rate,
 			
 		]);
 
@@ -5664,11 +5460,12 @@ order by staff_id, header_oder
 		$affected_rows = 0;
 		$payslip = $this->hr_payroll_model->get_hrp_payslip($id);
 		unlink(HR_PAYROLL_PAYSLIP_FILE.$payslip->file_name);
+		
 		if(isset($data['image_flag'])){
 			if($data['image_flag'] == "true"){
-				$data['payslip_data'] = new_str_replace('[removed]', 'data:image/png;base64,', $data['payslip_data']); 
-				$data['payslip_data'] = new_str_replace('imga$imga', '"', $data['payslip_data']); 
-				$data['payslip_data'] = new_str_replace('""', '"', $data['payslip_data']); 
+				$data['payslip_data'] = str_replace('[removed]', 'data:image/png;base64,', $data['payslip_data']); 
+				$data['payslip_data'] = str_replace('imga$imga', '"', $data['payslip_data']); 
+				$data['payslip_data'] = str_replace('""', '"', $data['payslip_data']); 
 			}
 		}
 
@@ -5758,7 +5555,7 @@ order by staff_id, header_oder
 					$payslip_detail[$key][$payroll_key] = to_sql_date($payroll_value);
 				}
 
-			    if(!in_array($payroll_key, $payroll_system_columns) && $payroll_key != 'payslip_id' && $payroll_key != 'month' ||( $payroll_key == 'bank_name' || $payroll_key == 'account_number' || $payroll_key == 'epf_no' || $payroll_key == 'social_security_no') ){
+			    if(!in_array($payroll_key, $payroll_system_columns) && $payroll_key != 'payslip_id' && $payroll_key != 'month'){
 			    	$payslip_json_data[$payroll_key] = $payroll_value;
 			    	unset($payslip_detail[$key][$payroll_key]);
 			    }
@@ -5768,12 +5565,6 @@ order by staff_id, header_oder
 			}
 			if(isset($payslip_detail[$key]['account_number'])){
 				unset($payslip_detail[$key]['account_number']);
-			}
-			if(isset($payslip_detail[$key]['epf_no'])){
-				unset($payslip_detail[$key]['epf_no']);
-			}
-			if(isset($payslip_detail[$key]['social_security_no'])){
-				unset($payslip_detail[$key]['social_security_no']);
 			}
 			
 			$payslip_detail[$key]['json_data'] =  json_encode($payslip_json_data);
@@ -5888,13 +5679,7 @@ order by staff_id, header_oder
 
 			$staff_income[$value['staff_id']]['pay_slip_number'] = $value['pay_slip_number'];
 			$staff_income[$value['staff_id']]['employee_name'] = $value['employee_name'];
-
-			if(isset($staff_income[$value['staff_id']][$get_month])){
-				$staff_income[$value['staff_id']][$get_month] += $value['net_pay'];
-			}else{
-				$staff_income[$value['staff_id']][$get_month] = $value['net_pay'];
-			}
-
+			$staff_income[$value['staff_id']][$get_month] = $value['net_pay'];
 			if(isset($staff_income[$value['staff_id']]['average_income'])){
 				$staff_income[$value['staff_id']]['average_income'] += (float)$value['net_pay'];
 			}else{
@@ -6005,25 +5790,25 @@ order by staff_id, header_oder
 			$staff_income[$value['staff_id']]['employee_name'] = $value['employee_name'];
 			
 
-			if(isset($staff_income[$value['staff_id']][$get_month]['total_insurance'])){
+			if(isset($staff_income[$value['staff_id']]['total_insurance'])){
 				$staff_income[$value['staff_id']][$get_month]['total_insurance'] += (float)$value['total_insurance'];
 			}else{
 				$staff_income[$value['staff_id']][$get_month]['total_insurance'] = (float)$value['total_insurance'];
 			}
 
-			if(isset($staff_income[$value['staff_id']][$get_month]['income_tax_paye'])){
+			if(isset($staff_income[$value['staff_id']]['income_tax_paye'])){
 				$staff_income[$value['staff_id']][$get_month]['income_tax_paye'] += (float)$value['income_tax_paye'];
 			}else{
 				$staff_income[$value['staff_id']][$get_month]['income_tax_paye'] = (float)$value['income_tax_paye'];
 			}
 
-			if(isset($staff_income[$value['staff_id']][$get_month]['total_deductions'])){
+			if(isset($staff_income[$value['staff_id']]['total_deductions'])){
 				$staff_income[$value['staff_id']][$get_month]['total_deductions'] += (float)$value['total_deductions'];
 			}else{
 				$staff_income[$value['staff_id']][$get_month]['total_deductions'] = (float)$value['total_deductions'];
 			}
 
-			if(isset($staff_income[$value['staff_id']][$get_month]['net_pay'])){
+			if(isset($staff_income[$value['staff_id']]['net_pay'])){
 				$staff_income[$value['staff_id']][$get_month]['net_pay'] += (float)$value['net_pay'];
 			}else{
 				$staff_income[$value['staff_id']][$get_month]['net_pay'] = (float)$value['net_pay'];
@@ -6074,10 +5859,10 @@ order by staff_id, header_oder
 		foreach ($income_tax_rate as $key => $value) {
 			$formular_close .=')';
 
-			if(new_strlen($income_tax_formular) == 0){
+			if(strlen($income_tax_formular) == 0){
 				$income_tax_formular .='IF('.$taxable_salary.'<='.$value['tax_bracket_value_to'].',(('.$taxable_salary.'-'.$value['tax_bracket_value_from'].')*'.$value['tax_rate'].'/100)';
 			}elseif($key+1 != count($income_tax_rate)){
-				$income_tax_formular .=',IF('.$taxable_salary.'<='.$value['tax_bracket_value_to'].',(('.$taxable_salary.'-'.$value['tax_bracket_value_from'].')*'.$value['tax_rate'].'/100)+'.$formular.'';
+				$income_tax_formular .=',IF('.$taxable_salary.'<='.$value['tax_bracket_value_to'].',(('.$value['tax_bracket_value_to'].'-'.$value['tax_bracket_value_from'].')*'.$value['tax_rate'].'/100)+'.$formular.'';
 			}else{
 				$income_tax_formular .=',IF('.$taxable_salary.'>='.$value['tax_bracket_value_from'].',(('.$taxable_salary.'-'.$value['tax_bracket_value_from'].')*'.$value['tax_rate'].'/100)+'.$formular.' , '.$formular.$formular_close;
 			}
@@ -6085,7 +5870,7 @@ order by staff_id, header_oder
 
 			if($value['tax_bracket_value_to'] != 0 ){
 
-				if(new_strlen($formular) == 0){
+				if(strlen($formular) == 0){
 					$formular .= '(('.$value['tax_bracket_value_to'].'-'.$value['tax_bracket_value_from'].')*'.$value['tax_rate'].'/100)';
 				}else{
 					$formular .= '+'.'(('.$value['tax_bracket_value_to'].'-'.$value['tax_bracket_value_from'].')*'.$value['tax_rate'].'/100)';
@@ -6172,11 +5957,9 @@ order by staff_id, header_oder
 					$data_result[$staff_department['departmentid']]['total_cost'] = $staff_payslip[$staff_department['staffid']]['total_cost'];
 				}
 			}else{
-				if(!in_array($staff_department['name'], $department_name)){
-					$department_name[] =  $staff_department['name'];
-				}
-
-				if(!isset($data_result[$staff_department['departmentid']])){
+					if(!in_array($staff_department['name'], $department_name)){
+						$department_name[] =  $staff_department['name'];
+					}
 
 					$data_result[$staff_department['departmentid']]['gross_pay'] = 0;
 					$data_result[$staff_department['departmentid']]['total_insurance'] = 0;
@@ -6186,7 +5969,6 @@ order by staff_id, header_oder
 					$data_result[$staff_department['departmentid']]['bonus_kpi'] = 0;
 					$data_result[$staff_department['departmentid']]['net_pay'] = 0;
 					$data_result[$staff_department['departmentid']]['total_cost'] = 0;
-				}
 			}
 		}
 
@@ -6338,7 +6120,7 @@ order by staff_id, header_oder
 	
 		if($staff_ids != false){
 
-			$array_staff_ids = new_explode(",", $staff_ids);
+			$array_staff_ids = explode(",", $staff_ids);
 
 			foreach ($array_staff_ids as $key => $value) {
 				if(in_array($value, $except_staff)){
@@ -6361,13 +6143,13 @@ order by staff_id, header_oder
 
 				for ($i=0; $i < count($payslip_templates); $i++) { 
 					if($payslip_templates[$i]['staff_employees'] != '' || $payslip_templates[$i]['staff_employees'] != null){
-						$array_staffs = new_explode(",", $payslip_templates[$i]['staff_employees']);
+						$array_staffs = explode(",", $payslip_templates[$i]['staff_employees']);
 					}else{
 						$get_staffid_by_payslip_template = $this->payslip_template_get_staffid($payslip_templates[$i]['department_id'], $payslip_templates[$i]['role_employees'], $payslip_templates[$i]['staff_employees'], $payslip_templates[$i]['except_staff']);
 
 						$array_staffs=[];
 						if($get_staffid_by_payslip_template != false){
-							$array_staffs = new_explode(",", $get_staffid_by_payslip_template);
+							$array_staffs = explode(",", $get_staffid_by_payslip_template);
 						}
 					}
 
@@ -6387,7 +6169,7 @@ order by staff_id, header_oder
 					$array_staff_has_template = $this->get_staff_timekeeping_applicable_object($staff_str_query);
 
 					foreach ($array_staff_has_template as $key => $value) {
-						if(new_strlen($str_staff_has_template) > 0){
+						if(strlen($str_staff_has_template) > 0){
 							$str_staff_has_template .= ', '. $value['firstname'].' '.$value['lastname'];
 
 						}else{
@@ -6566,9 +6348,8 @@ order by staff_id, header_oder
 	 * @param  [type] $month 
 	 * @return [type]        
 	 */
-	public function get_tasks_timer_by_month($month, $staff_id, $str_sql1, $hr_profile_status, $payslip_range = [])
+	public function get_tasks_timer_by_month($month, $staff_id, $str_sql1, $hr_profile_status)
 	{
-
 		$month_temp = $month;
 		//TODO get hourly rate by contract
 		$salary_task_timers=[];
@@ -6591,20 +6372,10 @@ order by staff_id, header_oder
 			$staff_contracts = $this->get_list_staff_contract($month_temp);
 		}
 		
-		if(count($payslip_range) == 0){
-
-			$sql_where="SELECT ".db_prefix()."tasks.hourly_rate, ".db_prefix()."taskstimers.staff_id, from_unixtime(start_time, '%Y-%m-%d %H:%i:%s') as start_time, from_unixtime(end_time, '%Y-%m-%d %H:%i:%s') as end_time, date_format(from_unixtime(end_time, '%Y-%m-%d'), '%c') as months, TIMESTAMPDIFF(MINUTE, from_unixtime(start_time, '%Y-%m-%d %H:%i:%s'), from_unixtime(end_time, '%Y-%m-%d %H:%i:%s')) as total_time FROM ".db_prefix()."taskstimers 
-			LEFT join ".db_prefix()."tasks on ".db_prefix()."taskstimers.task_id = ".db_prefix()."tasks.id
-			where date_format(from_unixtime(end_time, '%Y-%m-%d'), '%c') = ".$month." AND ".$staff_id."
-			order by staff_id desc";
-
-		}else{
-			$sql_where="SELECT ".db_prefix()."tasks.hourly_rate, ".db_prefix()."taskstimers.staff_id, from_unixtime(start_time, '%Y-%m-%d %H:%i:%s') as start_time, from_unixtime(end_time, '%Y-%m-%d %H:%i:%s') as end_time, date_format(from_unixtime(end_time, '%Y-%m-%d'), '%c') as months, TIMESTAMPDIFF(MINUTE, from_unixtime(start_time, '%Y-%m-%d %H:%i:%s'), from_unixtime(end_time, '%Y-%m-%d %H:%i:%s')) as total_time FROM ".db_prefix()."taskstimers 
-			LEFT join ".db_prefix()."tasks on ".db_prefix()."taskstimers.task_id = ".db_prefix()."tasks.id
-			where from_unixtime(start_time, '%Y-%m-%d') >= '".$payslip_range[0]."' AND from_unixtime(end_time, '%Y-%m-%d') <= '".$payslip_range[1]."'  AND ".$staff_id."
-			order by staff_id desc";
-
-		}
+		$sql_where="SELECT ".db_prefix()."tasks.hourly_rate, ".db_prefix()."taskstimers.staff_id, from_unixtime(start_time, '%Y-%m-%d %H:%i:%s') as start_time, from_unixtime(end_time, '%Y-%m-%d %H:%i:%s') as end_time, date_format(from_unixtime(end_time, '%Y-%m-%d'), '%c') as months, TIMESTAMPDIFF(MINUTE, from_unixtime(start_time, '%Y-%m-%d %H:%i:%s'), from_unixtime(end_time, '%Y-%m-%d %H:%i:%s')) as total_time FROM ".db_prefix()."taskstimers 
+		LEFT join ".db_prefix()."tasks on ".db_prefix()."taskstimers.task_id = ".db_prefix()."tasks.id
+		where date_format(from_unixtime(end_time, '%Y-%m-%d'), '%c') = ".$month." AND ".$staff_id."
+		order by staff_id desc";
 
 		$task_timers = $this->db->query($sql_where)->result_array();
 
@@ -6785,7 +6556,7 @@ order by staff_id, header_oder
 						$staff_id_col = $celldata->c;
 					}
 
-					if(isset($staff_id_col) && new_strlen($staff_id_col) > 0){
+					if(isset($staff_id_col) && strlen($staff_id_col) > 0){
 						break;
 					}
 				}
@@ -6835,897 +6606,6 @@ order by staff_id, header_oder
 		$this->db->where('payslip_id', $payslip_id);
 		return $this->db->get(db_prefix() . 'hrp_payslip_details')->result_array();
 	}
-
-	/**
-	 * get hrp attendance timesheet leave
-	 * @param  [type] $month 
-	 * @param  string $where 
-	 * @return [type]        
-	 */
-	public function get_hrp_attendance_timesheet_leave($month, $where='')
-	{
-		$rel_type = hrp_get_timesheets_status();
-
-		if($where != ''){
-			$this->db->where($where);
-		}
-		$this->db->where('rel_type', $rel_type);
-		$this->db->where("date_format(month, '%Y-%m-%d') = '".$month."'");
-		$this->db->order_by('staff_id', 'asc');
-		$employees_timesheets = $this->db->get(db_prefix() . 'hrp_employees_timeshee_leaves')->result_array();
-
-		return $employees_timesheets;
-	}
-	
-	/**
-	 * add update attendance timesheets leave
-	 * @param [type] $data 
-	 */
-	public function add_update_attendance_timesheets_leave($data)
-	{	
-
-		$affectedRows = 0;
-		$rel_type = hrp_get_timesheets_status();
-
-		$attendance_month = date('Y-m-d',strtotime($data['attendance_fill_month'].'-01'));
-
-		$days_header_in_month = $this->hr_payroll_model->get_day_header_in_month($attendance_month, '', false);
-		$header_key = array_merge($days_header_in_month['staff_key'], $days_header_in_month['days_key'], $days_header_in_month['attendance_key']);
-		
-		if (isset($data['hrp_attendance_value'])) {
-			$hrp_attendance_value = $data['hrp_attendance_value'];
-			unset($data['hrp_attendance_value']);
-		}
-		/*update save note*/
-
-		if(isset($hrp_attendance_value)){
-			$hrp_attendance_detail = json_decode($hrp_attendance_value);
-
-			$es_detail = [];
-			$row = [];
-
-			foreach ($hrp_attendance_detail as $key => $value) {				
-					$es_detail[] = array_combine($header_key, $value);
-			}
-		}
-
-		$row = [];
-		$row['update'] = []; 
-		$row['insert'] = []; 
-		$row['delete'] = [];
-		$total = [];
-
-		$total['total_amount'] = 0;
-		foreach ($es_detail as $key => $value) {
-			if(isset($value['staff_departments'])){
-				unset($value['staff_departments']);
-			}
-			if(isset($value['hr_code'])){
-				unset($value['hr_code']);
-			}
-			if(isset($value['staff_name'])){
-				unset($value['staff_name']);
-			}
-
-			foreach ($value as $k_value => $val) {
-				if($k_value != 'staff_id' && $k_value != 'id' && $k_value != 'rel_type' && $k_value != 'month' && $k_value != 'paid_leave' &&  $k_value != 'unpaid_leave'){
-
-					if(strlen($val) > 0){
-
-						$explode_temp = [];
-						$val_explode = explode(';', $val);
-						foreach ($val_explode as $ex_value) {
-						    if(preg_match('/PL:/', $ex_value) || preg_match('/UPL:/', $ex_value)){
-						    	$explode_temp[] = $ex_value;
-						    }
-						}
-						if(count($explode_temp) > 0){
-							$value[$k_value] = implode(';', $explode_temp);
-						}else{
-							$value[$k_value] = '';
-						}
-					}
-				}
-			    
-			}
-			
-			if($value['id'] != 0){
-				$row['delete'][] = $value['id'];
-				$row['update'][] = $value;
-			}else{
-				unset($value['id']);
-				$row['insert'][] = $value;
-			}
-
-		}
-
-		if(empty($row['delete'])){
-			$row['delete'] = ['0'];
-		}
-
-		if($data['department_attendance_filter'] == '' && $data['staff_attendance_filter'] == '' && $data['role_attendance_filter'] == ''){
-			$row['delete'] = implode(",",$row['delete']);
-			$this->db->where('id NOT IN ('.$row['delete'] .') and rel_type = "'.$rel_type.'" AND date_format(month,"%Y-%m-%d") = "'.$attendance_month.'"');
-			$this->db->delete(db_prefix().'hrp_employees_timeshee_leaves');
-			if($this->db->affected_rows() > 0){
-				$affectedRows++;
-			}
-		}
-
-		if(count($row['insert']) != 0){
-			$affected_rows = $this->db->insert_batch(db_prefix().'hrp_employees_timeshee_leaves', $row['insert']);
-			if($affected_rows > 0){
-				$affectedRows++;
-			}
-
-		}
-		if(count($row['update']) != 0){
-			$affected_rows = $this->db->update_batch(db_prefix().'hrp_employees_timeshee_leaves', $row['update'], 'id');
-			if($affected_rows > 0){
-				$affectedRows++;
-			}
-
-		}
-
-		if ($affectedRows > 0) {
-			return true;
-		}
-		return false;
-
-	}
-
-	/**
-	 * timesheet leave calculation
-	 * @param  [type] $data 
-	 * @return [type]       
-	 */
-	public function timesheet_leave_calculation($data)
-	{
-		$month = date('Y-m-d',strtotime($data['month'].'-01'));
-
-		//get employee data for caculation attendance
-		$employees = $this->get_employees_data($month);
-		$employees_data = [];
-		foreach ($employees as $employee_key => $employee_value) {
-			$employees_data[$employee_value['staff_id']] = $employee_value;
-		}
-
-		$update_batch_data = [];
-		$update_batch_employees_timesheet = [];
-		$rel_type = hrp_get_timesheets_status();
-		$date_to_column_name = date_to_column_name();
-
-		$str_select_day = '*, ';
-		
-		$this->db->select($str_select_day);
-		$this->db->where('rel_type', $rel_type);
-		$this->db->where("date_format(month, '%Y-%m-%d') = '".$month."'");
-		$this->db->order_by('staff_id', 'asc');
-		$employees_timesheets = $this->db->get(db_prefix() . 'hrp_employees_timeshee_leaves')->result_array();
-
-		foreach ($employees_timesheets as $em_key => $timesheet_leave) {
-			$paid_leave = 0;
-			$unpaid_leave = 0;
-
-			foreach ($timesheet_leave as $k_value => $val) {
-				if($k_value != 'staff_id' && $k_value != 'id' && $k_value != 'rel_type' && $k_value != 'month' && $k_value != 'paid_leave' &&  $k_value != 'unpaid_leave'){
-
-					if(strlen($val) > 0){
-
-						$explode_temp = [];
-						$val_explode = explode(';', $val);
-						foreach ($val_explode as $ex_value) {
-							if(preg_match('/UPL:/', $ex_value)){
-								$unpaid_leave += (float)str_replace('UPL:', '', $ex_value);
-							}elseif(preg_match('/PL:/', $ex_value)){
-								$paid_leave += (float)str_replace('PL:', '', $ex_value);
-							}
-						}
-					}
-				}
-			}
-
-			$update_batch_data[$em_key]['id'] = $timesheet_leave['id'];
-			$update_batch_data[$em_key]['paid_leave'] = $paid_leave;
-			$update_batch_data[$em_key]['unpaid_leave'] = $unpaid_leave;
-			$update_batch_employees_timesheet[$timesheet_leave['staff_id']] = [
-				'paid_leave' => $paid_leave,
-				'unpaid_leave' => $unpaid_leave,
-			];
-
-		}
-
-		if(count($update_batch_data) > 0){
-			$this->db->update_batch(db_prefix().'hrp_employees_timeshee_leaves', $update_batch_data, 'id');
-
-			$str_select_day = '*, ';
-			$this->db->select($str_select_day);
-			$this->db->where('rel_type', $rel_type);
-			$this->db->where("date_format(month, '%Y-%m-%d') = '".$month."'");
-			$this->db->order_by('staff_id', 'asc');
-			$employees_timesheets = $this->db->get(db_prefix() . 'hrp_employees_timesheets')->result_array();
-
-			if(count($employees_timesheets) > 0){
-
-				foreach ($employees_timesheets as $key => $value) {
-					if(isset($update_batch_employees_timesheet[$value['staff_id']])){
-						$employees_timesheets[$key]['paid_leave'] = $update_batch_employees_timesheet[$value['staff_id']]['paid_leave'];
-						$employees_timesheets[$key]['unpaid_leave'] = $update_batch_employees_timesheet[$value['staff_id']]['unpaid_leave'];
-					}
-				}
-				if(count($employees_timesheets) > 0){
-					$this->db->update_batch(db_prefix().'hrp_employees_timesheets', $employees_timesheets, 'id');
-				}
-			}else{
-				foreach ($update_batch_employees_timesheet as $key => $batch_employees_timesheet) {
-				    $update_batch_employees_timesheet[$key]['staff_id'] = $key;
-				    $update_batch_employees_timesheet[$key]['month'] = $month;
-				    $update_batch_employees_timesheet[$key]['rel_type'] = $rel_type;
-				}
-				$this->db->insert_batch(db_prefix().'hrp_employees_timesheets', $update_batch_employees_timesheet);
-			}
-
-
-		}
-
-
-		return true;
-	}
-
-	/**
-	 * attendance calculation v2
-	 * @param  [type] $payslip_month     
-	 * @param  [type] $arr_payslip_range 
-	 * @return [type]                    
-	 */
-	public function attendance_calculation_v2($payslip_month, $arr_payslip_range, $where = '')
-	{
-		// var_dump(($arr_payslip_range[0]));
-		// var_dump( ($arr_payslip_range[1]));
-		$total_day = (strtotime($arr_payslip_range[1])- strtotime($arr_payslip_range[0]))/60/60/24;
-		// var_dump((strtotime($arr_payslip_range[1])- strtotime($arr_payslip_range[0]))/60/60/24);
-		// die;
-		$arr_employees_timeshee_leaves = [];
-		$attendance_data = [];
-		$date_column_header=[];
-		$str_select_temp = '';
-
-
-		$date['01'] = 'day_1';
-
-		$rel_type = hrp_get_timesheets_status();
-		$date_to_column_name = date_to_column_name();
-
-		// for first day
-		$temp_date = date('Y-m-d', strtotime($arr_payslip_range[0]));
-		$column_name = $date_to_column_name[date('d',strtotime($temp_date))];
-		$date_column_header[date('d',strtotime($temp_date))] = $column_name;
-		if(strlen($str_select_temp) > 0){
-			$str_select_temp .= ','.$column_name;
-		}else{
-			$str_select_temp .= $column_name;
-		}
-
-		// for last day
-		$temp_date = date('Y-m-d', strtotime($arr_payslip_range[1]));
-		$column_name = $date_to_column_name[date('d',strtotime($temp_date))];
-		$date_column_header[date('d',strtotime($temp_date))] = $column_name;
-		if(strlen($str_select_temp) > 0){
-			$str_select_temp .= ','.$column_name;
-		}else{
-			$str_select_temp .= $column_name;
-		}
-
-
-		for ($i=1; $i < $total_day; $i++) { 
-			$temp_date = date('Y-m-d', strtotime($arr_payslip_range[0].'+'.$i.' days'));
-
-			$column_name = $date_to_column_name[date('d',strtotime($temp_date))];
-			$date_column_header[date('d',strtotime($temp_date))] = $column_name;
-
-			if(strlen($str_select_temp) > 0){
-				$str_select_temp .= ','.$column_name;
-			}else{
-				$str_select_temp .= $column_name;
-			}
-
-		}
-
-		$month = date('Y-m-d',strtotime($payslip_month.'-01'));
-
-		//get employee data for caculation attendance
-		$employees = $this->get_employees_data($month);
-		$employees_data = [];
-		foreach ($employees as $employee_key => $employee_value) {
-			$employees_data[$employee_value['staff_id']] = $employee_value;
-		}
-
-		$str_select_day = $str_select_temp.', id, staff_id, month';
-		$str_select_day .= '('.implode("+", $date_column_header).') as actual_workday_temp, standard_workday, rel_type';
-		
-		$this->db->select($str_select_day);
-		if($where != ''){
-			$this->db->where($where);
-		}
-		$this->db->where('rel_type', $rel_type);
-		$this->db->where("date_format(month, '%Y-%m-%d') = '".$month."'");
-		$this->db->order_by('staff_id', 'asc');
-		$employees_timesheets = $this->db->get(db_prefix() . 'hrp_employees_timesheets')->result_array();
-
-		// get employees_timesheet leaves
-		$this->db->select($str_select_temp.', id, staff_id, month');
-		if($where != ''){
-			$this->db->where($where);
-		}
-		$this->db->where('rel_type', $rel_type);
-		$this->db->where("date_format(month, '%Y-%m-%d') = '".$month."'");
-		$this->db->order_by('staff_id', 'asc');
-		$employees_timesheet_leaves = $this->db->get(db_prefix() . 'hrp_employees_timeshee_leaves')->result_array();
-
-		foreach ($employees_timesheet_leaves as $em_key => $timesheet_leave) {
-			$paid_leave = 0;
-			$unpaid_leave = 0;
-
-			foreach ($timesheet_leave as $k_value => $val) {
-				if($k_value != 'staff_id' && $k_value != 'id' && $k_value != 'rel_type' && $k_value != 'month' && $k_value != 'paid_leave' &&  $k_value != 'unpaid_leave'){
-
-					if(strlen($val) > 0){
-
-						$explode_temp = [];
-						$val_explode = explode(';', $val);
-						foreach ($val_explode as $ex_value) {
-							if(preg_match('/UPL:/', $ex_value)){
-								$unpaid_leave += (float)str_replace('UPL:', '', $ex_value);
-							}elseif(preg_match('/PL:/', $ex_value)){
-								$paid_leave += (float)str_replace('PL:', '', $ex_value);
-							}
-						}
-					}
-				}
-			}
-			$arr_employees_timeshee_leaves[$timesheet_leave['staff_id']] = [
-				'paid_leave' => $paid_leave,
-				'unpaid_leave' => $unpaid_leave,
-			];
-		}
-
-
-		foreach ($employees_timesheets as $em_key => $timesheet) {
-
-			$employees_timesheets[$em_key]['actual_workday'] = 0;
-			$employees_timesheets[$em_key]['actual_workday_probation'] = 0;
-			$paid_leave = 0;
-			$unpaid_leave = 0;
-
-			if(isset($arr_employees_timeshee_leaves[$timesheet['staff_id']])){
-				$paid_leave = $arr_employees_timeshee_leaves[$timesheet['staff_id']]['paid_leave'];
-				$unpaid_leave = $arr_employees_timeshee_leaves[$timesheet['staff_id']]['unpaid_leave'];
-			}
-
-			$employees_timesheets[$em_key]['paid_leave'] = $paid_leave;
-			$employees_timesheets[$em_key]['unpaid_leave'] = $unpaid_leave;
-
-			if(isset($employees_data[$timesheet['staff_id']])){
-
-					//check timesheet in formal contract or probationary contract.
-				$payslip_month = date("m", strtotime($month));
-				$probationary_expiration_month = date("m", strtotime($employees_data[$timesheet['staff_id']]['probationary_expiration'] ?? ''));
-				$probationary_expiration_day = date("d", strtotime($employees_data[$timesheet['staff_id']]['probationary_expiration'] ?? ''));
-
-					//if probationary_expiration month == payslip month
-				foreach ($timesheet as $timesheet_key => $timesheet_value) {
-					if((float)$payslip_month == (float)$probationary_expiration_month ){
-
-						if(preg_match('/^day_/', $timesheet_key)){
-
-							$day = new_str_replace('day_', '', $timesheet_key);
-								//if probationary_expiration day <= timesheet day
-							if( (float)$day <= (float)$probationary_expiration_day){
-
-								$employees_timesheets[$em_key]['actual_workday_probation'] += $timesheet_value;
-							}else{
-								//if probationary_expiration day > timesheet day
-								$employees_timesheets[$em_key]['actual_workday'] += $timesheet_value;
-							}
-
-						}
-
-					}else{
-						if(preg_match('/^day_/', $timesheet_key)){
-							$employees_timesheets[$em_key]['actual_workday'] += $timesheet_value;
-						}
-					}
-				}
-
-			}else{
-				$employees_timesheets[$em_key]['actual_workday'] = $timesheet['actual_workday_temp'];
-			}
-
-			$attendance_data[$timesheet['staff_id']] = $employees_timesheets[$em_key];
-		}
-		return $employees_timesheets;
-	}
-
-	/**
-	 * get customize payslip columns
-	 * @return [type] 
-	 */
-	public function get_customize_payslip_columns()
-	{
-		$this->db->order_by('order_number', 'asc');
-		return $this->db->get(db_prefix() . 'hrp_customize_staff_payslip_columns')->result_array();
-	}
-
-	/**
-	 * get pdf payslip template
-	 * @param  boolean $id 
-	 * @return [type]      
-	 */
-	public function get_pdf_payslip_template($id = false, $payslip_template_id = false)
-	{
-		if (is_numeric($id)) {
-			$this->db->where('id', $id);
-			return $this->db->get(db_prefix() . 'hrp_payslip_pdf_templates')->row();
-		}
-		if ($id == false) {
-			if($payslip_template_id){
-				$this->db->where('payslip_template_id', $payslip_template_id);
-			}
-		   return  $this->db->get(db_prefix() . 'hrp_payslip_pdf_templates')->result_array();
-		}
-
-	}
-
-	/**
-	 * add contract template
-	 * @param [type] $data 
-	 */
-	public function add_pdf_payslip_template($data){
-		$data['content'] = $data['content'];
-
-		$this->db->insert(db_prefix() . 'hrp_payslip_pdf_templates', $data);
-		$insert_id = $this->db->insert_id();
-
-		if ($insert_id) {
-			return $insert_id;
-		}
-		return false;
-	}
-
-	/**
-	 * update pdf_payslip template
-	 * @param  [type] $data 
-	 * @param  [type] $id   
-	 * @return [type]       
-	 */
-	public function update_pdf_payslip_template($data, $id)
-	{   
-		$data['content'] = $data['content'];
-
-		$this->db->where('id', $id);
-		$this->db->update(db_prefix() . 'hrp_payslip_pdf_templates', $data);
-
-		if ($this->db->affected_rows() > 0) {
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * delete pdf_payslip template 
-	 * @param  [type] $id [
-	 * @return [type]     [
-	 */
-	public function delete_pdf_payslip_template($id){
-		$this->db->where('id', $id);
-		$this->db->delete(db_prefix() . 'hrp_payslip_pdf_templates');
-
-		if ($this->db->affected_rows() > 0) {
-			return true;
-		}
-
-		return false;
-	}
-
-	public function get_pdf_payslip_template_selected_html($payslip_template_id, $pdf_payslip_template_id)
-	{
-
-		if(is_numeric($payslip_template_id)){
-			$pdf_payslip_templates = $this->get_pdf_payslip_template(false, $payslip_template_id);
-		}else{
-			$pdf_payslip_templates = [];
-		}
-		$template_options = '';
-
-		if(isset($pdf_payslip_template_id) && $pdf_payslip_template_id != ''){
-
-			$template_options .= '<option value=""></option>';
-			foreach ($pdf_payslip_templates as $template) {
-
-					$select='';
-					if($template['id'] == $pdf_payslip_template_id){           
-						$select .= 'selected';
-					}
-					$template_options .= '<option value="' . $template['id'] . '" '.$select.'>' . $template['name'] . '</option>';
-				}
-
-		}else{
-			/*get payslip template for case create new*/
-
-			$template_options .= '<option value=""></option>';
-			foreach ($pdf_payslip_templates as $template) {
-				$template_options .= '<option value="' . $template['id'] . '" >' . $template['name'] . '</option>';
-			}
-
-		}
-
-		return $template_options;
-	}
-
-	public function hr_payroll_get_payslip_pdf_only_for_pdf($id = '', $where = [], $for_editor = false)
-	{
-		$this->db->where('id', $id);
-		$hrp_payslip_details = $this->db->get(db_prefix() . 'hrp_payslip_details')->result_array();
-
-		if (is_numeric($id)) {
-			$this->db->where(db_prefix() . 'hrp_payslip_details.id', $id);
-			$hrp_payslip_details = $this->db->get(db_prefix() . 'hrp_payslip_details')->row();
-
-			// get pdf payslip template
-			
-			if ($hrp_payslip_details) {
-				// get payslip
-				$hrp_payslip = $this->get_hrp_payslip($hrp_payslip_details->payslip_id);
-				if ($hrp_payslip && is_numeric($hrp_payslip->pdf_template_id) && $hrp_payslip->pdf_template_id != 0) {
-
-					$pdf_payslip_template = $this->get_pdf_payslip_template($hrp_payslip->pdf_template_id);
-
-					if ($pdf_payslip_template) {
-						$pdf_payslip_template->payslip_number = $hrp_payslip_details->pay_slip_number;
-						if ($for_editor == false) {
-							$this->load->library('merge_fields/hr_payslip_merge_fields');
-							$this->load->library('merge_fields/other_merge_fields');
-
-							$merge_fields = [];
-							$merge_fields = array_merge($merge_fields, $this->hr_payslip_merge_fields->format($id));
-							$merge_fields = array_merge($merge_fields, $this->other_merge_fields->format());
-
-							$logo_url = '';
-
-							foreach ($merge_fields as $key => $val) {
-								if($key == '{logo_url}'){
-									$logo_url .= $val;
-									
-								}
-
-								if($key == '{logo_image_with_url}'){
-									$val ='';
-									
-									$val .= '<a href="'.$logo_url.'" class="logo hr-img-responsive" style=" width: 300px; height: auto;">';
-									$val .= '<img src="'.$logo_url.'" class="hr-img-responsive" style=" width: 300px; height: auto;" alt="GTSS Solution Viet Nam">';
-									$val .= '</a>';
-									
-								}
-
-								if (stripos($pdf_payslip_template->content, $key) !== false) {
-									$pdf_payslip_template->content = str_ireplace($key, $val ?? '', $pdf_payslip_template->content ?? '');
-								} else {
-									$pdf_payslip_template->content = str_ireplace($key, '', $pdf_payslip_template->content ?? '');
-								}
-							}
-
-						}
-					}
-				}
-			}
-
-			return $pdf_payslip_template;
-		}
-
-		return $hrp_payslip_details;
-	}
-
-	/**
-     * check auto create currency rate
-     * @return [type]
-     */
-    public function check_auto_create_currency_rate() {
-        $this->load->model('currencies_model');
-        $currency_rates = $this->get_currency_rate();
-        $currencies = $this->currencies_model->get();
-        $currency_generator = $this->currency_generator($currencies);
-
-        foreach ($currency_rates as $key => $currency_rate) {
-            if (isset($currency_generator[$currency_rate['from_currency_id'] . '_' . $currency_rate['to_currency_id']])) {
-                unset($currency_generator[$currency_rate['from_currency_id'] . '_' . $currency_rate['to_currency_id']]);
-            }
-        }
-
-        //if have API, will get currency rate from here
-        if (count($currency_generator) > 0) {
-            $this->db->insert_batch(db_prefix() . 'currency_rates', $currency_generator);
-        }
-
-        return true;
-    }
-
-    /**
-     * currency generator
-     * @param  $variants
-     * @param  integer $i
-     * @return 
-     */
-    public function currency_generator($currencies) {
-
-        $currency_rates = [];
-
-        foreach ($currencies as $key_1 => $value_1) {
-            foreach ($currencies as $key_2 => $value_2) {
-                if ($value_1['id'] != $value_2['id']) {
-                    $currency_rates[$value_1['id'] . '_' . $value_2['id']] = [
-                        'from_currency_id' => $value_1['id'],
-                        'from_currency_name' => $value_1['name'],
-                        'from_currency_rate' => 1,
-                        'to_currency_id' => $value_2['id'],
-                        'to_currency_name' => $value_2['name'],
-                        'to_currency_rate' => 0,
-                        'date_updated' => date('Y-m-d H:i:s'),
-                    ];
-                }
-
-            }
-        }
-
-        return $currency_rates;
-    }
-
-    /**
-     * get currency rate
-     * @param  boolean $id
-     * @return [type]
-     */
-    public function get_currency_rate($id = false) {
-        if (is_numeric($id)) {
-            $this->db->where('id', $id);
-            return $this->db->get(db_prefix() . 'currency_rates')->row();
-        }
-
-        if ($id == false) {
-            return $this->db->query('select * from ' . db_prefix() . 'currency_rates')->result_array();
-        }
-    }
-
-    /**
-     * update currency rate setting
-     *
-     * @param      array   $data   The data
-     *
-     * @return     boolean
-     */
-    public function update_setting_currency_rate($data) {
-        $affectedRows = 0;
-        if (!isset($data['cr_automatically_get_currency_rate'])) {
-            $data['cr_automatically_get_currency_rate'] = 0;
-        }
-
-        foreach ($data as $key => $value) {
-            $this->db->where('name', $key);
-            $this->db->update(db_prefix() . 'options', [
-                'value' => $value,
-            ]);
-            if ($this->db->affected_rows() > 0) {
-                $affectedRows++;
-            }
-        }
-
-        if ($affectedRows > 0) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Gets the currency rate online.
-     *
-     * @param        $id     The identifier
-     *
-     * @return     bool    The currency rate online.
-     */
-    public function get_currency_rate_online($id) {
-        $currency_rate = $this->get_currency_rate($id);
-
-        if ($currency_rate) {
-            return $this->currency_converter($currency_rate->from_currency_name, $currency_rate->to_currency_name);
-        }
-
-        return false;
-    }
-
-    /**
-     * Gets all currency rate online.
-     *
-     * @return     bool  All currency rate online.
-     */
-    public function get_all_currency_rate_online() {
-        $currency_rates = $this->get_currency_rate();
-        $affectedRows = 0;
-        foreach ($currency_rates as $currency_rate) {
-            $rate = $this->currency_converter($currency_rate['from_currency_name'], $currency_rate['to_currency_name']);
-
-            $data_update = ['to_currency_rate' => $rate];
-            $success = $this->update_currency_rate($data_update, $currency_rate['id']);
-
-            if ($success) {
-                $affectedRows++;
-            }
-        }
-
-        if ($affectedRows > 0) {
-            return true;
-        }
-
-        return true;
-    }
-
-    /**
-     * update currency rate
-     * @param  [type] $data
-     * @return [type]
-     */
-    public function update_currency_rate($data, $id) {
-
-        $this->db->where('id', $id);
-        $this->db->update(db_prefix() . 'currency_rates', ['to_currency_rate' => $data['to_currency_rate'], 'date_updated' => date('Y-m-d H:i:s')]);
-        if ($this->db->affected_rows() > 0) {
-            $this->db->where('id', $id);
-            $current_rate = $this->db->get(db_prefix() . 'currency_rates')->row();
-
-            $data_log['from_currency_id'] = $current_rate->from_currency_id;
-            $data_log['from_currency_name'] = $current_rate->from_currency_name;
-            $data_log['to_currency_id'] = $current_rate->to_currency_id;
-            $data_log['to_currency_name'] = $current_rate->to_currency_name;
-            $data_log['from_currency_rate'] = isset($data['from_currency_rate']) ? $data['from_currency_rate'] : '';
-            $data_log['to_currency_rate'] = isset($data['to_currency_rate']) ? $data['to_currency_rate'] : '';
-            $data_log['date'] = date('Y-m-d H:i:s');
-            $this->db->insert(db_prefix() . 'currency_rate_logs', $data_log);
-            return true;
-        }
-        return false;
-    }
-
-     /**
-     * [currency_converter description]
-     * @param  string $from   Currency Code
-     * @param  string $to     Currency Code
-     * @param  float $amount
-     * @return float        
-     */
-    public function currency_converter($from,$to,$amount = 1)
-    {   
-        $url = "https://www.google.com/finance/quote/$from-$to";
-        $response = $this->api_get($url);
-        $string1 = explode('class="YMlKec fxKbKc">', $response);
-
-        if(isset($string1[1])){
-
-            $rate = explode('</div>', $string1[1]);
-
-            if(isset($rate[0])){
-            	$rate[0]             = hr_payroll_reformat_currency($rate[0]);
-
-                $result = $rate[0] * $amount;
-                
-                return $result;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * api get
-     * @param  string $url
-     * @return string
-     */
-    public function api_get($url) {
-        $curl = curl_init($url);
-
-        curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'GET');
-        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($curl, CURLOPT_AUTOREFERER, true);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
-        curl_setopt($curl, CURLOPT_TIMEOUT, 120);
-        curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 120);
-        curl_setopt($curl, CURLOPT_MAXREDIRS, 10);
-
-        return curl_exec($curl);
-    }
-
-    /**
-     * delete currency rate
-     * @param  [type] $id
-     * @return [type]
-     */
-    public function delete_currency_rate($id) {
-        $this->db->where('id', $id);
-        $this->db->delete(db_prefix() . 'currency_rates');
-        if ($this->db->affected_rows() > 0) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * { cronjob currency rates }
-     *
-     * @param        $manually  The manually
-     *
-     * @return     bool    
-     */
-    public function cronjob_currency_rates($manually) {
-        $currency_rates = $this->get_currency_rate();
-        foreach ($currency_rates as $currency_rate) {
-            $data_insert = $currency_rate;
-            $data_insert['date'] = date('Y-m-d');
-            unset($data_insert['date_updated']);
-            unset($data_insert['id']);
-
-            $this->db->insert(db_prefix() . 'currency_rate_logs', $data_insert);
-        }
-
-        if (get_option('cr_automatically_get_currency_rate') == 1) {
-            $this->get_all_currency_rate_online();
-        }
-
-        $cr_global_amount_expiration = get_option('cr_global_amount_expiration');
-        if ($cr_global_amount_expiration != 0 && $cr_global_amount_expiration != '') {
-            $this->db->where('date < "' . date('Y-m-d', strtotime(date('Y-m-d') . ' - ' . $cr_global_amount_expiration . ' days')).'"');
-            $this->db->delete(db_prefix() . 'currency_rate_logs');
-        }
-        update_option('cr_date_cronjob_currency_rates', date('Y-m-d'));
-
-        return true;
-    }
-
-    /**
-     * get currency rate
-     * @param  [type] $currency_id 
-     * @return [type]              
-     */
-    public function get_currency_rate_infor($currency_id)
-    {
-    	$base_currency = get_base_currency();
-        $pr_currency = get_currency($currency_id);
-
-        $base_currency_name = $base_currency->name;
-        $to_currency_name = $base_currency->name;
-        $base_currency_rate = 1;
-        $currency_rate = 1;
-        
-        $convert_str = ' ('.$base_currency->name.' => '.$base_currency->name.')'; 
-        $currency_name = '('.$base_currency->name.')';
-        if($base_currency->id != $pr_currency->id){
-            $currency_rate = hrp_get_currency_rate($base_currency->name, $pr_currency->name);
-            $convert_str = ' ('.$base_currency->name.' => '.$pr_currency->name.')'; 
-            $currency_name = '('.$pr_currency->name.')';
-            $to_currency_name = $pr_currency->name;
-        }
-
-        $data = [];
-        $data = [
-        	'convert_str' => $convert_str,
-        	'currency_name' => $currency_name,
-        	'base_currency_name' => $base_currency_name,
-        	'to_currency_name' => $to_currency_name,
-        	'base_currency_rate' => $base_currency_rate,
-        	'currency_rate' => $currency_rate,
-        ];
-
-        return $data;
-    }
 
 //End file
 }

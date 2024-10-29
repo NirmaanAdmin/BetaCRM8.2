@@ -509,11 +509,11 @@ class PHPExcel_Writer_Excel2007_Worksheet extends PHPExcel_Writer_Excel2007_Writ
                     } elseif ($conditional->getConditionType() == PHPExcel_Style_Conditional::CONDITION_CONTAINSTEXT
                         && $conditional->getOperatorType() == PHPExcel_Style_Conditional::OPERATOR_BEGINSWITH
                         && !is_null($conditional->getText())) {
-                        $objWriter->writeElement('formula', 'LEFT(' . $cellCoordinate . ',' . new_strlen($conditional->getText()) . ')="' . $conditional->getText() . '"');
+                        $objWriter->writeElement('formula', 'LEFT(' . $cellCoordinate . ',' . strlen($conditional->getText()) . ')="' . $conditional->getText() . '"');
                     } elseif ($conditional->getConditionType() == PHPExcel_Style_Conditional::CONDITION_CONTAINSTEXT
                         && $conditional->getOperatorType() == PHPExcel_Style_Conditional::OPERATOR_ENDSWITH
                         && !is_null($conditional->getText())) {
-                        $objWriter->writeElement('formula', 'RIGHT(' . $cellCoordinate . ',' . new_strlen($conditional->getText()) . ')="' . $conditional->getText() . '"');
+                        $objWriter->writeElement('formula', 'RIGHT(' . $cellCoordinate . ',' . strlen($conditional->getText()) . ')="' . $conditional->getText() . '"');
                     } elseif ($conditional->getConditionType() == PHPExcel_Style_Conditional::CONDITION_CONTAINSTEXT
                         && $conditional->getOperatorType() == PHPExcel_Style_Conditional::OPERATOR_NOTCONTAINS
                         && !is_null($conditional->getText())) {
@@ -628,7 +628,7 @@ class PHPExcel_Writer_Excel2007_Worksheet extends PHPExcel_Writer_Excel2007_Writ
                     $objWriter->writeAttribute('r:id', 'rId_hyperlink_' . $relationId);
                     ++$relationId;
                 } else {
-                    $objWriter->writeAttribute('location', new_str_replace('sheet://', '', $hyperlink->getUrl()));
+                    $objWriter->writeAttribute('location', str_replace('sheet://', '', $hyperlink->getUrl()));
                 }
 
                 if ($hyperlink->getTooltip() != '') {
@@ -761,11 +761,11 @@ class PHPExcel_Writer_Excel2007_Worksheet extends PHPExcel_Writer_Excel2007_Writ
             $range = $range[0];
             //    Strip any worksheet ref
             if (strpos($range[0], '!') !== false) {
-                list($ws, $range[0]) = new_explode('!', $range[0]);
+                list($ws, $range[0]) = explode('!', $range[0]);
             }
             $range = implode(':', $range);
 
-            $objWriter->writeAttribute('ref', new_str_replace('$', '', $range));
+            $objWriter->writeAttribute('ref', str_replace('$', '', $range));
 
             $columns = $pSheet->getAutoFilter()->getColumns();
             if (count($columns > 0)) {
@@ -1140,7 +1140,7 @@ class PHPExcel_Writer_Excel2007_Worksheet extends PHPExcel_Writer_Excel2007_Writ
                         break;
                     case 'n':            // Numeric
                         // force point as decimal separator in case current locale uses comma
-                        $objWriter->writeElement('v', new_str_replace(',', '.', $cellValue));
+                        $objWriter->writeElement('v', str_replace(',', '.', $cellValue));
                         break;
                     case 'b':            // Boolean
                         $objWriter->writeElement('v', ($cellValue ? '1' : '0'));

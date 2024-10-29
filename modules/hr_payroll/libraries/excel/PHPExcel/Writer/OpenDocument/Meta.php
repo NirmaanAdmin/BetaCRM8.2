@@ -70,7 +70,7 @@ class PHPExcel_Writer_OpenDocument_Meta extends PHPExcel_Writer_OpenDocument_Wri
         $objWriter->writeElement('dc:title', $pPHPExcel->getProperties()->getTitle());
         $objWriter->writeElement('dc:description', $pPHPExcel->getProperties()->getDescription());
         $objWriter->writeElement('dc:subject', $pPHPExcel->getProperties()->getSubject());
-        $keywords = new_explode(' ', $pPHPExcel->getProperties()->getKeywords());
+        $keywords = explode(' ', $pPHPExcel->getProperties()->getKeywords());
         foreach ($keywords as $keyword) {
             $objWriter->writeElement('meta:keyword', $keyword);
         }

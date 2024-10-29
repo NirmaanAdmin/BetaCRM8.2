@@ -331,7 +331,7 @@ class PHPExcel_Calculation_Functions
             list(, $operator, $operand) = $matches;
 
             if (!is_numeric($operand)) {
-                $operand = new_str_replace('"', '""', $operand);
+                $operand = str_replace('"', '""', $operand);
                 $operand = PHPExcel_Calculation::wrapResult(strtoupper($operand));
             }
 
@@ -559,7 +559,7 @@ class PHPExcel_Calculation_Functions
                 return (integer) $value;
             case 'string':
                 //    Errors
-                if ((new_strlen($value) > 0) && ($value{0} == '#')) {
+                if ((strlen($value) > 0) && ($value{0} == '#')) {
                     return $value;
                 }
                 break;
@@ -609,7 +609,7 @@ class PHPExcel_Calculation_Functions
                 return 64;
         } elseif (is_string($value)) {
             //    Errors
-            if ((new_strlen($value) > 0) && ($value{0} == '#')) {
+            if ((strlen($value) > 0) && ($value{0} == '#')) {
                 return 16;
             }
             return 2;
@@ -734,12 +734,12 @@ if (!function_exists('atanh')) {
 //
 if ((!function_exists('mb_str_replace')) &&
     (function_exists('mb_substr')) && (function_exists('mb_strlen')) && (function_exists('mb_strpos'))) {
-    function mb_new_str_replace($search, $replace, $subject)
+    function mb_str_replace($search, $replace, $subject)
     {
         if (is_array($subject)) {
             $ret = array();
             foreach ($subject as $key => $val) {
-                $ret[$key] = mb_new_str_replace($search, $replace, $val);
+                $ret[$key] = mb_str_replace($search, $replace, $val);
             }
             return $ret;
         }
@@ -751,8 +751,8 @@ if ((!function_exists('mb_str_replace')) &&
             $r = !is_array($replace) ? $replace : (array_key_exists($key, $replace) ? $replace[$key] : '');
             $pos = mb_strpos($subject, $s, 0, 'UTF-8');
             while ($pos !== false) {
-                $subject = mb_substr($subject, 0, $pos, 'UTF-8') . $r . mb_substr($subject, $pos + new_strlen($s, 'UTF-8'), 65535, 'UTF-8');
-                $pos = mb_strpos($subject, $s, $pos + new_strlen($r, 'UTF-8'), 'UTF-8');
+                $subject = mb_substr($subject, 0, $pos, 'UTF-8') . $r . mb_substr($subject, $pos + mb_strlen($s, 'UTF-8'), 65535, 'UTF-8');
+                $pos = mb_strpos($subject, $s, $pos + mb_strlen($r, 'UTF-8'), 'UTF-8');
             }
         }
         return $subject;

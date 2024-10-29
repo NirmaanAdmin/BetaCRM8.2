@@ -4,32 +4,19 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 $base_currency = get_base_currency();
 
-if(get_hr_payroll_option('hrp_customize_staff_payslip_column') == 1){
-	$get_customize_staff_payslip_columns = get_customize_staff_payslip_columns(true);
-	$column_names = $get_customize_staff_payslip_columns['column_names'];
-	$aColumns = [];
-	if(isset($column_names['month'])){
-		$aColumns[] = db_prefix().'hrp_payslip_details.month';
-		unset($column_names['month']);
-	}
-	$aColumns = array_merge($aColumns, $column_names);
-}else{
-
-	$aColumns = [
-		db_prefix().'hrp_payslip_details.month',
-		'payslip_range',
-		'pay_slip_number',
-		'gross_pay',
-		'total_deductions',
-		'income_tax_paye',
-		'it_rebate_value',
-		'commission_amount',
-		'bonus_kpi',
-		'total_insurance',
-		'net_pay',
-		'total_cost',
-	];
-}
+$aColumns = [
+	db_prefix().'hrp_payslip_details.month',
+	'pay_slip_number',
+	'gross_pay',
+	'total_deductions',
+	'income_tax_paye',
+	'it_rebate_value',
+	'commission_amount',
+	'bonus_kpi',
+	'total_insurance',
+	'net_pay',
+	'total_cost',
+];
 
 $sIndexColumn = 'id';
 $sTable       = db_prefix() . 'hrp_payslip_details';
@@ -63,130 +50,74 @@ array_push($where, 'AND '.db_prefix().'hrp_payslips.payslip_status = "payslip_cl
 
 // Fix for big queries. Some hosting have max_join_limit
 
-$result = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where, [db_prefix().'hrp_payslip_details.id', db_prefix().'hrp_payslip_details.json_data', db_prefix().'hrp_payslip_details.actual_workday_probation', db_prefix().'hrp_payslip_details.payslip_id']);
+$result = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where, [db_prefix().'hrp_payslip_details.id', db_prefix().'hrp_payslip_details.json_data', db_prefix().'hrp_payslip_details.actual_workday_probation']);
 
 $output  = $result['output'];
 $rResult = $result['rResult'];
-foreach ($rResult as $aRow) {
 
-	$payslip = $this->ci->hr_payroll_model->get_hrp_payslip($aRow['payslip_id']);
-	if($payslip && is_null($payslip->to_currency_name)){
-		$base_currency = get_base_currency();
-		$base_currency_id = 0;
-		if ($base_currency) {
-			$payslip->to_currency_name = $base_currency->name;
-		}
+foreach ($rResult as $aRow) {
+	$row = [];
+	$row[] = $aRow['id'];
+
+	if (has_permission('hrm_contract', '', 'view') || is_admin()) {
+		$subjectOutput = '<a href="#" onclick="member_view_payslip(' . $aRow['id'] . ');return false;">' . $aRow['pay_slip_number'] . '</a>';
+	}else{
+		$subjectOutput = $aRow['pay_slip_number'];
 	}
 
-	$row = [];
+	$subjectOutput .= '<div class="row-options">';
+		$subjectOutput .= '<a href="#" onclick="member_view_payslip(' . $aRow['id'] . ');return false;">' . _l('hr_view') .' </a>';
+		$subjectOutput .= '| <a href="'.admin_url('hr_payroll/employee_export_pdf/'.$aRow['id'].'?output_type=I').'" target="_blank">' . _l('view_pdf_in_new_window') .' </a>';
+	$subjectOutput .= '</div>';
 
-	$check_payslip_has_pdf_template = check_payslip_has_pdf_template($aRow['payslip_id']);
 
-	if(get_hr_payroll_option('hrp_customize_staff_payslip_column') == 1){
-		
-		foreach ($column_names as $key => $column_name) {
-			if($key == 1){
-				$subjectOutput = '';
-				if(is_numeric($check_payslip_has_pdf_template) && is_numeric($check_payslip_has_pdf_template) != 0 ){
+	$row[] = $subjectOutput;
 
-				$subjectOutput .= '<a href="'.admin_url('hr_payroll/new_employee_export_pdf/'.$aRow['id'].'?output_type=I').'" o>' . $aRow[$column_name] . '</a>';
+	$row[] = date('m-Y',strtotime($aRow[db_prefix().'hrp_payslip_details.month']));
 
-				$subjectOutput .= '<div class="row-options">';
-				$subjectOutput .= '<a href="'.admin_url('hr_payroll/new_employee_export_pdf/'.$aRow['id'].'?output_type=I').'" target="_blank">' . _l('view_pdf_in_new_window') .' </a>';
-				$subjectOutput .= '</div>';
+	$hrp_payslip_salary_allowance = hrp_payslip_json_data_decode($aRow['json_data']);
 
-				}else{
 
-				$subjectOutput .= '<a href="#" onclick="member_view_payslip(' . $aRow['id'] . ');return false;">' . $aRow[$column_name] . '</a>';
+	if( $hrp_payslip_salary_allowance['integration_hr']){
+		//probation contract
+		$probation_salary ='';
+		$probation_salary .= _l('hrp_salary').': '.app_format_money($hrp_payslip_salary_allowance['probation_salary'], '').'<br>';
+		$probation_salary .= _l('hrp_allowance').': '.app_format_money($hrp_payslip_salary_allowance['probation_allowance'], '');
 
-				$subjectOutput .= '<div class="row-options">';
-				$subjectOutput .= '<a href="#" onclick="member_view_payslip(' . $aRow['id'] . ');return false;">' . _l('hr_view') .' </a>';
-				$subjectOutput .= '| <a href="'.admin_url('hr_payroll/employee_export_pdf/'.$aRow['id'].'?output_type=I').'" target="_blank">' . _l('view_pdf_in_new_window') .' </a>';
-				$subjectOutput .= '</div>';
+		$row[] = $probation_salary;
 
-				}
+		//formal contract
+		$formal_salary ='';
+		$formal_salary .= _l('hrp_salary').': '.app_format_money($hrp_payslip_salary_allowance['formal_salary'], '').'<br>';
+		$formal_salary .= _l('hrp_allowance').': '.app_format_money($hrp_payslip_salary_allowance['formal_allowance'], '');
 
-				$row[] = $subjectOutput;
-
-			}else{
-				$row[] = $aRow[$column_name];
-			}
-		}
+		$row[] = $formal_salary;
 
 	}else{
-		$row[] = $aRow['id'];
 
-		$subjectOutput = '';
-		if(is_numeric($check_payslip_has_pdf_template) && is_numeric($check_payslip_has_pdf_template) != 0 ){
+		$probation_salary ='';
+		$probation_salary .= _l('hrp_salary').' + '._l('hrp_allowance').': '.app_format_money($hrp_payslip_salary_allowance['probation_salary'], '').'<br>';
 
-			$subjectOutput .= '<a href="'.admin_url('hr_payroll/new_employee_export_pdf/'.$aRow['id'].'?output_type=I').'" >' . $aRow['pay_slip_number'] . '</a>';
-
-			$subjectOutput .= '<div class="row-options">';
-			$subjectOutput .= '<a href="'.admin_url('hr_payroll/new_employee_export_pdf/'.$aRow['id'].'?output_type=I').'" target="_blank">' . _l('view_pdf_in_new_window') .' </a>';
-			$subjectOutput .= '</div>';
-
-		}else{
-
-
-			$subjectOutput .= '<a href="#" onclick="member_view_payslip(' . $aRow['id'] . ');return false;">' . $aRow['pay_slip_number'] . '</a>';
-
-
-			$subjectOutput .= '<div class="row-options">';
-			$subjectOutput .= '<a href="#" onclick="member_view_payslip(' . $aRow['id'] . ');return false;">' . _l('hr_view') .' </a>';
-			$subjectOutput .= '| <a href="'.admin_url('hr_payroll/employee_export_pdf/'.$aRow['id'].'?output_type=I').'" target="_blank">' . _l('view_pdf_in_new_window') .' </a>';
-			$subjectOutput .= '</div>';
-		}
-
-
-		$row[] = $subjectOutput;
-
-		$row[] = date('m-Y',strtotime($aRow[db_prefix().'hrp_payslip_details.month']));
-		$row[] = $aRow['payslip_range'];
-
-		$hrp_payslip_salary_allowance = hrp_payslip_json_data_decode($aRow['json_data'], $payslip);
-
-
-		if( $hrp_payslip_salary_allowance['integration_hr']){
-		//probation contract
-			$probation_salary ='';
-			$probation_salary .= _l('hrp_salary').': '.currency_converter_value($hrp_payslip_salary_allowance['probation_salary'], $payslip->to_currency_rate, $payslip->to_currency_name ?? '', true).'<br>';
-			$probation_salary .= _l('hrp_allowance').': '.currency_converter_value($hrp_payslip_salary_allowance['probation_allowance'], $payslip->to_currency_rate, $payslip->to_currency_name ?? '', true);
-
-			$row[] = $probation_salary;
+		$row[] = $probation_salary;
 
 		//formal contract
-			$formal_salary ='';
-			$formal_salary .= _l('hrp_salary').': '.currency_converter_value($hrp_payslip_salary_allowance['formal_salary'], $payslip->to_currency_rate, $payslip->to_currency_name ?? '', true).'<br>';
-			$formal_salary .= _l('hrp_allowance').': '.currency_converter_value($hrp_payslip_salary_allowance['formal_allowance'], $payslip->to_currency_rate, $payslip->to_currency_name ?? '', true);
+		$formal_salary ='';
+		$formal_salary .= _l('hrp_salary').' + '._l('hrp_allowance').': '.app_format_money($hrp_payslip_salary_allowance['formal_salary'], '').'<br>';
 
-			$row[] = $formal_salary;
+		$row[] = $formal_salary;
 
-		}else{
-
-			$probation_salary ='';
-			$probation_salary .= _l('hrp_salary').' + '._l('hrp_allowance').': '.currency_converter_value($hrp_payslip_salary_allowance['probation_salary'], $payslip->to_currency_rate, $payslip->to_currency_name ?? '', true).'<br>';
-
-			$row[] = $probation_salary;
-
-		//formal contract
-			$formal_salary ='';
-			$formal_salary .= _l('hrp_salary').' + '._l('hrp_allowance').': '.currency_converter_value($hrp_payslip_salary_allowance['formal_salary'], $payslip->to_currency_rate, $payslip->to_currency_name ?? '', true).'<br>';
-
-			$row[] = $formal_salary;
-
-		}
-
-
-		$row[] = currency_converter_value($aRow['gross_pay'], $payslip->to_currency_rate, $payslip->to_currency_name ?? '', true);
-		$row[] = currency_converter_value($aRow['total_deductions'], $payslip->to_currency_rate, $payslip->to_currency_name ?? '', true);
-		$row[] = currency_converter_value($aRow['income_tax_paye'], $payslip->to_currency_rate, $payslip->to_currency_name ?? '', true);
-		$row[] = currency_converter_value($aRow['it_rebate_value'], $payslip->to_currency_rate, $payslip->to_currency_name ?? '', true);
-		$row[] = currency_converter_value($aRow['commission_amount'], $payslip->to_currency_rate, $payslip->to_currency_name ?? '', true);
-		$row[] = currency_converter_value($aRow['bonus_kpi'], $payslip->to_currency_rate, $payslip->to_currency_name ?? '', true);
-		$row[] = currency_converter_value($aRow['total_insurance'], $payslip->to_currency_rate, $payslip->to_currency_name ?? '', true);
-		$row[] = currency_converter_value($aRow['net_pay'], $payslip->to_currency_rate, $payslip->to_currency_name ?? '', true);
-		$row[] = currency_converter_value($aRow['total_cost'], $payslip->to_currency_rate, $payslip->to_currency_name ?? '', true);
 	}
+
+
+	$row[] = app_format_money($aRow['gross_pay'], '');
+	$row[] = app_format_money($aRow['total_deductions'], '');
+	$row[] = app_format_money($aRow['income_tax_paye'], '');
+	$row[] = app_format_money($aRow['it_rebate_value'],'');
+	$row[] = app_format_money($aRow['commission_amount'], '');
+	$row[] = app_format_money($aRow['bonus_kpi'], '');
+	$row[] = app_format_money($aRow['total_insurance'], '');
+	$row[] = app_format_money($aRow['net_pay'], '');
+	$row[] = app_format_money($aRow['total_cost'], '');
 
 	$row['DT_RowClass'] = 'has-row-options';
 	

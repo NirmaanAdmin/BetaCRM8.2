@@ -33,7 +33,7 @@
 											<label for="role_commissions" class="control-label"><?php echo _l('role'); ?></label>
 											<select name="role_commissions[]" class="form-control selectpicker" multiple="true" id="role_commissions" data-actions-box="true" data-width="100%" data-none-selected-text="<?php echo _l('dropdown_non_selected_tex'); ?>" data-live-search="true"> 
 												<?php foreach ($roles as $key => $role) { ?>
-													<option value="<?php echo new_html_entity_decode($role['roleid']); ?>" ><?php  echo new_html_entity_decode($role['name']); ?></option>
+													<option value="<?php echo html_entity_decode($role['roleid']); ?>" ><?php  echo html_entity_decode($role['name']); ?></option>
 												<?php } ?>
 											</select>
 										</div>
@@ -46,7 +46,7 @@
 											<select name="staff_commissions[]" class="form-control selectpicker" multiple="true" id="staff_commissions" data-actions-box="true" data-width="100%" data-none-selected-text="<?php echo _l('dropdown_non_selected_tex'); ?>" data-live-search="true"> 
 												<?php foreach ($staffs as $key => $staff) { ?>
 
-													<option value="<?php echo new_html_entity_decode($staff['staffid']); ?>" ><?php  echo new_html_entity_decode($staff['firstname'].' '.$staff['lastname']); ?></option>
+													<option value="<?php echo html_entity_decode($staff['staffid']); ?>" ><?php  echo html_entity_decode($staff['firstname'].' '.$staff['lastname']); ?></option>
 												<?php } ?>
 											</select>
 										</div>
@@ -90,7 +90,7 @@
 						<div class="col-md-12">
 							<div class="modal-footer">
 								<?php if(has_permission('hrp_commission', '', 'create') || has_permission('hrp_commission', '', 'edit')){ ?>
-									<button type="button" class="btn btn-info pull-right save_manage_commissions mleft5 "><?php echo new_html_entity_decode($button_name); ?></button>
+									<button type="button" class="btn btn-info pull-right save_manage_commissions mleft5 "><?php echo html_entity_decode($button_name); ?></button>
 									
 									<?php if(hrp_get_commission_status() == 'commission'){ ?>
 										<button type="button" class="btn btn-info pull-right save_synchronized mleft5 " onclick="save_synchronized(this); return false;" title="<?php echo _l('synchronized_commission_title'); ?>"><?php echo _l('hrp_synchronized'); ?> <i class="fa fa-question-circle i_tooltip" data-toggle="tooltip" title="" data-original-title="<?php echo _l('synchronized_commission_title'); ?>"></i></button>

@@ -241,7 +241,7 @@ class PHPExcel_Shared_OLERead
         $offset = 0;
 
         // loop through entires, each entry is 128 bytes
-        $entryLen = new_strlen($this->entry);
+        $entryLen = strlen($this->entry);
         while ($offset < $entryLen) {
             // entry data (128 bytes)
             $d = substr($this->entry, $offset, self::PROPERTY_STORAGE_BLOCK_SIZE);
@@ -258,7 +258,7 @@ class PHPExcel_Shared_OLERead
 
             $size = self::getInt4d($d, self::SIZE_POS);
 
-            $name = new_str_replace("\x00", "", substr($d, 0, $nameSize));
+            $name = str_replace("\x00", "", substr($d, 0, $nameSize));
 
             $this->props[] = array(
                 'name' => $name,

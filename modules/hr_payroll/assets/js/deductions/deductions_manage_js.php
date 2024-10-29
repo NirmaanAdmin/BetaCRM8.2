@@ -4,7 +4,7 @@
 		
 		<?php if(isset($body_value)){ ?>
 
-			var dataObject = <?php echo new_html_entity_decode($body_value) ; ?>;
+			var dataObject = <?php echo html_entity_decode($body_value) ; ?>;
 		<?php }?>
 
 	var hotElement1 = document.querySelector('#hrp_deductions_value');
@@ -48,9 +48,9 @@
 		rowHeaderWidth: [44],
 
 
-		columns: <?php echo new_html_entity_decode($columns) ?>,
+		columns: <?php echo html_entity_decode($columns) ?>,
 
-		colHeaders: <?php echo new_html_entity_decode($col_header); ?>,
+		colHeaders: <?php echo html_entity_decode($col_header); ?>,
 
 		data: dataObject,
 

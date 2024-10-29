@@ -72,7 +72,7 @@ class PHPExcel_ReferenceHelper
      */
     public static function columnSort($a, $b)
     {
-        return strcasecmp(new_strlen($a) . $a, new_strlen($b) . $b);
+        return strcasecmp(strlen($a) . $a, strlen($b) . $b);
     }
 
     /**
@@ -85,7 +85,7 @@ class PHPExcel_ReferenceHelper
      */
     public static function columnReverseSort($a, $b)
     {
-        return 1 - strcasecmp(new_strlen($a) . $a, new_strlen($b) . $b);
+        return 1 - strcasecmp(strlen($a) . $a, strlen($b) . $b);
     }
 
     /**
@@ -102,7 +102,7 @@ class PHPExcel_ReferenceHelper
         sscanf($b, '%[A-Z]%d', $bc, $br);
 
         if ($ar == $br) {
-            return strcasecmp(new_strlen($ac) . $ac, new_strlen($bc) . $bc);
+            return strcasecmp(strlen($ac) . $ac, strlen($bc) . $bc);
         }
         return ($ar < $br) ? -1 : 1;
     }
@@ -121,7 +121,7 @@ class PHPExcel_ReferenceHelper
         sscanf($b, '%[A-Z]%d', $bc, $br);
 
         if ($ar == $br) {
-            return 1 - strcasecmp(new_strlen($ac) . $ac, new_strlen($bc) . $bc);
+            return 1 - strcasecmp(strlen($ac) . $ac, strlen($bc) . $bc);
         }
         return ($ar < $br) ? 1 : -1;
     }
@@ -640,7 +640,7 @@ class PHPExcel_ReferenceHelper
     public function updateFormulaReferences($pFormula = '', $pBefore = 'A1', $pNumCols = 0, $pNumRows = 0, $sheetName = '')
     {
         //    Update cell references in the formula
-        $formulaBlocks = new_explode('"', $pFormula);
+        $formulaBlocks = explode('"', $pFormula);
         $i = false;
         foreach ($formulaBlocks as &$formulaBlock) {
             //    Ignore blocks that were enclosed in quotes (alternating entries in the $formulaBlocks array after the explode)
@@ -757,7 +757,7 @@ class PHPExcel_ReferenceHelper
                         ksort($cellTokens);
                         ksort($newCellTokens);
                     }   //  Update cell references in the formula
-                    $formulaBlock = new_str_replace('\\', '', preg_replace($cellTokens, $newCellTokens, $formulaBlock));
+                    $formulaBlock = str_replace('\\', '', preg_replace($cellTokens, $newCellTokens, $formulaBlock));
                 }
             }
         }
@@ -814,8 +814,8 @@ class PHPExcel_ReferenceHelper
                 if (($cell !== null) && ($cell->getDataType() == PHPExcel_Cell_DataType::TYPE_FORMULA)) {
                     $formula = $cell->getValue();
                     if (strpos($formula, $oldName) !== false) {
-                        $formula = new_str_replace("'" . $oldName . "'!", "'" . $newName . "'!", $formula);
-                        $formula = new_str_replace($oldName . "!", $newName . "!", $formula);
+                        $formula = str_replace("'" . $oldName . "'!", "'" . $newName . "'!", $formula);
+                        $formula = str_replace($oldName . "!", $newName . "!", $formula);
                         $cell->setValueExplicit($formula, PHPExcel_Cell_DataType::TYPE_FORMULA);
                     }
                 }

@@ -767,7 +767,7 @@ class PHPExcel_Calculation_Engineering
 
         //    Split the input into its Real and Imaginary components
         $leadingSign = 0;
-        if (new_strlen($workString) > 0) {
+        if (strlen($workString) > 0) {
             $leadingSign = (($workString{0} == '+') || ($workString{0} == '-')) ? 1 : 0;
         }
         $power = '';
@@ -777,10 +777,10 @@ class PHPExcel_Calculation_Engineering
             ++$leadingSign;
         }
 
-        $realNumber = substr($workString, 0, new_strlen($realNumber)+new_strlen($power)+$leadingSign);
+        $realNumber = substr($workString, 0, strlen($realNumber)+strlen($power)+$leadingSign);
 
         if ($suffix != '') {
-            $imaginary = substr($workString, new_strlen($realNumber));
+            $imaginary = substr($workString, strlen($realNumber));
 
             if (($imaginary == '') && (($realNumber == '') || ($realNumber == '+') || ($realNumber == '-'))) {
                 $imaginary = $realNumber.'1';
@@ -834,7 +834,7 @@ class PHPExcel_Calculation_Engineering
     private static function nbrConversionFormat($xVal, $places)
     {
         if (!is_null($places)) {
-            if (new_strlen($xVal) <= $places) {
+            if (strlen($xVal) <= $places) {
                 return substr(str_pad($xVal, $places, '0', STR_PAD_LEFT), -10);
             } else {
                 return PHPExcel_Calculation_Functions::NaN();
@@ -1157,12 +1157,12 @@ class PHPExcel_Calculation_Engineering
             $x = floor($x);
         }
         $x = (string) $x;
-        if (new_strlen($x) > preg_match_all('/[01]/', $x, $out)) {
+        if (strlen($x) > preg_match_all('/[01]/', $x, $out)) {
             return PHPExcel_Calculation_Functions::NaN();
         }
-        if (new_strlen($x) > 10) {
+        if (strlen($x) > 10) {
             return PHPExcel_Calculation_Functions::NaN();
-        } elseif (new_strlen($x) == 10) {
+        } elseif (strlen($x) == 10) {
             //    Two's Complement
             $x = substr($x, -9);
             return '-'.(512-bindec($x));
@@ -1211,12 +1211,12 @@ class PHPExcel_Calculation_Engineering
             $x = floor($x);
         }
         $x = (string) $x;
-        if (new_strlen($x) > preg_match_all('/[01]/', $x, $out)) {
+        if (strlen($x) > preg_match_all('/[01]/', $x, $out)) {
             return PHPExcel_Calculation_Functions::NaN();
         }
-        if (new_strlen($x) > 10) {
+        if (strlen($x) > 10) {
             return PHPExcel_Calculation_Functions::NaN();
-        } elseif (new_strlen($x) == 10) {
+        } elseif (strlen($x) == 10) {
             //    Two's Complement
             return str_repeat('F', 8).substr(strtoupper(dechex(bindec(substr($x, -9)))), -2);
         }
@@ -1266,12 +1266,12 @@ class PHPExcel_Calculation_Engineering
             $x = floor($x);
         }
         $x = (string) $x;
-        if (new_strlen($x) > preg_match_all('/[01]/', $x, $out)) {
+        if (strlen($x) > preg_match_all('/[01]/', $x, $out)) {
             return PHPExcel_Calculation_Functions::NaN();
         }
-        if (new_strlen($x) > 10) {
+        if (strlen($x) > 10) {
             return PHPExcel_Calculation_Functions::NaN();
-        } elseif (new_strlen($x) == 10) {
+        } elseif (strlen($x) == 10) {
             //    Two's Complement
             return str_repeat('7', 7).substr(strtoupper(decoct(bindec(substr($x, -9)))), -3);
         }
@@ -1322,15 +1322,15 @@ class PHPExcel_Calculation_Engineering
             }
         }
         $x = (string) $x;
-        if (new_strlen($x) > preg_match_all('/[-0123456789.]/', $x, $out)) {
+        if (strlen($x) > preg_match_all('/[-0123456789.]/', $x, $out)) {
             return PHPExcel_Calculation_Functions::VALUE();
         }
         $x = (string) floor($x);
         $r = decbin($x);
-        if (new_strlen($r) == 32) {
+        if (strlen($r) == 32) {
             //    Two's Complement
             $r = substr($r, -10);
-        } elseif (new_strlen($r) > 11) {
+        } elseif (strlen($r) > 11) {
             return PHPExcel_Calculation_Functions::NaN();
         }
 
@@ -1379,12 +1379,12 @@ class PHPExcel_Calculation_Engineering
             }
         }
         $x = (string) $x;
-        if (new_strlen($x) > preg_match_all('/[-0123456789.]/', $x, $out)) {
+        if (strlen($x) > preg_match_all('/[-0123456789.]/', $x, $out)) {
             return PHPExcel_Calculation_Functions::VALUE();
         }
         $x = (string) floor($x);
         $r = strtoupper(dechex($x));
-        if (new_strlen($r) == 8) {
+        if (strlen($r) == 8) {
             //    Two's Complement
             $r = 'FF'.$r;
         }
@@ -1434,12 +1434,12 @@ class PHPExcel_Calculation_Engineering
             }
         }
         $x = (string) $x;
-        if (new_strlen($x) > preg_match_all('/[-0123456789.]/', $x, $out)) {
+        if (strlen($x) > preg_match_all('/[-0123456789.]/', $x, $out)) {
             return PHPExcel_Calculation_Functions::VALUE();
         }
         $x = (string) floor($x);
         $r = decoct($x);
-        if (new_strlen($r) == 11) {
+        if (strlen($r) == 11) {
             //    Two's Complement
             $r = substr($r, -10);
         }
@@ -1488,7 +1488,7 @@ class PHPExcel_Calculation_Engineering
             return PHPExcel_Calculation_Functions::VALUE();
         }
         $x = (string) $x;
-        if (new_strlen($x) > preg_match_all('/[0123456789ABCDEF]/', strtoupper($x), $out)) {
+        if (strlen($x) > preg_match_all('/[0123456789ABCDEF]/', strtoupper($x), $out)) {
             return PHPExcel_Calculation_Functions::NaN();
         }
         $binVal = decbin(hexdec($x));
@@ -1524,7 +1524,7 @@ class PHPExcel_Calculation_Engineering
             return PHPExcel_Calculation_Functions::VALUE();
         }
         $x = (string) $x;
-        if (new_strlen($x) > preg_match_all('/[0123456789ABCDEF]/', strtoupper($x), $out)) {
+        if (strlen($x) > preg_match_all('/[0123456789ABCDEF]/', strtoupper($x), $out)) {
             return PHPExcel_Calculation_Functions::NaN();
         }
         return hexdec($x);
@@ -1572,7 +1572,7 @@ class PHPExcel_Calculation_Engineering
             return PHPExcel_Calculation_Functions::VALUE();
         }
         $x = (string) $x;
-        if (new_strlen($x) > preg_match_all('/[0123456789ABCDEF]/', strtoupper($x), $out)) {
+        if (strlen($x) > preg_match_all('/[0123456789ABCDEF]/', strtoupper($x), $out)) {
             return PHPExcel_Calculation_Functions::NaN();
         }
         $octVal = decoct(hexdec($x));
@@ -1624,7 +1624,7 @@ class PHPExcel_Calculation_Engineering
             return PHPExcel_Calculation_Functions::VALUE();
         }
         $x = (string) $x;
-        if (preg_match_all('/[01234567]/', $x, $out) != new_strlen($x)) {
+        if (preg_match_all('/[01234567]/', $x, $out) != strlen($x)) {
             return PHPExcel_Calculation_Functions::NaN();
         }
         $r = decbin(octdec($x));
@@ -1660,7 +1660,7 @@ class PHPExcel_Calculation_Engineering
             return PHPExcel_Calculation_Functions::VALUE();
         }
         $x = (string) $x;
-        if (preg_match_all('/[01234567]/', $x, $out) != new_strlen($x)) {
+        if (preg_match_all('/[01234567]/', $x, $out) != strlen($x)) {
             return PHPExcel_Calculation_Functions::NaN();
         }
         return octdec($x);
@@ -1705,7 +1705,7 @@ class PHPExcel_Calculation_Engineering
             return PHPExcel_Calculation_Functions::VALUE();
         }
         $x = (string) $x;
-        if (preg_match_all('/[01234567]/', $x, $out) != new_strlen($x)) {
+        if (preg_match_all('/[01234567]/', $x, $out) != strlen($x)) {
             return PHPExcel_Calculation_Functions::NaN();
         }
         $hexVal = strtoupper(dechex(octdec($x)));

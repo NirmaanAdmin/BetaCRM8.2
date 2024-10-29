@@ -691,7 +691,7 @@ class PHPExcel_Reader_Excel2007 extends PHPExcel_Reader_Abstract implements PHPE
                                 if (isset($xmlSheet->sheetViews->sheetView->selection)) {
                                     if (isset($xmlSheet->sheetViews->sheetView->selection['sqref'])) {
                                         $sqref = (string)$xmlSheet->sheetViews->sheetView->selection['sqref'];
-                                        $sqref = new_explode(' ', $sqref);
+                                        $sqref = explode(' ', $sqref);
                                         $sqref = $sqref[0];
                                         $docSheet->setSelectedCells($sqref);
                                     }
@@ -960,7 +960,7 @@ class PHPExcel_Reader_Excel2007 extends PHPExcel_Reader_Abstract implements PHPE
                                     }
 
                                     // Extract all cell references in $ref
-                                    $cellBlocks = new_explode(' ', new_str_replace('$', '', strtoupper($ref)));
+                                    $cellBlocks = explode(' ', str_replace('$', '', strtoupper($ref)));
                                     foreach ($cellBlocks as $cellBlock) {
                                         $docSheet->getStyle($cellBlock)->setConditionalStyles($conditionalStyles);
                                     }
@@ -1182,7 +1182,7 @@ class PHPExcel_Reader_Excel2007 extends PHPExcel_Reader_Abstract implements PHPE
                                 foreach ($xmlSheet->dataValidations->dataValidation as $dataValidation) {
                                     // Uppercase coordinate
                                     $range = strtoupper($dataValidation["sqref"]);
-                                    $rangeSet = new_explode(' ', $range);
+                                    $rangeSet = explode(' ', $range);
                                     foreach ($rangeSet as $range) {
                                         $stRange = $docSheet->shrinkRangeToFit($range);
 
@@ -1328,9 +1328,9 @@ class PHPExcel_Reader_Excel2007 extends PHPExcel_Reader_Abstract implements PHPE
                                                 $comment->getFillColor()->setRGB($fillColor);
 
                                                 // Parse style
-                                                $styleArray = new_explode(';', new_str_replace(' ', '', $style));
+                                                $styleArray = explode(';', str_replace(' ', '', $style));
                                                 foreach ($styleArray as $stylePair) {
-                                                    $stylePair = new_explode(':', $stylePair);
+                                                    $stylePair = explode(':', $stylePair);
 
                                                     if ($stylePair[0] == 'margin-left') {
                                                         $comment->setMarginLeft($stylePair[1]);
@@ -1549,9 +1549,9 @@ class PHPExcel_Reader_Excel2007 extends PHPExcel_Reader_Abstract implements PHPE
                                     $extractedRange = (string)$definedName;
                                     $extractedRange = preg_replace('/\'(\w+)\'\!/', '', $extractedRange);
                                     if (($spos = strpos($extractedRange, '!')) !== false) {
-                                        $extractedRange = substr($extractedRange, 0, $spos).new_str_replace('$', '', substr($extractedRange, $spos));
+                                        $extractedRange = substr($extractedRange, 0, $spos).str_replace('$', '', substr($extractedRange, $spos));
                                     } else {
-                                        $extractedRange = new_str_replace('$', '', $extractedRange);
+                                        $extractedRange = str_replace('$', '', $extractedRange);
                                     }
 
                                     // Valid range?
@@ -1565,7 +1565,7 @@ class PHPExcel_Reader_Excel2007 extends PHPExcel_Reader_Abstract implements PHPE
                                         switch ((string)$definedName['name']) {
                                             case '_xlnm._FilterDatabase':
                                                 if ((string)$definedName['hidden'] !== '1') {
-                                                    $extractedRange = new_explode(',', $extractedRange);
+                                                    $extractedRange = explode(',', $extractedRange);
                                                     foreach ($extractedRange as $range) {
                                                         $autoFilterRange = $range;
                                                         if (strpos($autoFilterRange, ':') !== false) {
@@ -1576,12 +1576,12 @@ class PHPExcel_Reader_Excel2007 extends PHPExcel_Reader_Abstract implements PHPE
                                                 break;
                                             case '_xlnm.Print_Titles':
                                                 // Split $extractedRange
-                                                $extractedRange = new_explode(',', $extractedRange);
+                                                $extractedRange = explode(',', $extractedRange);
 
                                                 // Set print titles
                                                 foreach ($extractedRange as $range) {
                                                     $matches = array();
-                                                    $range = new_str_replace('$', '', $range);
+                                                    $range = str_replace('$', '', $range);
 
                                                     // check for repeating columns, e g. 'A:A' or 'A:D'
                                                     if (preg_match('/!?([A-Z]+)\:([A-Z]+)$/', $range, $matches)) {
@@ -1593,15 +1593,15 @@ class PHPExcel_Reader_Excel2007 extends PHPExcel_Reader_Abstract implements PHPE
                                                 }
                                                 break;
                                             case '_xlnm.Print_Area':
-                                                $rangeSets = new_explode(',', $extractedRange);        // FIXME: what if sheetname contains comma?
+                                                $rangeSets = explode(',', $extractedRange);        // FIXME: what if sheetname contains comma?
                                                 $newRangeSets = array();
                                                 foreach ($rangeSets as $rangeSet) {
-                                                    $range = new_explode('!', $rangeSet);    // FIXME: what if sheetname contains exclamation mark?
+                                                    $range = explode('!', $rangeSet);    // FIXME: what if sheetname contains exclamation mark?
                                                     $rangeSet = isset($range[1]) ? $range[1] : $range[0];
                                                     if (strpos($rangeSet, ':') === false) {
                                                         $rangeSet = $rangeSet . ':' . $rangeSet;
                                                     }
-                                                    $newRangeSets[] = new_str_replace('$', '', $rangeSet);
+                                                    $newRangeSets[] = str_replace('$', '', $rangeSet);
                                                 }
                                                 $docSheet->getPageSetup()->setPrintArea(implode(',', $newRangeSets));
                                                 break;
@@ -1624,9 +1624,9 @@ class PHPExcel_Reader_Excel2007 extends PHPExcel_Reader_Abstract implements PHPE
                                 $extractedRange = (string)$definedName;
                                 $extractedRange = preg_replace('/\'(\w+)\'\!/', '', $extractedRange);
                                 if (($spos = strpos($extractedRange, '!')) !== false) {
-                                    $extractedRange = substr($extractedRange, 0, $spos).new_str_replace('$', '', substr($extractedRange, $spos));
+                                    $extractedRange = substr($extractedRange, 0, $spos).str_replace('$', '', substr($extractedRange, $spos));
                                 } else {
-                                    $extractedRange = new_str_replace('$', '', $extractedRange);
+                                    $extractedRange = str_replace('$', '', $extractedRange);
                                 }
 
                                 // Valid range?
@@ -1645,12 +1645,12 @@ class PHPExcel_Reader_Excel2007 extends PHPExcel_Reader_Abstract implements PHPE
                                             break;
                                         default:
                                             if ($mapSheetId[(integer) $definedName['localSheetId']] !== null) {
-                                                $range = new_explode('!', (string)$definedName);
+                                                $range = explode('!', (string)$definedName);
                                                 if (count($range) == 2) {
-                                                    $range[0] = new_str_replace("''", "'", $range[0]);
-                                                    $range[0] = new_str_replace("'", "", $range[0]);
+                                                    $range[0] = str_replace("''", "'", $range[0]);
+                                                    $range[0] = str_replace("'", "", $range[0]);
                                                     if ($worksheet = $docSheet->getParent()->getSheetByName($range[0])) {
-                                                        $extractedRange = new_str_replace('$', '', $range[1]);
+                                                        $extractedRange = str_replace('$', '', $range[1]);
                                                         $scope = $docSheet->getParent()->getSheet($mapSheetId[(integer) $definedName['localSheetId']]);
                                                         $excel->addNamedRange(new PHPExcel_NamedRange((string)$definedName['name'], $worksheet, $extractedRange, true, $scope));
                                                     }
@@ -1671,7 +1671,7 @@ class PHPExcel_Reader_Excel2007 extends PHPExcel_Reader_Abstract implements PHPE
                                         $locatedSheet = $excel->getSheetByName($extractedSheetName);
 
                                         // Modify range
-                                        $range = new_explode('!', $extractedRange);
+                                        $range = explode('!', $extractedRange);
                                         $extractedRange = isset($range[1]) ? $range[1] : $range[0];
                                     }
 
@@ -2009,26 +2009,26 @@ class PHPExcel_Reader_Excel2007 extends PHPExcel_Reader_Abstract implements PHPE
 
     private static function toCSSArray($style)
     {
-        $style = new_str_replace(array("\r","\n"), "", $style);
+        $style = str_replace(array("\r","\n"), "", $style);
 
-        $temp = new_explode(';', $style);
+        $temp = explode(';', $style);
         $style = array();
         foreach ($temp as $item) {
-            $item = new_explode(':', $item);
+            $item = explode(':', $item);
 
             if (strpos($item[1], 'px') !== false) {
-                $item[1] = new_str_replace('px', '', $item[1]);
+                $item[1] = str_replace('px', '', $item[1]);
             }
             if (strpos($item[1], 'pt') !== false) {
-                $item[1] = new_str_replace('pt', '', $item[1]);
+                $item[1] = str_replace('pt', '', $item[1]);
                 $item[1] = PHPExcel_Shared_Font::fontSizeToPixels($item[1]);
             }
             if (strpos($item[1], 'in') !== false) {
-                $item[1] = new_str_replace('in', '', $item[1]);
+                $item[1] = str_replace('in', '', $item[1]);
                 $item[1] = PHPExcel_Shared_Font::inchSizeToPixels($item[1]);
             }
             if (strpos($item[1], 'cm') !== false) {
-                $item[1] = new_str_replace('cm', '', $item[1]);
+                $item[1] = str_replace('cm', '', $item[1]);
                 $item[1] = PHPExcel_Shared_Font::centimeterSizeToPixels($item[1]);
             }
 

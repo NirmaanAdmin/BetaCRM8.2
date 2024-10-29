@@ -64,8 +64,8 @@ class PHPExcel_Worksheet_Drawing extends PHPExcel_Worksheet_BaseDrawing implemen
     public function getIndexedFilename()
     {
         $fileName = $this->getFilename();
-        $fileName = new_str_replace(' ', '_', $fileName);
-        return new_str_replace('.' . $this->getExtension(), '', $fileName) . $this->getImageIndex() . '.' . $this->getExtension();
+        $fileName = str_replace(' ', '_', $fileName);
+        return str_replace('.' . $this->getExtension(), '', $fileName) . $this->getImageIndex() . '.' . $this->getExtension();
     }
 
     /**
@@ -75,7 +75,7 @@ class PHPExcel_Worksheet_Drawing extends PHPExcel_Worksheet_BaseDrawing implemen
      */
     public function getExtension()
     {
-        $exploded = new_explode(".", basename($this->path));
+        $exploded = explode(".", basename($this->path));
         return $exploded[count($exploded) - 1];
     }
 

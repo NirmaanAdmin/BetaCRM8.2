@@ -94,7 +94,7 @@ class PHPExcel_Reader_Excel5_Escher
         $this->data = $data;
 
         // total byte size of Excel data (workbook global substream + sheet substreams)
-        $this->dataSize = new_strlen($this->data);
+        $this->dataSize = strlen($this->data);
 
         $this->pos = 0;
 

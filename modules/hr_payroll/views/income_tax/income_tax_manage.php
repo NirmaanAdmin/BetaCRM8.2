@@ -33,7 +33,7 @@
 											<label for="role_income_taxs" class="control-label"><?php echo _l('role'); ?></label>
 											<select name="role_income_taxs[]" class="form-control selectpicker" multiple="true" id="role_income_taxs" data-actions-box="true" data-width="100%" data-none-selected-text="<?php echo _l('dropdown_non_selected_tex'); ?>" data-live-search="true"> 
 												<?php foreach ($roles as $key => $role) { ?>
-													<option value="<?php echo new_html_entity_decode($role['roleid']); ?>" ><?php  echo new_html_entity_decode($role['name']); ?></option>
+													<option value="<?php echo html_entity_decode($role['roleid']); ?>" ><?php  echo html_entity_decode($role['name']); ?></option>
 												<?php } ?>
 											</select>
 										</div>
@@ -46,7 +46,7 @@
 											<select name="staff_income_taxs[]" class="form-control selectpicker" multiple="true" id="staff_income_taxs" data-actions-box="true" data-width="100%" data-none-selected-text="<?php echo _l('dropdown_non_selected_tex'); ?>" data-live-search="true"> 
 												<?php foreach ($staffs as $key => $staff) { ?>
 
-													<option value="<?php echo new_html_entity_decode($staff['staffid']); ?>" ><?php  echo new_html_entity_decode($staff['firstname'].' '.$staff['lastname']); ?></option>
+													<option value="<?php echo html_entity_decode($staff['staffid']); ?>" ><?php  echo html_entity_decode($staff['firstname'].' '.$staff['lastname']); ?></option>
 												<?php } ?>
 											</select>
 										</div>

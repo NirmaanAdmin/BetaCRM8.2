@@ -139,7 +139,7 @@ class PHPExcel_Writer_Excel2007_ContentTypes extends PHPExcel_Writer_Excel2007_W
                 $mimeType = $this->getImageMimeType($this->getParentWriter()->getDrawingHashTable()->getByIndex($i)->getPath());
             } elseif ($this->getParentWriter()->getDrawingHashTable()->getByIndex($i) instanceof PHPExcel_Worksheet_MemoryDrawing) {
                 $extension = strtolower($this->getParentWriter()->getDrawingHashTable()->getByIndex($i)->getMimeType());
-                $extension = new_explode('/', $extension);
+                $extension = explode('/', $extension);
                 $extension = $extension[1];
 
                 $mimeType = $this->getParentWriter()->getDrawingHashTable()->getByIndex($i)->getMimeType();

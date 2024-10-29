@@ -220,7 +220,7 @@ class PHPExcel_Style extends PHPExcel_Style_Supervisor implements PHPExcel_IComp
                     $rangeA = $pRange;
                     $rangeB = $pRange;
                 } else {
-                    list($rangeA, $rangeB) = new_explode(':', $pRange);
+                    list($rangeA, $rangeB) = explode(':', $pRange);
                 }
 
                 // Calculate range outer borders

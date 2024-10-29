@@ -498,7 +498,7 @@ class PHPExcel_Reader_Excel2003XML extends PHPExcel_Reader_Abstract implements P
                     case 'NumberFormat':
                         foreach ($styleAttributes as $styleAttributeKey => $styleAttributeValue) {
 //                                echo $styleAttributeKey.' = '.$styleAttributeValue.'<br />';
-                            $styleAttributeValue = new_str_replace($fromFormats, $toFormats, $styleAttributeValue);
+                            $styleAttributeValue = str_replace($fromFormats, $toFormats, $styleAttributeValue);
                             switch ($styleAttributeValue) {
                                 case 'Short Date':
                                     $styleAttributeValue = 'dd/mm/yyyy';
@@ -659,18 +659,18 @@ class PHPExcel_Reader_Excel2003XML extends PHPExcel_Reader_Abstract implements P
                                 if (substr($cellDataFormula, 0, 3) == 'of:') {
                                     $cellDataFormula = substr($cellDataFormula, 3);
 //                                    echo 'Before: ', $cellDataFormula,'<br />';
-                                    $temp = new_explode('"', $cellDataFormula);
+                                    $temp = explode('"', $cellDataFormula);
                                     $key = false;
                                     foreach ($temp as &$value) {
                                         //    Only replace in alternate array entries (i.e. non-quoted blocks)
                                         if ($key = !$key) {
-                                            $value = new_str_replace(array('[.', '.', ']'), '', $value);
+                                            $value = str_replace(array('[.', '.', ']'), '', $value);
                                         }
                                     }
                                 } else {
                                     //    Convert R1C1 style references to A1 style references (but only when not quoted)
 //                                    echo 'Before: ', $cellDataFormula,'<br />';
-                                    $temp = new_explode('"', $cellDataFormula);
+                                    $temp = explode('"', $cellDataFormula);
                                     $key = false;
                                     foreach ($temp as &$value) {
                                         //    Only replace in alternate array entries (i.e. non-quoted blocks)
@@ -702,7 +702,7 @@ class PHPExcel_Reader_Excel2003XML extends PHPExcel_Reader_Abstract implements P
                                                     $columnReference = $columnNumber + trim($columnReference, '[]');
                                                 }
                                                 $A1CellReference = PHPExcel_Cell::stringFromColumnIndex($columnReference-1).$rowReference;
-                                                $value = subnew_str_replace($value, $A1CellReference, $cellReference[0][1], new_strlen($cellReference[0][0]));
+                                                $value = substr_replace($value, $A1CellReference, $cellReference[0][1], strlen($cellReference[0][0]));
                                             }
                                         }
                                     }
@@ -732,7 +732,7 @@ class PHPExcel_Reader_Excel2003XML extends PHPExcel_Reader_Abstract implements P
 //                                echo 'Author: ', $author,'<br />';
                             }
                             $node = $cell->Comment->Data->asXML();
-//                            $annotation = new_str_replace('html:','',substr($node,49,-10));
+//                            $annotation = str_replace('html:','',substr($node,49,-10));
 //                            echo $annotation,'<br />';
                             $annotation = strip_tags($node);
 //                            echo 'Annotation: ', $annotation,'<br />';

@@ -145,7 +145,7 @@ class PHPExcel_Shared_OLE_ChainedBlockStream
      */
     public function stream_eof()
     {
-        return $this->pos >= new_strlen($this->data);
+        return $this->pos >= strlen($this->data);
     }
 
     /**
@@ -173,7 +173,7 @@ class PHPExcel_Shared_OLE_ChainedBlockStream
         } elseif ($whence == SEEK_CUR && -$offset <= $this->pos) {
             $this->pos += $offset;
         } elseif ($whence == SEEK_END && -$offset <= sizeof($this->data)) {
-            $this->pos = new_strlen($this->data) + $offset;
+            $this->pos = strlen($this->data) + $offset;
         } else {
             return false;
         }
@@ -188,7 +188,7 @@ class PHPExcel_Shared_OLE_ChainedBlockStream
     public function stream_stat()
     {
         return array(
-            'size' => new_strlen($this->data),
+            'size' => strlen($this->data),
             );
     }
 

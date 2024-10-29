@@ -12,66 +12,58 @@
 					foreach($tab as $gr){
 						?>
 						<li<?php if($i == 0){echo " class='active'"; } ?>>
-						<a href="<?php echo admin_url('hr_payroll/setting?group='.$gr); ?>" data-group="<?php echo new_html_entity_decode($gr); ?>">
+						<a href="<?php echo admin_url('hr_payroll/setting?group='.$gr); ?>" data-group="<?php echo html_entity_decode($gr); ?>">
 							<?php
 							
 								$icon['income_tax_rates'] = '<span class="fa fa-area-chart"></span>';
-								$icon['income_tax_rebates'] = '<span class="fa-brands fa-shirtsinbulk"></span>';
+								$icon['income_tax_rebates'] = '<span class="fa fa-shirtsinbulk"></span>';
 								$icon['hr_records_earnings_list'] = '<span class="fa fa-dollar"></span>';
 								$icon['earnings_list'] = '<span class="fa fa-dollar"></span>';
 								$icon['salary_deductions_list'] = '<span class="fa fa-dedent"></span>';
 								$icon['company_contributions_list'] = '<span class="fa fa-building-o"></span>';
 								$icon['payroll_columns'] = '<span class="fa fa-database"></span>';
-								$icon['pdf_payslip_template'] = '<span class="fa-solid fa-money-bill"></span>';
 								$icon['data_integration'] = '<span class="fa fa-chain-broken"></span>';
 								$icon['permissions'] = '<span class="fa fa-unlock-alt"></span>';
-								$icon['insurance_list'] = '<span class="fa-brands fa-get-pocket"></span>';
+								$icon['insurance_list'] = '<span class="fa fa-get-pocket"></span>';
 								$icon['reset_data'] = '<span class="fa fa-window-close-o"></span>';
-								$icon['currency_rates'] = '<span class="fa-solid fa-scale-unbalanced"></span>';
 
 
 
 							if($gr == 'hr_records_earnings_list'){
-								echo new_html_entity_decode($icon[$gr] .' '. _l('earnings_list')); 
+								echo html_entity_decode($icon[$gr] .' '. _l('earnings_list')); 
 
 							}elseif($gr == 'income_tax_rates'){
-								echo new_html_entity_decode($icon[$gr] .' '. _l($gr)); 
+								echo html_entity_decode($icon[$gr] .' '. _l($gr)); 
 
 							}elseif($gr == 'income_tax_rebates'){
-								echo new_html_entity_decode($icon[$gr] .' '. _l($gr)); 
+								echo html_entity_decode($icon[$gr] .' '. _l($gr)); 
 
 							}elseif($gr == 'hr_records_earnings_list'){
-								echo new_html_entity_decode($icon[$gr] .' '. _l($gr)); 
+								echo html_entity_decode($icon[$gr] .' '. _l($gr)); 
 
 							}elseif($gr == 'earnings_list'){
-								echo new_html_entity_decode($icon[$gr] .' '. _l($gr)); 
+								echo html_entity_decode($icon[$gr] .' '. _l($gr)); 
 
 							}elseif($gr == 'salary_deductions_list'){
-								echo new_html_entity_decode($icon[$gr] .' '. _l($gr)); 
+								echo html_entity_decode($icon[$gr] .' '. _l($gr)); 
 
 							}elseif($gr == 'insurance_list'){
-								echo new_html_entity_decode($icon[$gr] .' '. _l($gr)); 
+								echo html_entity_decode($icon[$gr] .' '. _l($gr)); 
 
 							}elseif($gr == 'company_contributions_list'){
-								echo new_html_entity_decode($icon[$gr] .' '. _l($gr)); 
+								echo html_entity_decode($icon[$gr] .' '. _l($gr)); 
 
 							}elseif($gr == 'payroll_columns'){
-								echo new_html_entity_decode($icon[$gr] .' '. _l($gr)); 
+								echo html_entity_decode($icon[$gr] .' '. _l($gr)); 
 
 							}elseif($gr == 'data_integration'){
-								echo new_html_entity_decode($icon[$gr] .' '. _l($gr)); 
+								echo html_entity_decode($icon[$gr] .' '. _l($gr)); 
 
 							}elseif($gr == 'permissions'){
-								echo new_html_entity_decode($icon[$gr] .' '. _l($gr)); 
+								echo html_entity_decode($icon[$gr] .' '. _l($gr)); 
 
 							}elseif($gr == 'reset_data'){
-								echo new_html_entity_decode($icon[$gr] .' '. _l($gr)); 
-
-							}elseif($gr == 'pdf_payslip_template'){
-								echo new_html_entity_decode($icon[$gr] .' '. _l($gr)); 
-
-							}elseif($gr == 'currency_rates'){
-								echo new_html_entity_decode($icon[$gr] .' '. _l('hrp_'.$gr)); 
+								echo html_entity_decode($icon[$gr] .' '. _l($gr)); 
 
 							}
 
@@ -123,8 +115,6 @@ $viewuri = $_SERVER['REQUEST_URI'];
 	require 'modules/hr_payroll/assets/js/settings/permissions_js.php';
 }elseif(!(strpos($viewuri,'admin/hr_payroll/setting?group=insurance_list') === false)){
 	require 'modules/hr_payroll/assets/js/settings/insurance_list_js.php';
-}elseif(!(strpos($viewuri,'admin/hr_payroll/setting?group=currency_rates') === false)){
-	require 'modules/hr_payroll/assets/js/settings/currency_rates_js.php';
 }
 
  ?>

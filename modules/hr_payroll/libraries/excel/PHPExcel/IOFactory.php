@@ -134,7 +134,7 @@ class PHPExcel_IOFactory
         // Include class
         foreach (self::$searchLocations as $searchLocation) {
             if ($searchLocation['type'] == $searchType) {
-                $className = new_str_replace('{0}', $writerType, $searchLocation['class']);
+                $className = str_replace('{0}', $writerType, $searchLocation['class']);
 
                 $instance = new $className($phpExcel);
                 if ($instance !== null) {
@@ -164,7 +164,7 @@ class PHPExcel_IOFactory
         // Include class
         foreach (self::$searchLocations as $searchLocation) {
             if ($searchLocation['type'] == $searchType) {
-                $className = new_str_replace('{0}', $readerType, $searchLocation['class']);
+                $className = str_replace('{0}', $readerType, $searchLocation['class']);
 
                 $instance = new $className();
                 if ($instance !== null) {
@@ -205,7 +205,7 @@ class PHPExcel_IOFactory
     {
         $reader = self::createReaderForFile($pFilename);
         $className = get_class($reader);
-        $classType = new_explode('_', $className);
+        $classType = explode('_', $className);
         unset($reader);
         return array_pop($classType);
     }

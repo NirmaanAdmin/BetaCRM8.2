@@ -600,7 +600,7 @@ class PHPExcel_Worksheet_PageSetup
         if ($index == 0) {
             return $this->printArea;
         }
-        $printAreas = new_explode(',', $this->printArea);
+        $printAreas = explode(',', $this->printArea);
         if (isset($printAreas[$index-1])) {
             return $printAreas[$index-1];
         }
@@ -621,7 +621,7 @@ class PHPExcel_Worksheet_PageSetup
         if ($index == 0) {
             return !is_null($this->printArea);
         }
-        $printAreas = new_explode(',', $this->printArea);
+        $printAreas = explode(',', $this->printArea);
         return isset($printAreas[$index-1]);
     }
 
@@ -639,7 +639,7 @@ class PHPExcel_Worksheet_PageSetup
         if ($index == 0) {
             $this->printArea = null;
         } else {
-            $printAreas = new_explode(',', $this->printArea);
+            $printAreas = explode(',', $this->printArea);
             if (isset($printAreas[$index-1])) {
                 unset($printAreas[$index-1]);
                 $this->printArea = implode(',', $printAreas);
@@ -684,7 +684,7 @@ class PHPExcel_Worksheet_PageSetup
             if ($index == 0) {
                 $this->printArea = $value;
             } else {
-                $printAreas = new_explode(',', $this->printArea);
+                $printAreas = explode(',', $this->printArea);
                 if ($index < 0) {
                     $index = count($printAreas) - abs($index) + 1;
                 }
@@ -698,7 +698,7 @@ class PHPExcel_Worksheet_PageSetup
             if ($index == 0) {
                 $this->printArea .= ($this->printArea == '') ? $value : ','.$value;
             } else {
-                $printAreas = new_explode(',', $this->printArea);
+                $printAreas = explode(',', $this->printArea);
                 if ($index < 0) {
                     $index = abs($index) - 1;
                 }

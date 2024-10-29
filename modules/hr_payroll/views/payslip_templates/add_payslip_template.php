@@ -16,7 +16,7 @@
 						$payslip_template_id = $id;
 					}
 					?>
-					<input type="hidden" name="id" value="<?php echo new_html_entity_decode($payslip_template_id); ?>">
+					<input type="hidden" name="id" value="<?php echo html_entity_decode($payslip_template_id); ?>">
 
 					<?php echo form_close(); ?>  
 			</div>

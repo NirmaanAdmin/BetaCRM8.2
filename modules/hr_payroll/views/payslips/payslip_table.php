@@ -7,6 +7,7 @@ $aColumns = [
 	'payslip_name',
 	'payslip_template_id',
 	'payslip_month',
+	'payslip_range',
 	'staff_id_created',
 	'date_created',
 	'payslip_status',
@@ -78,6 +79,7 @@ foreach ($rResult as $aRow) {
 			}
 
 			if (has_permission('hrp_payslip', '', 'edit') || is_admin()) {
+				$code .= ' | <a href="#" onclick="edit_payslip(this, '.$aRow['id'] .', '.$aRow['payslip_template_id'] .'); return false;"  >' . _l('edit') . '</a>';
 
 			}
 			if (has_permission('hrp_payslip', '', 'delete') || is_admin()) {
@@ -92,6 +94,9 @@ foreach ($rResult as $aRow) {
 
 		}elseif($aColumns[$i] == 'payslip_month'){
 			$_data =  date('m-Y', strtotime($aRow['payslip_month']));
+
+		}elseif($aColumns[$i] == 'payslip_range'){
+			$_data =  $aRow['payslip_range'];
 
 		} elseif ($aColumns[$i] == 'staff_id_created') {
 			$_data = '<a href="' . admin_url('staff/profile/' . $aRow['staff_id_created']) . '">' . staff_profile_image($aRow['staff_id_created'], [

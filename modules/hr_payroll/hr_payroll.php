@@ -5,7 +5,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 /*
 Module Name: HR Payroll
 Description: This module encompasses everything that goes into onboarding and paying your employees.
-Version: 1.0.4
+Version: 1.0.9
 Requires at least: 2.3.*
 Author: GreenTech Solutions
 Author URI: https://codecanyon.net/user/greentech_solutions
@@ -22,9 +22,10 @@ define('HR_PAYROLL_CREATE_EMPLOYEES_SAMPLE', 'modules/hr_payroll/uploads/employe
 define('HR_PAYROLL_CREATE_COMMISSIONS_SAMPLE', 'modules/hr_payroll/uploads/commissions_sample_file/');
 define('HR_PAYROLL_ERROR', 'modules/hr_payroll/uploads/file_error_response/');
 define('HR_PAYROLL_PAYSLIP_FILE', 'modules/hr_payroll/uploads/payslip/');
-define('HR_PAYROLL_EXPORT_EMPLOYEE_PAYSLIP', module_dir_path(HR_PAYROLL_MODULE_NAME, 'uploads/export_employee_payslip/'));
+// define('HR_PAYROLL_EXPORT_EMPLOYEE_PAYSLIP', module_dir_path(HR_PAYROLL_MODULE_NAME, 'uploads/export_employee_payslip/'));
+define('HR_PAYROLL_EXPORT_EMPLOYEE_PAYSLIP', FCPATH . 'modules/hr_payroll/uploads/export_employee_payslip' . '/');
 
-define('HR_PAYROLL_REVISION', 104);
+define('HR_PAYROLL_REVISION', 1092);
 
 //prefix for contract
 define('HR_PAYROLL_PREFIX_PROBATIONARY', ' (CT1)');
@@ -41,6 +42,14 @@ hooks()->add_filter('hr_profile_tab_name', 'hr_payroll_add_tab_name', 10);
 hooks()->add_filter('hr_profile_tab_content', 'hr_payroll_add_tab_content', 10);
 hooks()->add_action('hr_profile_load_js_file', 'hr_payroll_load_js_file');
 
+register_merge_fields('hr_payroll/merge_fields/hr_payslip_merge_fields');
+hooks()->add_filter('other_merge_fields_available_for', 'hrp_pdf_payslip_register_other_merge_fields');
+//get currency
+hooks()->add_action('after_cron_run', 'hrp_cronjob_currency_rates');
+hooks()->add_action('hr_payroll_init',HR_PAYROLL_MODULE_NAME.'_appint');
+hooks()->add_action('pre_activate_module', HR_PAYROLL_MODULE_NAME.'_preactivate');
+hooks()->add_action('pre_deactivate_module', HR_PAYROLL_MODULE_NAME.'_predeactivate');
+
 /**
 * Register activation module hook
 */
@@ -49,7 +58,7 @@ register_activation_hook(HR_PAYROLL_MODULE_NAME, 'hr_payroll_module_activation_h
 
 /**
  * hr payroll module activation hook
- * @return [type] 
+ * @return [type]
  */
 function hr_payroll_module_activation_hook()
 {
@@ -86,7 +95,7 @@ function hr_payroll_module_init_menu_items()
         $CI->app_menu->add_sidebar_children_item('hr_payroll', [
             'slug'     => 'hr_manage_employees',
             'name'     => _l('hr_manage_employees'),
-            'icon'     => 'fas fa-vcard',
+            'icon'     => 'fa fa-vcard',
             'href'     => admin_url('hr_payroll/manage_employees'),
             'position' => 1,
         ]);
@@ -96,7 +105,7 @@ function hr_payroll_module_init_menu_items()
         $CI->app_menu->add_sidebar_children_item('hr_payroll', [
             'slug'     => 'hr_manage_attendance',
             'name'     => _l('hr_manage_attendance'),
-            'icon'     => 'fas fa-pencil-square menu-icon',
+            'icon'     => 'fa-regular fa-pen-to-square menu-icon',
             'href'     => admin_url('hr_payroll/manage_attendance'),
             'position' => 2,
         ]);
@@ -148,7 +157,7 @@ function hr_payroll_module_init_menu_items()
         $CI->app_menu->add_sidebar_children_item('hr_payroll', [
             'slug'     => 'hr_pay_slips',
             'name'     => _l('hr_pay_slips'),
-            'icon'     => 'fa fa-money',
+            'icon'     => 'fa-solid fa-money-bill',
             'href'     => admin_url('hr_payroll/payslip_manage'),
             'position' => 7,
         ]);
@@ -168,7 +177,7 @@ function hr_payroll_module_init_menu_items()
         $CI->app_menu->add_sidebar_children_item('hr_payroll', [
             'slug'     => 'hrp_income_tax',
             'name'     => _l('hrp_income_tax'),
-            'icon'     => 'fas fa-calendar-minus',
+            'icon'     => 'fa fa-calendar-minus',
             'href'     => admin_url('hr_payroll/income_taxs_manage'),
             'position' => 9,
         ]);
@@ -199,7 +208,7 @@ function hr_payroll_module_init_menu_items()
 
 /**
  * hr payroll load js
- * @return library 
+ * @return library
  */
 function hr_payroll_load_js(){
     $CI = &get_instance();
@@ -210,7 +219,7 @@ function hr_payroll_load_js(){
         echo '<script src="'.module_dir_url(HR_PAYROLL_MODULE_NAME, 'assets/js/deactivate_hotkey.js').'?v=' . HR_PAYROLL_REVISION.'"></script>';
     }
 
-    if (!(strpos($viewuri, '/admin/hr_payroll/setting') === false) || !(strpos($viewuri, '/admin/hr_payroll/manage_employees') === false) || !(strpos($viewuri, '/admin/hr_payroll/manage_attendance') === false) || !(strpos($viewuri, '/admin/hr_payroll/manage_deductions') === false) || !(strpos($viewuri, '/admin/hr_payroll/manage_commissions') === false) || !(strpos($viewuri, '/admin/hr_payroll/income_taxs_manage') === false) || !(strpos($viewuri, '/admin/hr_payroll/manage_insurances') === false) ) {   
+    if (!(strpos($viewuri, '/admin/hr_payroll/setting') === false) || !(strpos($viewuri, '/admin/hr_payroll/manage_employees') === false) || !(strpos($viewuri, '/admin/hr_payroll/manage_attendance') === false) || !(strpos($viewuri, '/admin/hr_payroll/manage_deductions') === false) || !(strpos($viewuri, '/admin/hr_payroll/manage_commissions') === false) || !(strpos($viewuri, '/admin/hr_payroll/income_taxs_manage') === false) || !(strpos($viewuri, '/admin/hr_payroll/manage_insurances') === false) ) {
      echo '<script src="' . module_dir_url(HR_PAYROLL_MODULE_NAME, 'assets/plugins/handsontable/chosen.jquery.js') . '"></script>';
      echo '<script src="' . module_dir_url(HR_PAYROLL_MODULE_NAME, 'assets/plugins/handsontable/handsontable-chosen-editor.js') . '"></script>';
  }
@@ -251,23 +260,26 @@ if(!(strpos($viewuri,'admin/hr_payroll/reports') === false)){
     echo '<script src="'.module_dir_url(HR_PAYROLL_MODULE_NAME, 'assets/plugins/highcharts/exporting.js').'?v=' . HR_PAYROLL_REVISION.'"></script>';
     echo '<script src="'.module_dir_url(HR_PAYROLL_MODULE_NAME, 'assets/plugins/highcharts/series-label.js').'?v=' . HR_PAYROLL_REVISION.'"></script>';
 }
+if(!(strpos($viewuri,'admin/hr_payroll/payslip_manage') === false)){
+    echo '<script src="'.module_dir_url(HR_PAYROLL_MODULE_NAME, 'assets/plugins/daterangepicker/daterangepicker.js').'?v='.HR_PAYROLL_REVISION.'"></script>';
+}
 
 }
 
 
 /**
  * hr payroll add head components
- * @return library 
+ * @return library
  */
 function hr_payroll_add_head_components(){
     $CI = &get_instance();
     $viewuri = $_SERVER['REQUEST_URI'];
 
-    if (!(strpos($viewuri, '/admin/hr_payroll') === false)) { 
+    if (!(strpos($viewuri, '/admin/hr_payroll') === false)) {
         echo '<link href="' . module_dir_url(HR_PAYROLL_MODULE_NAME, 'assets/css/styles.css') . '"  rel="stylesheet" type="text/css" />';
     }
 
-    if (!(strpos($viewuri, '/admin/hr_payroll/setting') === false) || !(strpos($viewuri, '/admin/hr_payroll/manage_employees') === false) || !(strpos($viewuri, '/admin/hr_payroll/manage_attendance') === false) || !(strpos($viewuri, '/admin/hr_payroll/manage_deductions') === false) || !(strpos($viewuri, '/admin/hr_payroll/manage_commissions') === false) || !(strpos($viewuri, '/admin/hr_payroll/income_taxs_manage') === false) || !(strpos($viewuri, '/admin/hr_payroll/manage_insurances') === false) ) { 
+    if (!(strpos($viewuri, '/admin/hr_payroll/setting') === false) || !(strpos($viewuri, '/admin/hr_payroll/manage_employees') === false) || !(strpos($viewuri, '/admin/hr_payroll/manage_attendance') === false) || !(strpos($viewuri, '/admin/hr_payroll/manage_deductions') === false) || !(strpos($viewuri, '/admin/hr_payroll/manage_commissions') === false) || !(strpos($viewuri, '/admin/hr_payroll/income_taxs_manage') === false) || !(strpos($viewuri, '/admin/hr_payroll/manage_insurances') === false) ) {
 
         echo '<link href="' . module_dir_url(HR_PAYROLL_MODULE_NAME, 'assets/plugins/handsontable/handsontable.full.min.css') . '"  rel="stylesheet" type="text/css" />';
         echo '<link href="' . module_dir_url(HR_PAYROLL_MODULE_NAME, 'assets/plugins/handsontable/chosen.css') . '"  rel="stylesheet" type="text/css" />';
@@ -300,10 +312,12 @@ function hr_payroll_add_head_components(){
 
     if (!(strpos($viewuri,'admin/hr_payroll/payslip_manage') === false) || !(strpos($viewuri,'admin/hr_payroll/payslip_templates_manage') === false) ) {
         echo '<link href="' . module_dir_url(HR_PAYROLL_MODULE_NAME, 'assets/css/modal_dialog.css') . '?v=' . HR_PAYROLL_REVISION. '"  rel="stylesheet" type="text/css" />';
+        echo '<link href="' . module_dir_url(HR_PAYROLL_MODULE_NAME, 'assets/plugins/daterangepicker/css/daterangepicker.css') . '?v=' . HR_PAYROLL_REVISION . '"  rel="stylesheet" type="text/css" />';
+
     }
 
     if (!(strpos($viewuri, '/admin/hr_payroll/import_xlsx_attendance') === false) || !(strpos($viewuri, '/admin/hr_payroll/import_xlsx_employees') === false) || !(strpos($viewuri,'admin/hr_payroll/import_xlsx_commissions') === false) || !(strpos($viewuri,'admin/hr_payroll/view_payslip_detail') === false) || !(strpos($viewuri,'admin/hr_payroll/payslip_manage') === false) ) {
-       echo '<link href="' . module_dir_url(HR_PAYROLL_MODULE_NAME, 'assets/css/box_loading/box_loading.css')  .'?v=' . HR_PAYROLL_REVISION. '"  rel="stylesheet" type="text/css" />'; 
+       echo '<link href="' . module_dir_url(HR_PAYROLL_MODULE_NAME, 'assets/css/box_loading/box_loading.css')  .'?v=' . HR_PAYROLL_REVISION. '"  rel="stylesheet" type="text/css" />';
    }
 
    if (!(strpos($viewuri,'admin/hr_payroll/view_payslip_detail') === false) || !(strpos($viewuri,'admin/hr_payroll/view_payslip_templates_detail') === false) ) {
@@ -316,7 +330,7 @@ function hr_payroll_add_head_components(){
 
 /**
  * hr payroll permissions
- * @return capabilities 
+ * @return capabilities
  */
 function hr_payroll_permissions()
 {
@@ -331,7 +345,7 @@ function hr_payroll_permissions()
 
     $dashboard['capabilities'] = [
         'view'   => _l('permission_view') . '(' . _l('permission_global') . ')',
-        
+
     ];
 
     $capabilities_3['capabilities'] = [
@@ -364,9 +378,9 @@ function hr_payroll_permissions()
 
 /**
  * hr payroll add tab name
- * @param  [type] $row  
- * @param  [type] $aRow 
- * @return [type]       
+ * @param  [type] $row
+ * @param  [type] $aRow
+ * @return [type]
  */
 function hr_payroll_add_tab_name($tab_names)
 {
@@ -377,8 +391,8 @@ function hr_payroll_add_tab_name($tab_names)
 
 /**
  * hr payroll add tab content
- * @param  [type] $tab_content_link 
- * @return [type]                   
+ * @param  [type] $tab_content_link
+ * @return [type]
  */
 function hr_payroll_add_tab_content($tab_content_link)
 {
@@ -392,11 +406,54 @@ function hr_payroll_add_tab_content($tab_content_link)
 
 /**
  * hr payroll load js file
- * @param  [type] $group_name 
- * @return [type]             
+ * @param  [type] $group_name
+ * @return [type]
  */
 function hr_payroll_load_js_file($group_name)
 {
     echo  require 'modules/hr_payroll/assets/js/employee_payslip/payslip_js.php';
 
+}
+
+/**
+ * hrp pdf payslip register other merge fields
+ * @param  [type] $for
+ * @return [type]
+ */
+function hrp_pdf_payslip_register_other_merge_fields($for)
+{
+    $for[] = 'hr_payslip';
+
+    return $for;
+}
+
+/**
+ * hrp cronjob currency rates
+ * @param  [type] $manually
+ * @return [type]
+ */
+function hrp_cronjob_currency_rates($manually) {
+    $CI = &get_instance();
+    $CI->load->model('hr_payroll/hr_payroll_model');
+    if (date('G') == '16' && get_option('cr_automatically_get_currency_rate') == 1) {
+        if(date('Y-m-d') != get_option('cr_date_cronjob_currency_rates')){
+            $CI->hr_payroll_model->cronjob_currency_rates($manually);
+        }
+    }
+}
+
+function hr_payroll_appint(){
+    
+}
+
+function hr_payroll_preactivate($module_name){
+    if ($module_name['system_name'] == HR_PAYROLL_MODULE_NAME) {
+
+    }
+}
+
+function hr_payroll_predeactivate($module_name){
+    if ($module_name['system_name'] == HR_PAYROLL_MODULE_NAME) {
+
+    }
 }

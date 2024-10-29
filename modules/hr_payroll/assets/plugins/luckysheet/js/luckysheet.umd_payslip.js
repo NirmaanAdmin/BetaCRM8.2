@@ -10946,9 +10946,9 @@
         },
         info: {
             detailExport: "<i class='fa fa-download' aria-hidden='true'></i> Download",
-            detailSaveAs: "<i class='fa fa-save'></i> Save As",
+            detailSaveAs: " Save As",
             close: "<i class='fa fa-window-close' aria-hidden='true'></i> Close",
-            detailSave: "<i class='fa fa-save'></i> Save",
+            detailSave: " Save",
             row: "",
             column: "",
             loading: "Loading",

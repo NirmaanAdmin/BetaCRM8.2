@@ -46,9 +46,9 @@
 		rowHeaderWidth: [44],
 
 
-		 columns: <?php echo html_entity_decode($columns) ?>,
+		 columns: <?php echo new_html_entity_decode($columns) ?>,
 
-    colHeaders: <?php echo html_entity_decode($col_header); ?>,
+    colHeaders: <?php echo new_html_entity_decode($col_header); ?>,
 
 		data: dataObject,
 
@@ -144,7 +144,8 @@
 
 	$('#month_attendance').on('change', function() {
 		'use strict';
-
+		// set timesheet leave URL
+		$('.timesheet_leaves_url').attr('href', admin_url+'hr_payroll/manage_attendance_timesheet_leaves'+'/'+$('#month_attendance').val());
 		attendance_filter();
 
 	});

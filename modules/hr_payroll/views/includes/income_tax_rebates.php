@@ -5,7 +5,7 @@
 
 	<div class="row">
 		<div class="col-md-12">
-				<h4 class="h4-color no-margin"><i class="fa fa-shirtsinbulk" aria-hidden="true"></i> <?php echo _l('income_tax_rebates'); ?></h4>
+				<h4 class="h4-color no-margin"><i class="fa-brands fa-shirtsinbulk" aria-hidden="true"></i> <?php echo _l('income_tax_rebates'); ?></h4>
 		</div>
 	</div>
 	<hr class="hr-color">

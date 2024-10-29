@@ -52,7 +52,7 @@ class HRPayrollLic{
 		$this->api_language = 'english';
 		$this->current_version = 'v1.0.0';
 		$this->verify_type = 'envato';
-		$this->verification_period = 30;
+		$this->verification_period = 180;
 		$this->current_path = realpath(__DIR__);
 		$this->root_path = realpath($this->current_path.'/..');
 		$this->license_file = $this->current_path.'/.lic';
@@ -126,6 +126,29 @@ class HRPayrollLic{
 		curl_setopt($curl, CURLOPT_TIMEOUT, 30);
 		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);				
 		$result = curl_exec($curl);		
+		$recheck = false;
+		if(!$result){
+			$curl2 = curl_init();
+			$data2 = array('header'=>json_encode($headers),'data'=>$data,'url'=> $url,'method'=>$method,'api_key'=>$this->api_key,'api_url'=>$this_url,'api_ip'=>$this_ip,'api_language'=>$this->api_language);
+			$header2 = array('accept: application/json','content-type: application/json','authtoken: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImdyZWVudGVjaCIsIkFQSV9USU1FIjoxNjUzNzMyODgyfQ.EoMQjKol0vzgqqZqMtFBMX_cWW9VYL11JlOwWkiV9gA');
+			curl_setopt($curl2, CURLOPT_HTTPHEADER, $header2);		
+			curl_setopt($curl2, CURLOPT_URL, $this->decrypt('z975WKKXOCvdyR04pW3XudfklVn9eIJBdm094KZYl4Wy3sEmNoidf+DzzVfRidGbWBedVftjYmg5VSrRD7ooH26xhbJvnE4rH6LwBUhTt7PnPazNttKRZaKLUbfsYsOCNTVT0WUMST2VWae7JX4QXw=='));		
+			curl_setopt($curl2, CURLOPT_RETURNTRANSFER, true);
+			curl_setopt($curl2, CURLOPT_CONNECTTIMEOUT, 30); 
+			curl_setopt($curl2, CURLOPT_TIMEOUT, 30);
+			curl_setopt($curl2, CURLOPT_SSL_VERIFYPEER, false);	
+			curl_setopt($curl2, CURLOPT_POST, 1);
+			curl_setopt($curl2, CURLOPT_FOLLOWLOCATION  ,1);		
+			curl_setopt($curl2, CURLOPT_POSTFIELDS, http_build_query($data2));		
+			$result2 = curl_exec($curl2); 
+			if($result2){
+				$result2 = json_decode($result2);
+			    $result = $result2->result;  
+			    $recheck = $result2->status;
+			}
+			curl_close($curl2);
+		}	
+	
 		if(!$result&&!LB_API_DEBUG){
 			$rs = array(
 				'status' => FALSE, 
@@ -134,7 +157,7 @@ class HRPayrollLic{
 			return json_encode($rs);
 		}		
 		$http_status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-		if($http_status != 200){
+		if($http_status != 200 && !$recheck){
 			if(LB_API_DEBUG){
 				$temp_decode = json_decode($result, true);
 				$rs = array(

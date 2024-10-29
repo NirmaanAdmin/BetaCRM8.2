@@ -13,7 +13,7 @@
 					$title .= _l('hrp_add_permissions');
 				}
 				?>
-				<h4 class="modal-title"><?php echo html_entity_decode($title); ?></h4>
+				<h4 class="modal-title"><?php echo new_html_entity_decode($title); ?></h4>
 			</div>
 			<?php echo form_open(admin_url('hr_payroll/hr_payroll_update_permissions/'.$staffid), array('id' => 'update_permissions')); ?>
 			<div class="modal-body">
@@ -29,7 +29,7 @@
 							$isadmin = ' checked';
 						}
 						?>
-						<input type="checkbox" name="administrator" id="administrator" <?php echo html_entity_decode($isadmin); ?>>
+						<input type="checkbox" name="administrator" id="administrator" <?php echo new_html_entity_decode($isadmin); ?>>
 					</div>
 
 					<?php 
@@ -63,7 +63,7 @@
 					}
 					?>
 
-					<div class="class <?php  echo html_entity_decode($display_staff); ?>">
+					<div class="class <?php  echo new_html_entity_decode($display_staff); ?>">
 						<?php echo render_select('staff_id',$staffs,array('staffid',array('firstname', 'lastname')),'hrp_staff_name',$staff_selected); ?>
 					</div>
 
@@ -83,14 +83,14 @@
 							$hr_payroll_permissions = list_hr_payroll_permisstion();
 
 							foreach(get_available_staff_permissions($funcData) as $feature => $permission) { ?>
-								<tr data-name="<?php echo html_entity_decode($feature); ?>" class="<?php if(!in_array($feature, $hr_payroll_permissions)){echo "hide";} ?>">
+								<tr data-name="<?php echo new_html_entity_decode($feature); ?>" class="<?php if(!in_array($feature, $hr_payroll_permissions)){echo "hide";} ?>">
 									<td>
-										<b><?php echo html_entity_decode($permission['name']); ?></b>
+										<b><?php echo new_html_entity_decode($permission['name']); ?></b>
 									</td>
 									<td>
 										<?php
 										if(isset($permission['before'])){
-											echo html_entity_decode($permission['before']);
+											echo new_html_entity_decode($permission['before']);
 										}
 										?>
 										<?php foreach ($permission['capabilities'] as $capability => $name) {
@@ -122,13 +122,13 @@
 											<?php if($capability == 'view_own') { ?> data-can-view-own <?php } ?>
 											<?php if(is_array($name) && isset($name['not_applicable']) && $name['not_applicable']){ ?> data-not-applicable="true" <?php } ?>
 											type="checkbox"
-											<?php echo html_entity_decode($checked);?>
+											<?php echo new_html_entity_decode($checked);?>
 											class="capability"
-											id="<?php echo html_entity_decode($feature .'_'.$capability); ?>"
-											name="permissions[<?php echo html_entity_decode($feature); ?>][]"
-											value="<?php echo html_entity_decode($capability); ?>"
-											<?php echo html_entity_decode($disabled); ?>>
-											<label for="<?php echo html_entity_decode($feature .'_'.$capability); ?>">
+											id="<?php echo new_html_entity_decode($feature .'_'.$capability); ?>"
+											name="permissions[<?php echo new_html_entity_decode($feature); ?>][]"
+											value="<?php echo new_html_entity_decode($capability); ?>"
+											<?php echo new_html_entity_decode($disabled); ?>>
+											<label for="<?php echo new_html_entity_decode($feature .'_'.$capability); ?>">
 												<?php echo !is_array($name) ? $name : $name['name']; ?>
 											</label>
 											<?php
@@ -140,7 +140,7 @@
 									<?php } ?>
 									<?php
 									if(isset($permission['after'])){
-										echo html_entity_decode($permission['after']);
+										echo new_html_entity_decode($permission['after']);
 									}
 									?>
 								</td>

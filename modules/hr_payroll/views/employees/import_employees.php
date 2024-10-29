@@ -60,11 +60,11 @@ $file_header[] = _l('income_tax_rate');
 											for($i=0;$i<count($file_header);$i++){
 												if($i == -1){
 													?>
-													<th class="bold"><span class="text-danger">*</span> <?php echo html_entity_decode($file_header[$i]) ?> </th>
+													<th class="bold"><span class="text-danger">*</span> <?php echo new_html_entity_decode($file_header[$i]) ?> </th>
 													<?php 
 												} else {
 													?>
-													<th class="bold"><?php echo html_entity_decode($file_header[$i]) ?> </th>
+													<th class="bold"><?php echo new_html_entity_decode($file_header[$i]) ?> </th>
 													
 													<?php
 

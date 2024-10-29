@@ -103,7 +103,7 @@
 								<label for="department_id" class="control-label"><?php echo _l('staff_departments'); ?></label>
 								<select name="department_id[]" class="form-control selectpicker" multiple="true" id="department_id" data-actions-box="true" data-width="100%" data-none-selected-text="<?php echo _l('dropdown_all_selected_tex'); ?>" data-live-search="true"> 
 									<?php foreach ($departments as $department_key => $department) { ?>
-										<option value="<?php echo html_entity_decode($department['departmentid']); ?>" ><?php  echo html_entity_decode($department['name']); ?></option>
+										<option value="<?php echo new_html_entity_decode($department['departmentid']); ?>" ><?php  echo new_html_entity_decode($department['name']); ?></option>
 									<?php } ?>
 								</select>
 							</div>
@@ -113,7 +113,7 @@
 								<label for="role_employees" class="control-label"><?php echo _l('role'); ?></label>
 								<select name="role_employees[]" class="form-control selectpicker" multiple="true" id="role_employees" data-actions-box="true" data-width="100%" data-none-selected-text="<?php echo _l('dropdown_all_selected_tex'); ?>" data-live-search="true"> 
 									<?php foreach ($roles as $key => $role) { ?>
-										<option value="<?php echo html_entity_decode($role['roleid']); ?>" ><?php  echo html_entity_decode($role['name']); ?></option>
+										<option value="<?php echo new_html_entity_decode($role['roleid']); ?>" ><?php  echo new_html_entity_decode($role['name']); ?></option>
 									<?php } ?>
 								</select>
 
@@ -129,7 +129,7 @@
 								<select name="staff_employees[]" class="form-control selectpicker" multiple="true" id="staff_employees" data-actions-box="true" data-width="100%" data-none-selected-text="<?php echo _l('dropdown_all_selected_tex'); ?>" data-live-search="true"> 
 									<?php foreach ($staffs as $key => $staff) { ?>
 
-										<option value="<?php echo html_entity_decode($staff['staffid']); ?>" ><?php  echo html_entity_decode($staff['firstname'].' '.$staff['lastname']); ?></option>
+										<option value="<?php echo new_html_entity_decode($staff['staffid']); ?>" ><?php  echo new_html_entity_decode($staff['firstname'].' '.$staff['lastname']); ?></option>
 									<?php } ?>
 								</select>
 							</div>
@@ -141,7 +141,7 @@
 								<select name="except_staff[]" class="form-control selectpicker" multiple="true" id="except_staff" data-actions-box="true" data-width="100%" data-none-selected-text="<?php echo _l('dropdown_non_selected_tex'); ?>" data-live-search="true"> 
 									<?php foreach ($staffs as $key => $staff) { ?>
 
-										<option value="<?php echo html_entity_decode($staff['staffid']); ?>" ><?php  echo html_entity_decode($staff['firstname'].' '.$staff['lastname']); ?></option>
+										<option value="<?php echo new_html_entity_decode($staff['staffid']); ?>" ><?php  echo new_html_entity_decode($staff['firstname'].' '.$staff['lastname']); ?></option>
 									<?php } ?>
 								</select>
 							</div>

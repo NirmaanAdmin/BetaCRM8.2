@@ -588,8 +588,8 @@ class PHPExcel_Writer_Excel5_Parser
     private function convertString($string)
     {
         // chop away beggining and ending quotes
-        $string = substr($string, 1, strlen($string) - 2);
-        if (strlen($string) > 255) {
+        $string = substr($string, 1, new_strlen($string) - 2);
+        if (new_strlen($string) > 255) {
             throw new PHPExcel_Writer_Exception("String is too long");
         }
 
@@ -633,7 +633,7 @@ class PHPExcel_Writer_Excel5_Parser
         // TODO: possible class value 0,1,2 check Formula.pm
         // Split the range into 2 cell refs
         if (preg_match('/^(\$)?([A-Ia-i]?[A-Za-z])(\$)?(\d+)\:(\$)?([A-Ia-i]?[A-Za-z])(\$)?(\d+)$/', $range)) {
-            list($cell1, $cell2) = explode(':', $range);
+            list($cell1, $cell2) = new_explode(':', $range);
         } else {
             // TODO: use real error codes
             throw new PHPExcel_Writer_Exception("Unknown range separator");
@@ -670,13 +670,13 @@ class PHPExcel_Writer_Excel5_Parser
 //        $class = 0; // formulas like Sheet1!$A$1:$A$2 in list type data validation need this class (0x3B)
 
         // Split the ref at the ! symbol
-        list($ext_ref, $range) = explode('!', $token);
+        list($ext_ref, $range) = new_explode('!', $token);
 
         // Convert the external reference part (different for BIFF8)
         $ext_ref = $this->getRefIndex($ext_ref);
 
         // Split the range into 2 cell refs
-        list($cell1, $cell2) = explode(':', $range);
+        list($cell1, $cell2) = new_explode(':', $range);
 
         // Convert the cell references
         if (preg_match("/^(\\$)?[A-Ia-i]?[A-Za-z](\\$)?(\d+)$/", $cell1)) {
@@ -742,7 +742,7 @@ class PHPExcel_Writer_Excel5_Parser
 //        $class = 2; // as far as I know, this is magick.
 
         // Split the ref at the ! symbol
-        list($ext_ref, $cell) = explode('!', $cell);
+        list($ext_ref, $cell) = new_explode('!', $cell);
 
         // Convert the external reference part (different for BIFF8)
         $ext_ref = $this->getRefIndex($ext_ref);
@@ -807,7 +807,7 @@ class PHPExcel_Writer_Excel5_Parser
 
         // Check if there is a sheet range eg., Sheet1:Sheet2.
         if (preg_match("/:/", $ext_ref)) {
-            list($sheet_name1, $sheet_name2) = explode(':', $ext_ref);
+            list($sheet_name1, $sheet_name2) = new_explode(':', $ext_ref);
 
             $sheet1 = $this->getSheetIndex($sheet_name1);
             if ($sheet1 == -1) {
@@ -849,11 +849,11 @@ class PHPExcel_Writer_Excel5_Parser
     {
         $ext_ref = preg_replace("/^'/", '', $ext_ref); // Remove leading  ' if any.
         $ext_ref = preg_replace("/'$/", '', $ext_ref); // Remove trailing ' if any.
-        $ext_ref = str_replace('\'\'', '\'', $ext_ref); // Replace escaped '' with '
+        $ext_ref = new_str_replace('\'\'', '\'', $ext_ref); // Replace escaped '' with '
 
         // Check if there is a sheet range eg., Sheet1:Sheet2.
         if (preg_match("/:/", $ext_ref)) {
-            list($sheet_name1, $sheet_name2) = explode(':', $ext_ref);
+            list($sheet_name1, $sheet_name2) = new_explode(':', $ext_ref);
 
             $sheet1 = $this->getSheetIndex($sheet_name1);
             if ($sheet1 == -1) {
@@ -1016,9 +1016,9 @@ class PHPExcel_Writer_Excel5_Parser
         $row     = $match[4];
 
         // Convert base26 column string to a number.
-        $expn = strlen($col_ref) - 1;
+        $expn = new_strlen($col_ref) - 1;
         $col  = 0;
-        $col_ref_length = strlen($col_ref);
+        $col_ref_length = new_strlen($col_ref);
         for ($i = 0; $i < $col_ref_length; ++$i) {
             $col += (ord($col_ref{$i}) - 64) * pow(26, $expn);
             --$expn;
@@ -1039,7 +1039,7 @@ class PHPExcel_Writer_Excel5_Parser
     private function advance()
     {
         $i = $this->currentCharacter;
-        $formula_length = strlen($this->formula);
+        $formula_length = new_strlen($this->formula);
         // eat up white spaces
         if ($i < $formula_length) {
             while ($this->formula{$i} == " ") {
@@ -1062,7 +1062,7 @@ class PHPExcel_Writer_Excel5_Parser
             }
 
             if ($this->match($token) != '') {
-                //if ($i < strlen($this->formula) - 1) {
+                //if ($i < new_strlen($this->formula) - 1) {
                 //    $this->lookAhead = $this->formula{$i+1};
                 //}
                 $this->currentCharacter = $i + 1;
@@ -1235,7 +1235,7 @@ class PHPExcel_Writer_Excel5_Parser
     {
         // If it's a string return a string node
         if (preg_match("/\"([^\"]|\"\"){0,255}\"/", $this->currentToken)) {
-            $tmp = str_replace('""', '"', $this->currentToken);
+            $tmp = new_str_replace('""', '"', $this->currentToken);
             if (($tmp == '"') || ($tmp == '')) {
                 //    Trap for "" that has been used for an empty string
                 $tmp = '""';

@@ -77,7 +77,7 @@ function hr_payroll_payroll_column_exist($key){
  */
 function hr_payroll_reformat_currency($value)
 {
-	$f_dot = str_replace(',','', $value);
+	$f_dot = new_str_replace(',','', $value);
 	return ((float)$f_dot + 0);
 }
 
@@ -132,7 +132,7 @@ function hr_payroll_get_departments_name($staffid)
 
 	$departments = $CI->hr_payroll_model->get_staff_departments($staffid);
 	foreach ($departments as $value) {
-		if(strlen($str_department) > 0){
+		if(new_strlen($str_department) > 0){
 			$str_department .= ', '.$value['name'];
 		}else{
 			$str_department .= $value['name'];
@@ -251,7 +251,7 @@ function hrp_get_commission_status()
 
 		$str_permissions ='';
 		foreach (list_hr_payroll_permisstion() as $per_key =>  $per_value) {
-			if(strlen($str_permissions) > 0){
+			if(new_strlen($str_permissions) > 0){
 				$str_permissions .= ",'".$per_value."'";
 			}else{
 				$str_permissions .= "'".$per_value."'";
@@ -375,6 +375,8 @@ function hrp_get_commission_status()
 		$payroll_system_columns[] = 'salary_from_tasks';
 		$payroll_system_columns[] = 'bank_name';
 		$payroll_system_columns[] = 'account_number';
+		$payroll_system_columns[] = 'epf_no';
+		$payroll_system_columns[] = 'social_security_no';
 
 		return $payroll_system_columns;
 
@@ -396,7 +398,9 @@ function hrp_get_commission_status()
 		$payroll_system_columns[] = 'dept_name';
 		$payroll_system_columns[] = 'it_rebate_code';
 		$payroll_system_columns[] = 'income_tax_code';
-		$payroll_system_columns[] = 'account_number';
+		// $payroll_system_columns[] = 'account_number';
+		$payroll_system_columns[] = 'epf_no';
+		$payroll_system_columns[] = 'social_security_no';
 
 		return $payroll_system_columns;
 
@@ -457,7 +461,7 @@ function hrp_get_commission_status()
 	function hrp_reformat_currency($value)
 	{
 
-		$f_dot = str_replace(',','', $value);
+		$f_dot = new_str_replace(',','', $value);
 
 		if(is_numeric($f_dot)){
 			return ((float)$f_dot + 0);
@@ -490,18 +494,18 @@ function hrp_get_commission_status()
 	 */
 	function hrp_payslip_replace_string($file)
 	{
-	   $file = str_replace("&lt;", "<", $file) ;
-	   $file = str_replace("&gt;", ">", $file) ;
-	   $file = str_replace("&gt", ">", $file) ;
-	   $file = str_replace("&nbsp;", " ", $file) ;
-	   $file = str_replace("&amp;", "&", $file) ;
-	   $file = str_replace("&quot;", '"', $file) ;
-	   $file = str_replace(	"&apos;", "'", $file) ;
-	   $file = str_replace(	"&apos;", "'", $file) ;
+	   $file = new_str_replace("&lt;", "<", $file) ;
+	   $file = new_str_replace("&gt;", ">", $file) ;
+	   $file = new_str_replace("&gt", ">", $file) ;
+	   $file = new_str_replace("&nbsp;", " ", $file) ;
+	   $file = new_str_replace("&amp;", "&", $file) ;
+	   $file = new_str_replace("&quot;", '"', $file) ;
+	   $file = new_str_replace(	"&apos;", "'", $file) ;
+	   $file = new_str_replace(	"&apos;", "'", $file) ;
 
-	   $file = str_replace(	"#replace#", ",(", $file) ;
-	   $file = str_replace(	" replace#", ",(", $file) ;
-	   $file = str_replace(	"#replace2#", ",IF(", $file) ;
+	   $file = new_str_replace(	"#replace#", ",(", $file) ;
+	   $file = new_str_replace(	" replace#", ",(", $file) ;
+	   $file = new_str_replace(	"#replace2#", ",IF(", $file) ;
 
 
 	   return $file;
@@ -547,7 +551,7 @@ function hrp_get_commission_status()
 		}
 
 		if(count($staff_ids) > 0){
-			if(strlen($newquerystring) > 0){
+			if(new_strlen($newquerystring) > 0){
 				$str_where .= "staffid IN (".implode(',', $staff_ids).") AND ".$newquerystring;
 			}else{
 				$str_where .= "staffid IN (".implode(',', $staff_ids).")";
@@ -587,7 +591,7 @@ function hrp_get_commission_status()
 	 * @param  string $json_data 
 	 * @return [type]            
 	 */
-	function hrp_payslip_json_data_decode($json_data='')
+	function hrp_payslip_json_data_decode($json_data='', $payslip = '')
 	{
 		$CI             = &get_instance();
 
@@ -664,7 +668,7 @@ function hrp_get_commission_status()
 			}
 	    }
 
-		if(strlen($json_data) > 2){
+		if(new_strlen($json_data) > 2){
 			$salary_allowance_data = json_decode($json_data, true);
 
 			foreach ($salary_allowance_data as $key => $value) {
@@ -680,7 +684,7 @@ function hrp_get_commission_status()
 
 					$probation_salary_list .= '<tr class="project-overview">
 					<td  width="50%" >'. $_name .'</td>
-					<td class="text-left">'. app_format_money($value, '').'</td>
+					<td class="text-left">'. currency_converter_value($value, $payslip->to_currency_rate, $payslip->to_currency_name ?? '', true).'</td>
 					</tr>';
 
 				}elseif(preg_match('/^al1_/', $key) ){
@@ -694,7 +698,7 @@ function hrp_get_commission_status()
 
 					$probation_allowance_list .= '<tr class="project-overview">
 					<td  width="50%" >'.$_name .'</td>
-					<td class="text-left">'. app_format_money($value, '').'</td>
+					<td class="text-left">'. currency_converter_value($value, $payslip->to_currency_rate, $payslip->to_currency_name ?? '', true).'</td>
 					</tr>';
 					
 				}elseif(preg_match('/^st2_/', $key) ){
@@ -708,7 +712,7 @@ function hrp_get_commission_status()
 
 					$formal_salary_list .= '<tr class="project-overview">
 					<td  width="50%" >'. $_name .'</td>
-					<td class="text-left">'. app_format_money($value, '').'</td>
+					<td class="text-left">'. currency_converter_value($value, $payslip->to_currency_rate ?? 1, $payslip->to_currency_name ?? '', true).'</td>
 					</tr>';
 
 				}elseif(preg_match('/^al2_/', $key)){
@@ -722,7 +726,7 @@ function hrp_get_commission_status()
 
 					$formal_allowance_list .= '<tr class="project-overview">
 					<td  width="50%" >'. $_name .'</td>
-					<td class="text-left">'. app_format_money($value, '').'</td>
+					<td class="text-left">'. currency_converter_value($value, $payslip->to_currency_rate ?? 1, $payslip->to_currency_name ?? '', true).'</td>
 					</tr>';
 
 				}elseif(preg_match('/^earning1_/', $key) ){
@@ -735,7 +739,7 @@ function hrp_get_commission_status()
 
 					$earning_salary_list .= '<tr class="project-overview">
 					<td  width="50%" >'. $_name .'</td>
-					<td class="text-left">'. app_format_money($value, '').'</td>
+					<td class="text-left">'. currency_converter_value($value, $payslip->to_currency_rate ?? 1, $payslip->to_currency_name ?? '', true).'</td>
 					</tr>';
 
 				}elseif(preg_match('/^earning2_/', $key) ){
@@ -748,7 +752,7 @@ function hrp_get_commission_status()
 
 					$earning_allowance_list .= '<tr class="project-overview">
 					<td  width="50%" >'. $_name .'</td>
-					<td class="text-left">'. app_format_money($value, '').'</td>
+					<td class="text-left">'. currency_converter_value($value, $payslip->to_currency_rate ?? 1, $payslip->to_currency_name ?? '', true).'</td>
 					</tr>';
 
 				}
@@ -839,4 +843,383 @@ function hrp_get_commission_status()
 		function cal_days_in_month($calendar, $month, $year) {
 			return date('t', mktime(0, 0, 0, $month, 1, $year));
 		}
+	}
+
+	/**
+	 * [new_html_entity_decode description]
+	 * @param  [type] $str [description]
+	 * @return [type]      [description]
+	 */
+	if (!function_exists('new_html_entity_decode')) {
+		
+		function new_html_entity_decode($str){
+			return html_entity_decode($str ?? '');
+		}
+	}
+
+	
+	if (!function_exists('new_strlen')) {
+		
+		function new_strlen($str){
+			return strlen($str ?? '');
+		}
+	}
+
+	if (!function_exists('new_str_replace')) {
+		
+		function new_str_replace($search, $replace, $subject){
+			return str_replace($search, $replace, $subject ?? '');
+		}
+	}
+
+	if (!function_exists('new_explode')) {
+		
+		function new_explode($delimiter, $string){
+			return explode($delimiter, $string ?? '');
+		}
+	}
+
+	/**
+	 * hrp timesheet leave data sample
+	 * @return [type] 
+	 */
+	function hrp_timesheet_leave_data_sample()
+	{
+		$data = [];
+		$data['staff_id'] = '#fff';
+		$data['id'] = '#fff';
+		$data['rel_type'] = '#fff';
+		$data['month'] = '#fff';
+		$data['hr_code'] = '#fff';
+		$data['staff_name'] = '#fff';
+		$data['staff_departments'] = '#fff';
+		$data['paid_leave'] = '#fff';
+		$data['unpaid_leave'] = '#fff';
+		$data['day_1'] = '#fff';
+		$data['day_2'] = '#fff';
+		$data['day_3'] = '#fff';
+		$data['day_4'] = '#fff';
+		$data['day_5'] = '#fff';
+		$data['day_6'] = '#fff';
+		$data['day_7'] = '#fff';
+		$data['day_8'] = '#fff';
+		$data['day_9'] = '#fff';
+		$data['day_10'] = '#fff';
+		$data['day_11'] = '#fff';
+		$data['day_12'] = '#fff';
+		$data['day_13'] = '#fff';
+		$data['day_14'] = '#fff';
+		$data['day_15'] = '#fff';
+		$data['day_16'] = '#fff';
+		$data['day_17'] = '#fff';
+		$data['day_18'] = '#fff';
+		$data['day_19'] = '#fff';
+		$data['day_20'] = '#fff';
+		$data['day_21'] = '#fff';
+		$data['day_22'] = '#fff';
+		$data['day_23'] = '#fff';
+		$data['day_24'] = '#fff';
+		$data['day_25'] = '#fff';
+		$data['day_26'] = '#fff';
+		$data['day_27'] = '#fff';
+		$data['day_28'] = '#fff';
+		$data['day_29'] = '#fff';
+		$data['day_30'] = '#fff';
+		$data['day_31'] = '#fff';
+
+		return $data;
+	}
+
+	/**
+	 * hrp customize staff payslip columns
+	 * @return [type] 
+	 */
+	function hrp_customize_staff_payslip_columns()
+	{
+		$customize_staff_payslip_columns = [];
+		$customize_staff_payslip_columns = [
+			
+			// [
+			// 	'name' => 'staff_id',
+			// 	'label' => _l('staff_id'),
+			// ],
+			[
+				'name' => 'month',
+				'label' => _l('hrp_month'),
+			],
+			[
+				'name' => 'pay_slip_number',
+				'label' => _l('ps_pay_slip_number'),
+			],
+			[
+				'name' => 'payment_run_date',
+				'label' => _l('ps_payment_run_date'),
+			],
+			[
+				'name' => 'employee_number',
+				'label' => _l('employee_number'),
+			],
+			[
+				'name' => 'employee_name',
+				'label' => _l('employee_name'),
+			],
+			[
+				'name' => 'dept_name',
+				'label' => _l('staff_departments'),
+			],
+			[
+				'name' => 'standard_workday',
+				'label' => _l('standard_workday'),
+			],
+			[
+				'name' => 'actual_workday',
+				'label' => _l('actual_workday'),
+			],
+			[
+				'name' => 'paid_leave',
+				'label' => _l('paid_leave'),
+			],
+			[
+				'name' => 'unpaid_leave',
+				'label' => _l('unpaid_leave'),
+			],
+			[
+				'name' => 'gross_pay',
+				'label' => _l('ps_gross_pay'),
+			],
+
+			[
+				'name' => 'income_tax_paye',
+				'label' => _l('ps_income_tax_paye'),
+			],
+			[
+				'name' => 'total_deductions',
+				'label' => _l('ps_total_deductions'),
+			],
+			[
+				'name' => 'net_pay',
+				'label' => _l('ps_net_pay'),
+			],
+			[
+				'name' => 'it_rebate_code',
+				'label' => _l('income_rebate_code'),
+			],
+			[
+				'name' => 'it_rebate_value',
+				'label' => _l('ps_it_rebate_value'),
+			],
+			[
+				'name' => 'income_tax_code',
+				'label' => _l('income_tax_code'),
+			],
+			[
+				'name' => 'commission_amount',
+				'label' => _l('ps_commission_amount'),
+			],
+			[
+				'name' => 'bonus_kpi',
+				'label' => _l('ps_bonus_kpi'),
+			],
+			[
+				'name' => 'total_cost',
+				'label' => _l('total_cost'),
+			],
+			[
+				'name' => 'total_insurance',
+				'label' => _l('ps_total_insurance'),
+			],
+			[
+				'name' => 'salary_of_the_probationary_contract',
+				'label' => _l('salary_of_the_probationary_contract'),
+			],
+			[
+				'name' => 'salary_of_the_formal_contract',
+				'label' => _l('salary_of_the_formal_contract'),
+			],
+			[
+				'name' => 'taxable_salary',
+				'label' => _l('taxable_salary'),
+			],
+			[
+				'name' => 'actual_workday_probation',
+				'label' => _l('actual_workday_probation'),
+			],
+			[
+				'name' => 'total_hours_by_tasks',
+				'label' => _l('total_hours_by_tasks'),
+			],
+			[
+				'name' => 'salary_from_tasks',
+				'label' => _l('salary_from_tasks'),
+			],
+			
+		];
+
+		return $customize_staff_payslip_columns;
+	}
+
+	/**
+	 * get customize staff payslip columns
+	 * @return [type] 
+	 */
+	function get_customize_staff_payslip_columns($only_column_name = false)
+	{
+		$hrp_customize_staff_payslip_columns = hrp_customize_staff_payslip_columns();
+		$CI = & get_instance();
+
+		// is not auto loaded
+		$CI->db->order_by('order_number', 'asc');
+		$customize_staff_payslip_columns = $CI->db->get(db_prefix() . 'hrp_customize_staff_payslip_columns')->result_array();
+		if($only_column_name){
+			$column_names = [];
+			$column_name_translate = [];
+			foreach ($customize_staff_payslip_columns as $value) {
+			    $column_names[] = $value['column_name'];
+
+			    $found_key = array_search($value['column_name'], array_column($hrp_customize_staff_payslip_columns, 'name'));
+			    if($found_key){
+			    	$hrp_customize_staff_payslip_columns[$found_key];
+			    	$column_name_translate[] = $hrp_customize_staff_payslip_columns[$found_key]['label'];
+			    }else{
+			    	$column_name_translate[] = '';
+			    }
+			}
+			return ['column_names' => $column_names, 'column_name_translate' => $column_name_translate];
+		}
+
+		return $customize_staff_payslip_columns;
+	}
+
+	/**
+	 * check payslip has pdf template
+	 * @param  [type] $payslip_id 
+	 * @return [type]             
+	 */
+	function check_payslip_has_pdf_template($payslip_id)
+	{
+		$pdf_template_id = '';
+		$CI = & get_instance();
+
+		// is not auto loaded
+		$CI->db->where('id', $payslip_id);
+		$hrp_payslip = $CI->db->get(db_prefix() . 'hrp_payslips')->row();
+
+		if($hrp_payslip){
+			if(is_numeric($hrp_payslip->pdf_template_id) && $hrp_payslip->pdf_template_id != 0){
+				$pdf_template_id = $hrp_payslip->pdf_template_id;
+			}
+		}
+
+		return $pdf_template_id;
+	}
+
+	/**
+	 * hr payroll payslip pdf
+	 * @param  [type] $payslip 
+	 * @return [type]          
+	 */
+	function hr_payroll_payslip_pdf($payslip)
+	{
+		return app_pdf('payslip',  module_dir_path(HR_PAYROLL_MODULE_NAME, 'libraries/pdf/Hr_payroll_payslip_pdf'), $payslip);
+	}
+
+	/**
+	 * hrp get currency name symbol
+	 * @param  [type] $id     
+	 * @param  string $column 
+	 * @return [type]         
+	 */
+	function hrp_get_currency_name_symbol($id, $column='')
+	{
+		$CI   = & get_instance();
+		$currency_value='';
+
+		if($column == ''){
+			$column = 'name';
+		}
+
+		$CI->db->select($column);
+		$CI->db->from(db_prefix() . 'currencies');
+		$CI->db->where('id', $id);
+		$currency = $CI->db->get()->row();
+		if($currency){
+			$currency_value = $currency->$column;
+		}
+
+		return $currency_value;
+	}
+
+	/**
+	 * hrp app format number
+	 * @param  [type]  $total                    
+	 * @param  boolean $foce_check_zero_decimals 
+	 * @return [type]                            
+	 */
+	function hrp_app_format_number($total, $foce_check_zero_decimals = false)
+	{
+		if (!is_numeric($total)) {
+			return $total;
+		}
+
+		$decimal_separator  = get_option('decimal_separator');
+		$thousand_separator = get_option('thousand_separator');
+
+		$d = 6;
+		if (get_option('remove_decimals_on_zero') == 1 || $foce_check_zero_decimals == true) {
+			if (!is_decimal($total)) {
+				$d = 0;
+			}
+		}
+
+		$formatted = number_format($total, $d, $decimal_separator, $thousand_separator);
+
+		return hooks()->apply_filters('number_after_format', $formatted, [
+			'total'              => $total,
+			'decimal_separator'  => $decimal_separator,
+			'thousand_separator' => $thousand_separator,
+			'decimal_places'     => $d,
+		]);
+	}
+
+	/**
+	 * hrp get currency rate
+	 * @param  [type] $from 
+	 * @param  [type] $to   
+	 * @return [type]       
+	 */
+	function hrp_get_currency_rate($from, $to)
+	{
+		$CI   = & get_instance();
+		if($from == $to){
+			return 1;
+		}
+
+		$amount_after_convertion = 1;
+
+		$CI->db->where('from_currency_name', strtoupper($from));
+		$CI->db->where('to_currency_name', strtoupper($to));
+		$currency_rates = $CI->db->get(db_prefix().'currency_rates')->row();
+
+		if($currency_rates){
+			$amount_after_convertion = $currency_rates->to_currency_rate;
+		}
+
+		return $amount_after_convertion;
+	}
+
+	/**
+	 * currency converter value
+	 * @param  [type] $value 
+	 * @param  [type] $rate  
+	 * @return [type]        
+	 */
+	function currency_converter_value($value, $rate, $currency, $symbol = false)
+	{
+		$value = (float)$value * (float)$rate;
+
+		if($symbol){
+			$value = app_format_money($value, $currency);
+		}
+
+		return $value;
 	}

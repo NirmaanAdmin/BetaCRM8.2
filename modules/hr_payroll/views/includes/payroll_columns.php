@@ -42,15 +42,15 @@
 				$_data .= ' <a href="' . admin_url('staff/profile/' . $value['staff_id_created']) . '">' . get_staff_full_name($value['staff_id_created']) . '</a>';
 				?>
 				<tr>
-					<td><?php echo html_entity_decode($value['order_display']); ?></td>
-					<td><?php echo html_entity_decode($value['column_key']); ?></td>
-					<td><?php echo html_entity_decode($value['taking_method'] == 'caculator' ? 'formular' : $value['taking_method']); ?></td>
-					<td><?php echo html_entity_decode($_data); ?></td>
-					<td><?php echo html_entity_decode(_dt($value['date_created'])); ?></td>
+					<td><?php echo new_html_entity_decode($value['order_display']); ?></td>
+					<td><?php echo new_html_entity_decode($value['column_key']); ?></td>
+					<td><?php echo new_html_entity_decode($value['taking_method'] == 'caculator' ? 'formular' : $value['taking_method']); ?></td>
+					<td><?php echo new_html_entity_decode($_data); ?></td>
+					<td><?php echo new_html_entity_decode(_dt($value['date_created'])); ?></td>
 					<td>
 						
 						<?php if(is_admin() || has_permission('hrp_setting','','edit')) {?>
-							<a href="#" onclick="edit_column_type(this,<?php echo html_entity_decode($value['id']); ?>); return false"  class="btn btn-default btn-icon" data-toggle="sidebar-right" data-target=".insurance_type_modal-edit-modal"><i class="fa fa-pencil-square-o"></i></a>
+							<a href="#" onclick="edit_column_type(this,<?php echo new_html_entity_decode($value['id']); ?>); return false"  class="btn btn-default btn-icon" data-toggle="sidebar-right" data-target=".insurance_type_modal-edit-modal"><i class="fa-regular fa-pen-to-square"></i></a>
 						<?php } ?>
 
 						<?php if(is_admin() || has_permission('hrp_setting','','delete')) {?>

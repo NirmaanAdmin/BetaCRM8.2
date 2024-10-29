@@ -6,7 +6,7 @@
 
 
 	<?php if(isset($company_contributions_list)){?>
-		var dataObject_pu = <?php echo html_entity_decode($company_contributions_list); ?>;
+		var dataObject_pu = <?php echo new_html_entity_decode($company_contributions_list); ?>;
 	<?php }else{ ?>
 		var dataObject_pu = [];
 	<?php } ?>

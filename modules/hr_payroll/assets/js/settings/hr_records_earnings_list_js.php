@@ -6,7 +6,7 @@
 
 
 	<?php if(isset($earnings_list_hr_records)){?>
-		var dataObject_pu = <?php echo html_entity_decode($earnings_list_hr_records); ?>;
+		var dataObject_pu = <?php echo new_html_entity_decode($earnings_list_hr_records); ?>;
 	<?php }else{ ?>
 		var dataObject_pu = [];
 	<?php } ?>

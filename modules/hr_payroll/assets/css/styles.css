@@ -220,3 +220,29 @@ body.payslip_manage  .label-primary{
 .payslip-template-lable{
 	font-style: italic;
 }
+
+.timesheet-leave-line-suggestion button:nth-child(1){background-color: #0c0 !important; color: white;}
+.timesheet-leave-line-suggestion button:nth-child(2){background-color: #c00 !important; color: white;}
+
+.daterangepicker{
+	z-index: 93001 !important;
+}
+.drp-calendar.right {
+    display: none !important;
+  }
+
+  .ht_clone_top_left_corner {
+  	z-index: 98 !important;
+  }
+
+  .ht_clone_left {
+  	z-index: 98 !important;
+  }
+
+  .ht_clone_top_inline_start_corner {
+  	z-index: 98 !important;
+  }
+
+  .ht_clone_inline_start {
+  	z-index: 98 !important;
+  }

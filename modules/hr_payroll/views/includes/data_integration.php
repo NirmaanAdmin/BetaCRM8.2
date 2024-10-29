@@ -15,11 +15,70 @@
 				<input  type="checkbox" id="integrated_hrprofile" name="integrated_hrprofile" <?php if(get_hr_payroll_option('integrated_hrprofile') == 1 ){ echo 'checked';} ?> value="integrated_hrprofile" <?php if($hr_profile_active == false){echo ' disabled';} ?>>
 				<label for="integrated_hrprofile"><?php echo _l('integrated_hrprofile'); ?>
 
-				<a href="#" class="pull-right display-block input_method"><i class="fa fa-question-circle i_tooltip" data-toggle="tooltip" title="" data-original-title="<?php echo html_entity_decode($hr_profile_title); ?>"></i></a>
+				<a href="#" class="pull-right display-block input_method"><i class="fa fa-question-circle i_tooltip" data-toggle="tooltip" title="" data-original-title="<?php echo new_html_entity_decode($hr_profile_title); ?>"></i></a>
 			</label>
 		</div>
 	</div>
 </div>
+
+<div class="col-md-12 option-show-integra-hr-profile <?php if(get_hr_payroll_option('integrated_hrprofile') == 1){ echo '';}else{ echo 'hide';}  ?>">
+	<div class="row">
+		<div class="col-md-4">
+			<div class="form-group">
+				<div class="checkbox checkbox-primary">
+					<input  type="checkbox" id="hrp_customize_staff_payslip_column" name="hrp_customize_staff_payslip_column" <?php if(get_hr_payroll_option('hrp_customize_staff_payslip_column') == 1 ){ echo 'checked';} ?> value="hrp_customize_staff_payslip_column" <?php if($hr_profile_active == false){echo ' disabled';} ?>>
+					<label for="hrp_customize_staff_payslip_column"><?php echo _l('hrp_customize_staff_payslip_column'); ?>
+
+					<a href="#" class="pull-right display-block input_method"><i class="fa fa-question-circle i_tooltip" data-toggle="tooltip" title="" data-original-title="<?php echo _l('hr_customize_staff_payslip_column_title'); ?>"></i></a>
+				</label>
+			</div>
+		</div>
+		</div>
+	</div>
+
+	<div class="col-md-12 option-show-customize-payslip-column <?php if(get_hr_payroll_option('hrp_customize_staff_payslip_column') == 1){ echo '';}else{ echo 'hide';}  ?>">
+		<!-- 	Add assets    -->
+		<div class="col-md-12 assets_wrap">
+			<?php 
+			$hrp_customize_staff_payslip_columns = hrp_customize_staff_payslip_columns();
+			 ?>
+			<?php if(isset($get_customize_payslip_columns) && count($get_customize_payslip_columns) > 0){
+				foreach ($get_customize_payslip_columns as $p_key => $payslip_columns) {              
+					?>
+					<div id ="assets_emp" class="row">                            
+						
+						<div class="col-md-9 pt-2">
+							<?php echo render_select('column_name[]', $hrp_customize_staff_payslip_columns, ['name', 'label'], '', $payslip_columns['column_name'], ['placeholder' => _l('column_name'), 'data-none-selected-text' => _l('column_name') ]); ?>
+						</div>
+						<div class="col-md-2 mt-2">
+							<?php echo render_input('order_number[]', '', $payslip_columns['order_number'], 'number', ['placeholder' => _l('order_number'), 'data-none-selected-text' => _l('order_number')]); ?>
+						</div>
+
+						<div class="col-md-1 pl-0 pt-0" name="button_add">
+							<button name="add_asset" class="btn mt-1 <?php if($p_key == 0){ echo 'new_assets_emp btn-primary' ;}else{echo 'remove_assets_emp btn-danger' ;} ?>  " data-ticket="true" type="button"><i class="fa <?php if($p_key == 0){ echo 'fa-plus' ;}else{ echo 'fa-minus' ;} ?> "></i></button>
+						</div>
+					</div>
+				<?php } ?>
+			<?php }else{ ?>
+				<div id ="assets_emp" class="row">                           
+					<div class="col-md-9 pt-2">
+						<?php echo render_select('column_name[]', $hrp_customize_staff_payslip_columns, ['name', 'label'], '', '', ['placeholder' => _l('column_name'), 'data-none-selected-text' => _l('column_name') ]); ?>
+					</div>
+					<div class="col-md-2 mt-2">
+						<?php echo render_input('order_number[]', '', '', 'number', ['placeholder' => _l('order_number'), 'data-none-selected-text' => _l('order_number')]); ?>
+					</div>
+					
+					<div class="col-md-1 pl-0 pt-2" name="button_add">
+						<button name="add_asset" class="btn new_assets_emp btn-primary mt-1" data-ticket="true" type="button"><i class="fa fa-plus"></i></button>
+					</div>
+				</div>
+			<?php } ?>
+		</div>
+		<!-- 	End add assets    -->
+	</div>
+
+	</div>
+
 </div>
 
 
@@ -30,7 +89,7 @@
 				<input type="checkbox" id="integrated_timesheets" name="integrated_timesheets" <?php if(get_hr_payroll_option('integrated_timesheets') == 1 ){ echo 'checked';} ?> value="integrated_timesheets" <?php if($timesheets_active == false){echo ' disabled';} ?>>
 				<label for="integrated_timesheets"><?php echo _l('integrated_timesheets'); ?>
 
-				<a href="#" class="pull-right display-block input_method"><i class="fa fa-question-circle i_tooltip" data-toggle="tooltip" title="" data-original-title="<?php echo html_entity_decode($timesheets_title); ?>"></i></a>
+				<a href="#" class="pull-right display-block input_method"><i class="fa fa-question-circle i_tooltip" data-toggle="tooltip" title="" data-original-title="<?php echo new_html_entity_decode($timesheets_title); ?>"></i></a>
 			</label>
 		</div>
 	</div>
@@ -39,9 +98,9 @@
 
 <?php 
 $attendance_types = hrp_attendance_type();
-$actual_workday   = explode(',', get_hr_payroll_option('integration_actual_workday'));
-$paid_leave       = explode(',', get_hr_payroll_option('integration_paid_leave'));
-$unpaid_leave     = explode(',', get_hr_payroll_option('integration_unpaid_leave'));
+$actual_workday   = new_explode(',', get_hr_payroll_option('integration_actual_workday'));
+$paid_leave       = new_explode(',', get_hr_payroll_option('integration_paid_leave'));
+$unpaid_leave     = new_explode(',', get_hr_payroll_option('integration_unpaid_leave'));
 ?>
 
 	<div class="row">
@@ -69,7 +128,7 @@ $unpaid_leave     = explode(',', get_hr_payroll_option('integration_unpaid_leave
 							$selected .= ' selected';
 						}
 						?>
-						<option value="<?php echo html_entity_decode($key); ?>" <?php echo  html_entity_decode($selected)?>><?php  echo html_entity_decode($value); ?></option>
+						<option value="<?php echo new_html_entity_decode($key); ?>" <?php echo  new_html_entity_decode($selected)?>><?php  echo new_html_entity_decode($value); ?></option>
 
 					<?php } ?>
 				</select>
@@ -91,7 +150,7 @@ $unpaid_leave     = explode(',', get_hr_payroll_option('integration_unpaid_leave
 							$selected .= ' selected';
 						}
 						?>
-						<option value="<?php echo html_entity_decode($key); ?>" <?php echo html_entity_decode($selected); ?>><?php  echo html_entity_decode($value); ?></option>
+						<option value="<?php echo new_html_entity_decode($key); ?>" <?php echo new_html_entity_decode($selected); ?>><?php  echo new_html_entity_decode($value); ?></option>
 					<?php } ?>
 				</select>
 			</div>
@@ -110,7 +169,7 @@ $unpaid_leave     = explode(',', get_hr_payroll_option('integration_unpaid_leave
 							$selected .= ' selected';
 						}
 						?>
-						<option value="<?php echo html_entity_decode($key); ?>" <?php echo  $selected?>><?php echo html_entity_decode($value); ?></option>
+						<option value="<?php echo new_html_entity_decode($key); ?>" <?php echo  $selected?>><?php echo new_html_entity_decode($value); ?></option>
 
 					<?php } ?>
 				</select>
@@ -127,7 +186,7 @@ $unpaid_leave     = explode(',', get_hr_payroll_option('integration_unpaid_leave
 				<input type="checkbox" id="integrated_commissions" name="integrated_commissions" <?php if(get_hr_payroll_option('integrated_commissions') == 1 ){ echo 'checked';} ?> value="integrated_commissions" <?php if($commissions_active == false){echo ' disabled';} ?>>
 				<label for="integrated_commissions"><?php echo _l('integrated_commissions'); ?>
 
-				<a href="#" class="pull-right display-block input_method"><i class="fa fa-question-circle i_tooltip" data-toggle="tooltip" title="" data-original-title="<?php echo html_entity_decode($commissions_title); ?>"></i></a>
+				<a href="#" class="pull-right display-block input_method"><i class="fa fa-question-circle i_tooltip" data-toggle="tooltip" title="" data-original-title="<?php echo new_html_entity_decode($commissions_title); ?>"></i></a>
 			</label>
 		</div>
 	</div>
